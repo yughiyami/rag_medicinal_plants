@@ -1,0 +1,34 @@
+[
+  {
+    "query": "What are the main anti-inflammatory alkaloids in Uncaria tomentosa?",
+    "answer": "Based solely on the provided context, the main anti-inflammatory alkaloid in *Uncaria tomentosa* (Willdenow ex Roemer & Schultes) DC. (Rubiaceae) is **mitraphylline (MTP)**, which is described as \"the most abundant pentacyclic oxindolic alkaloid (POA) from U. Tomentosa and has been reported to modify the inflammatory response\" [1]. The context also notes that \"recent studies have reported anti-inflammatory and anti-proliferative properties of different alkaloids extracted from this plant\" [3], and that the plant \"has immunomodulatory and antitumor properties due to the alkaloids found in the p"
+  },
+  {
+    "query": "What is the wound healing mechanism of taspine from Croton lechleri?",
+    "answer": "Based solely on the provided context, the wound healing mechanism of **taspine** from **Croton lechleri** is described as **taspine** being the **cicatrizant principle** in **Sangre de Grado** [5]. **Taspine** is an **Alkaloid** found in **Croton lechleri** with the biological activity of **Wound healing** and **anti-inflammatory** effects [1]. The **latex** of **Croton lechleri** contains only **taspine (9)**, which is the component responsible for the wound healing activity, and its mean concentration was found to be **9% of the latex by dry weight** [3]. Other alkaloids isolated from **Crot"
+  },
+  {
+    "query": "Cuales son las propiedades medicinales de la maca para la fertilidad?",
+    "answer": "Según la información proporcionada, la maca (*Lepidium meyenii*) posee propiedades medicinales para la fertilidad, incluyendo la mejora de la fertilidad y la libido [1], así como el tratamiento de la infertilidad y la mejora del conteo y la calidad del esperma [3][4]. Tradicionalmente, la maca ha sido utilizada para mejorar la fertilidad y la libido, lo que sugiere su influencia potencial en los sistemas endocrinos [1]. Los estudios indican que la maca puede ser efectiva en la mejora del bienestar sexual tanto en hombres como en mujeres durante la andropausia y la menopausia [2]. Además, se me"
+  },
+  {
+    "query": "Compare the antioxidant activity of Physalis peruviana and Smallanthus sonchifolius",
+    "answer": "Based solely on the provided context, a direct comparison of the antioxidant activity of *Physalis peruviana* and *Smallanthus sonchifolius* is limited because the studies use different methodologies and extract types. For *Physalis peruviana*, the crude ethanolic extract and some fractions of calyces were evaluated for antioxidant in vitro activity by means of the superoxide and nitric oxide scavenging activity [3]. For *Smallanthus sonchifolius*, five landraces were investigated in total phenolic content, antioxidant activity and chemical composition of ethanol extracts (EEs) and decoction e"
+  },
+  {
+    "query": "What is the geographic distribution of Buddleja incana in Peru?",
+    "answer": "Based solely on the provided context, **Buddleja incana** has been recorded in Peru with **62 georeferenced occurrences** [1]. These occurrences are distributed across the following departments: **Amazonas, Ancash, Arequipa, Cajamarca, Celedin Prov., Cusco, Cuzco, Huánuco, Junín, La Libertad, Lima, Pasco** [1]. This data comes from the **GBIF (Global Biodiversity Information Facility)** [1]. The context does not mention any compounds, alkaloids, concentrations, or mechanisms of action for this species."
+  },
+  {
+    "query": "Actividad antimicrobiana de Minthostachys mollis aceite esencial",
+    "answer": "Basado en la información proporcionada, la actividad antimicrobiana del aceite esencial de **Minthostachys mollis** ha sido evaluada frente a varias bacterias y hongos. Se determinó la **actividad antibacteriana del aceite esencial de Minthostachys mollis “ruyaq muña” frente a Helicobacter pylori, Shigella dysenteriae, Salmonella typhi y Pseudomonas aeruginosa** [1][3]. Además, se demostró la **actividad antimicótica in vitro** del aceite esencial de las hojas de **Minthostachys mollis \"Muña\"** [4]. La composición química y la actividad antibacteriana también fueron evaluadas en aceite esencia"
+  },
+  {
+    "query": "How does Erythroxylum coca differ from cocaine pharmacologically?",
+    "answer": "Based solely on the provided context, **Erythroxylum coca** is a plant species \"indigenous to the Andean region of South America\" that is \"grown historically as a source of homeopathic medicine\" [1], while **cocaine** is a \"psychoactive substance extracted from the leaves of plants called Erythroxylum coca\" [2]. Pharmacologically, **cocaine** is described as \"a potent stimulant of the sympathetic nervous system\" that \"causes structural changes on the brain, heart, lung, liver and kidney\" [2]. The context does not provide any pharmacological data, mechanisms, or quantitative values (such as IC5"
+  },
+  {
+    "query": "What are the fructooligosaccharides in yacon and their prebiotic effects?",
+    "answer": "According to the provided context, yacon (*Smallanthus sonchifolius*) is a root rich in **fructooligosaccharides (FOS)** [1][4], which act as **prebiotics** [1]. Yacon contains **FOS (50–70% of its dry weight)** and, therefore, is considered a prebiotic [2]. The context also notes that yacon mainly contains **fructooligosaccharides (FOS)** and **inulin** [4]. Regarding prebiotic effects, **FOS** intake favors the growth of health-promoting bacteria while reducing pathogenic bacteria populations [5]. Additionally, commercial **FOS** can upregulate total secretory IgA (S-IgA) in infant mice, pre"
+  }
+]

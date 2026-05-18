@@ -1,0 +1,17 @@
+{
+  "perunpdb_compounds": 23,
+  "perunpdb_triples": 64,
+  "gbif_occurrences": 804,
+  "gbif_taxonomies": 8,
+  "wfo_taxonomies": 0,
+  "wfo_name_mappings": 0,
+  "coconut_by_organism": 164,
+  "coconut_by_name": 42,
+  "lotus_pairs": 0,
+  "pubmed_articles": 568,
+  "scielo_articles": 167,
+  "scielo_open_access": 27,
+  "total_chunks": 3040,
+  "timestamp": "2026-05-17T18:38:29.646720",
+  "elapsed_seconds": 263.7
+}

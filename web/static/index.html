@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIRCA-RAG | Peruvian Medicinal Plants</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <h1>SIRCA-RAG</h1>
+        <p class="subtitle">Semi-autonomous RAG for Peruvian Medicinal Plant Knowledge Integration</p>
+      </div>
+      <div class="header-meta">
+        <span class="badge" id="status-badge">Loading...</span>
+        <span class="badge badge-outline" id="vectorstore-badge">--</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="query-section">
+      <form id="query-form">
+        <div class="input-row">
+          <input
+            type="text"
+            id="query-input"
+            placeholder="Ask about Peruvian medicinal plants... / Pregunta sobre plantas medicinales peruanas..."
+            autocomplete="off"
+            required
+          >
+          <button type="submit" id="submit-btn">
+            <span class="btn-text">Search</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </div>
+        <div class="options-row">
+          <div class="option-group">
+            <label for="backend-select">Backend:</label>
+            <select id="backend-select">
+              <option value="deepseek">DeepSeek V4 Flash (API)</option>
+              <option value="ollama">Qwen3.5 Local (Ollama)</option>
+              <option value="template">Template (fast test)</option>
+            </select>
+          </div>
+          <div class="example-queries">
+            <span class="label">Examples:</span>
+            <button type="button" class="example-btn" data-query="What are the main alkaloids in Uncaria tomentosa?">Uncaria alkaloids</button>
+            <button type="button" class="example-btn" data-query="Propiedades medicinales de la maca para la fertilidad">Maca fertilidad</button>
+            <button type="button" class="example-btn" data-query="Compare antioxidant activity of Physalis peruviana and yacon">Antioxidants</button>
+            <button type="button" class="example-btn" data-query="Actividad antimicrobiana del aceite esencial de Minthostachys mollis">Muna antimicrobial</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section id="results-section" class="hidden">
+      <div class="result-header">
+        <div class="pipeline-info">
+          <span class="tag" id="tag-category">--</span>
+          <span class="tag" id="tag-crag">--</span>
+          <span class="tag" id="tag-model">--</span>
+          <span class="tag tag-muted" id="tag-tokens">--</span>
+          <span class="tag tag-muted" id="tag-latency">--</span>
+        </div>
+      </div>
+
+      <div class="answer-card">
+        <h3>Answer</h3>
+        <div id="answer-text" class="answer-body"></div>
+      </div>
+
+      <div id="citations-card" class="citations-card">
+        <h3>Sources <span id="citations-count"></span></h3>
+        <div id="citations-list"></div>
+      </div>
+
+      <details class="trace-details">
+        <summary>Pipeline Trace</summary>
+        <div id="trace-list" class="trace-list"></div>
+      </details>
+    </section>
+
+    <section id="error-section" class="hidden">
+      <div class="error-card">
+        <h3>Error</h3>
+        <p id="error-text"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>SIRCA-RAG v1.0 &mdash; SimBig / WAIMLAp 2026 &mdash; Hybrid Retrieval (BGE-M3 + BM25) + CRAG + Grounded Generation</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
