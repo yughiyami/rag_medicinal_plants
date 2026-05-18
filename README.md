@@ -10,15 +10,15 @@
 
 ```mermaid
 graph LR
-    Q["Query"] --> C["Classify"]
-    C --> R["Hybrid Retrieve"]
-    R --> E["CRAG Evaluate"]
-    E -->|"accept ≥ 0.35"| G["Generate"]
-    E -->|"refine 0.15–0.35"| RF["Re-retrieve"]
-    E -->|"web_search < 0.15"| WS["PubMed Live"]
+    Q[Query] --> C[Classify]
+    C --> R[Hybrid Retrieve]
+    R --> E[CRAG Evaluate]
+    E -- "accept >= 0.35" --> G[Generate]
+    E -- "refine 0.15-0.35" --> RF[Re-retrieve]
+    E -- "web < 0.15" --> WS[PubMed Live]
     RF --> G
     WS --> G
-    G --> A["Grounded Answer"]
+    G --> A[Grounded Answer]
 
     style Q fill:#3498db,stroke:#2c3e50,color:#fff
     style C fill:#9b59b6,stroke:#2c3e50,color:#fff
@@ -34,33 +34,33 @@ graph LR
 
 ```mermaid
 graph TD
-    subgraph "1. Query Classification"
-        CL["Rule-based Classifier"]
-        CL --> F["factual"]
-        CL --> EX["exploratory"]
-        CL --> CO["comparative"]
+    subgraph Classification
+        CL[Rule-based Classifier]
+        CL --> F[factual]
+        CL --> EX[exploratory]
+        CL --> CO[comparative]
     end
 
-    subgraph "2. Hybrid Retrieval"
-        BGE["BGE-M3 Dense<br/>1024 dimensions"]
-        BM["BM25 Sparse"]
-        BGE --> RRF["Reciprocal Rank Fusion"]
+    subgraph Retrieval
+        BGE[BGE-M3 Dense 1024d]
+        BM[BM25 Sparse]
+        BGE --> RRF[RRF Fusion]
         BM --> RRF
-        RRF --> RK["Cross-Encoder Rerank<br/>ms-marco-MiniLM-L-12-v2"]
+        RRF --> RK[Cross-Encoder Rerank]
     end
 
-    subgraph "3. CRAG Evaluation"
-        TH["Threshold Decision"]
-        TH -->|"≥ 0.35"| ACC["Accept"]
-        TH -->|"0.15 – 0.35"| REF["Refine"]
-        TH -->|"< 0.15"| WEB["Web Search"]
+    subgraph CRAG
+        TH[Threshold Decision]
+        TH -- ">= 0.35" --> ACC[Accept]
+        TH -- "0.15 - 0.35" --> REF[Refine]
+        TH -- "< 0.15" --> WEB[Web Search]
     end
 
-    subgraph "4. Grounded Generation"
-        COT["Chain-of-Thought"]
-        COT --> S1["Extract facts"]
-        S1 --> S2["Verify against sources"]
-        S2 --> S3["Compose answer"]
+    subgraph Generation
+        COT[Chain-of-Thought]
+        COT --> S1[Extract facts]
+        S1 --> S2[Verify sources]
+        S2 --> S3[Compose answer]
     end
 
     style BGE fill:#3498db,stroke:#2c3e50,color:#fff
@@ -84,23 +84,23 @@ sequenceDiagram
     participant G as Generator
 
     U->>C: Query
-    C->>C: Regex classify (< 1ms)
+    C->>C: Regex classify
     C->>R: category + weights
     R->>R: BGE-M3 encode
     R->>R: BM25 score
     R->>R: RRF fusion
     R->>R: Cross-encoder rerank
     R->>E: Top-5 documents + scores
-    E->>E: Threshold check (< 1ms)
-    alt accept (≥ 0.35)
+    E->>E: Threshold check
+    alt accept
         E->>G: Documents
-    else refine (0.15–0.35)
-        E->>R: Re-retrieve with adjusted params
+    else refine
+        E->>R: Re-retrieve
         R->>G: New documents
-    else web_search (< 0.15)
+    else web_search
         E->>G: PubMed live results
     end
-    G->>G: Extract → Verify → Compose
+    G->>G: Extract - Verify - Compose
     G->>U: Grounded answer + citations
 ```
 
@@ -110,12 +110,12 @@ sequenceDiagram
 
 | # | Species | Common Name | Key Compounds |
 |---|---------|-------------|---------------|
-| 1 | *Uncaria tomentosa* | Cat's Claw / Uña de Gato | Alkaloids, oxindoles |
+| 1 | *Uncaria tomentosa* | Cat's Claw / Una de Gato | Alkaloids, oxindoles |
 | 2 | *Lepidium meyenii* | Maca | Macamides, glucosinolates |
 | 3 | *Croton lechleri* | Dragon's Blood / Sangre de Grado | Taspine, proanthocyanidins |
-| 4 | *Minthostachys mollis* | Muña | Pulegone, menthone |
+| 4 | *Minthostachys mollis* | Muna | Pulegone, menthone |
 | 5 | *Erythroxylum coca* | Coca | Cocaine alkaloids, flavonoids |
-| 6 | *Smallanthus sonchifolius* | Yacón | FOS, phenolic acids |
+| 6 | *Smallanthus sonchifolius* | Yacon | FOS, phenolic acids |
 | 7 | *Physalis peruviana* | Aguaymanto / Cape Gooseberry | Withanolides, carotenoids |
 | 8 | *Buddleja incana* | Quishuar / Kiswar | Flavonoids, iridoids |
 
@@ -129,38 +129,22 @@ sequenceDiagram
 
 | Metric | Score | Target | Status |
 |--------|------:|--------|--------|
-| BERTScore F1 (roberta-large) | **0.9028** | ≥ 0.90 | PASS |
-| Semantic Similarity (cross-encoder) | **0.9929** | — | — |
-| Context Precision | **1.0000** | — | — |
-| Context Recall | **1.0000** | — | — |
-| MRR | **1.0000** | — | — |
-| NDCG@5 | **1.0000** | — | — |
-| Entity Recall | **0.7946** | — | — |
-| Faithfulness | **0.8411** | ≥ 0.80 | PASS |
-| Answer Relevancy | **0.9995** | — | — |
-
-### Metrics Breakdown
-
-```mermaid
----
-config:
-  xyChart:
-    width: 700
-    height: 400
----
-xychart-beta
-    title "SIRCA-RAG Evaluation Scores"
-    x-axis ["BERTScore", "Semantic Sim", "Ctx Precision", "Ctx Recall", "MRR", "NDCG@5", "Entity Recall", "Faithfulness", "Relevancy"]
-    y-axis "Score" 0.7 --> 1.0
-    bar [0.9028, 0.9929, 1.0, 1.0, 1.0, 1.0, 0.7946, 0.8411, 0.9995]
-```
+| BERTScore F1 (roberta-large) | **0.9028** | >= 0.90 | PASS |
+| Semantic Similarity (cross-encoder) | **0.9929** | -- | -- |
+| Context Precision | **1.0000** | -- | -- |
+| Context Recall | **1.0000** | -- | -- |
+| MRR | **1.0000** | -- | -- |
+| NDCG@5 | **1.0000** | -- | -- |
+| Entity Recall | **0.7946** | -- | -- |
+| Faithfulness | **0.8411** | >= 0.80 | PASS |
+| Answer Relevancy | **0.9995** | -- | -- |
 
 ### Faithfulness Metric Composition
 
 ```mermaid
 pie title Hybrid Faithfulness Score
-    "Semantic (cross-encoder)" : 65
-    "Lexical (word overlap)" : 35
+    "Semantic - cross-encoder" : 65
+    "Lexical - word overlap" : 35
 ```
 
 ---
@@ -174,28 +158,28 @@ Query: "What are the main alkaloids in Uncaria tomentosa?"
 ```mermaid
 gantt
     title Pipeline Execution Timeline
-    dateFormat X
-    axisFormat %s ms
+    dateFormat x
+    axisFormat %L ms
 
     section Classify
-    Rule-based classify     :0, 4
+    Rule-based classify :0, 4
 
     section Retrieve
-    BGE-M3 + BM25 + Rerank  :4, 3199
+    BGE-M3 + BM25 + Rerank :4, 3199
 
     section Evaluate
-    Threshold check          :3199, 3200
+    Threshold check :3199, 3200
 
     section Generate
-    DeepSeek V4 Flash        :3200, 6200
+    DeepSeek V4 Flash :3200, 6200
 ```
 
 | Node | Duration | Details |
 |------|----------|---------|
 | classify | < 1ms | category: exploratory, confidence: 0.60 |
-| retrieve | 3,195ms | 5 docs, hybrid α=0.6, BGE-M3 + BM25 + rerank |
+| retrieve | 3,195ms | 5 docs, hybrid alpha=0.6, BGE-M3 + BM25 + rerank |
 | evaluate | < 1ms | action: accept, confidence: 0.89 |
-| generate | ~30–150s | DeepSeek: API call \| Template: < 1ms \| Ollama: ~10–30s |
+| generate | ~30-150s | DeepSeek: API call / Template: < 1ms / Ollama: ~10-30s |
 
 ---
 
@@ -219,22 +203,22 @@ python -m web.app
 
 ```mermaid
 graph LR
-    subgraph "Docker Container"
-        APP["FastAPI :8000"]
-        VS["FAISS Vectorstore<br/>3,040 vectors"]
-        BGE["BGE-M3 Embeddings"]
+    subgraph Docker
+        APP[FastAPI :8000]
+        VS[FAISS 3040 vectors]
+        BGE[BGE-M3]
         APP --> VS
         APP --> BGE
     end
 
-    subgraph "External Services"
-        DS["DeepSeek API"]
-        OL["Ollama (optional)"]
+    subgraph External
+        DS[DeepSeek API]
+        OL[Ollama optional]
     end
 
-    APP -->|"DEEPSEEK_API_KEY"| DS
-    APP -.->|"OLLAMA_BASE_URL"| OL
-    U["User"] -->|":8000"| APP
+    APP -- DEEPSEEK_API_KEY --> DS
+    APP -. OLLAMA_BASE_URL .-> OL
+    U[User] -- ":8000" --> APP
 
     style APP fill:#27ae60,stroke:#2c3e50,color:#fff
     style DS fill:#3498db,stroke:#2c3e50,color:#fff
@@ -252,7 +236,7 @@ docker compose up --build
 
 | Variable | Required | Default |
 |----------|----------|---------|
-| `DEEPSEEK_API_KEY` | Yes | — |
+| `DEEPSEEK_API_KEY` | Yes | -- |
 | `OLLAMA_BASE_URL` | No | `http://localhost:11434` |
 | `HOST` | No | `0.0.0.0` |
 | `PORT` | No | `8000` |
@@ -265,41 +249,41 @@ docker compose up --build
 |--------|------|-------------|
 | `GET` | `/` | Interactive dark-themed frontend |
 | `GET` | `/api/health` | System status, backends, vectorstore size |
-| `POST` | `/api/query` | Full pipeline: query → answer + citations + trace |
+| `POST` | `/api/query` | Full pipeline query with answer + citations + trace |
 | `GET` | `/api/species` | List of 8 target species |
 
-### Query Request/Response
+### Query Request / Response
 
 ```mermaid
 classDiagram
     class QueryRequest {
         +string query
-        +string backend = "deepseek"
-        +string language = "auto"
+        +string backend
+        +string language
     }
 
     class QueryResponse {
         +string query
         +string answer
-        +Citation[] citations
+        +list citations
         +dict classification
         +string crag_action
         +float confidence
         +string model
         +int tokens_generated
         +int latency_ms
-        +string[] trace_summary
+        +list trace_summary
     }
 
     class Citation {
         +int index
         +string title
-        +string[] authors
+        +list authors
         +string year
         +string source
         +string pmid
         +string doi
-        +string[] species
+        +list species
     }
 
     QueryRequest --> QueryResponse : POST /api/query
@@ -312,8 +296,8 @@ classDiagram
 
 | Backend | Type | Speed | Quality | Requirements |
 |---------|------|-------|---------|--------------|
-| **DeepSeek V4 Flash** | API | ~30–150s | Best | `DEEPSEEK_API_KEY` |
-| **Ollama (Qwen3.5)** | Local | ~10–30s | Good | Ollama running |
+| **DeepSeek V4 Flash** | API | ~30-150s | Best | `DEEPSEEK_API_KEY` |
+| **Ollama (Qwen3.5)** | Local | ~10-30s | Good | Ollama running |
 | **Template** | Passthrough | < 1ms | Test only | None |
 
 ---
@@ -322,30 +306,30 @@ classDiagram
 
 ```mermaid
 graph TD
-    subgraph "Core Pipeline"
-        AG["agent/"] --> GR["graph.py — CRAG orchestration"]
-        AG --> QC["query_classifier.py"]
-        AG --> CE["crag_evaluator.py"]
+    subgraph Core
+        AG[agent] --> GR[graph.py]
+        AG --> QC[query_classifier.py]
+        AG --> CE[crag_evaluator.py]
     end
 
-    subgraph "Retrieval"
-        RT["retrieval/"] --> HY["hybrid.py — BGE-M3 + BM25 + RRF"]
-        RT --> BM["bm25_index.py"]
+    subgraph Retrieval
+        RT[retrieval] --> HY[hybrid.py]
+        RT --> BM[bm25_index.py]
     end
 
-    subgraph "Generation"
-        GN["generation/"] --> GG["grounded_generator.py — CoT protocol"]
+    subgraph Generation
+        GN[generation] --> GG[grounded_generator.py]
     end
 
-    subgraph "Web"
-        WB["web/"] --> AP["app.py — FastAPI"]
-        WB --> ST["static/ — Frontend"]
+    subgraph Web
+        WB[web] --> AP[app.py]
+        WB --> ST[static]
     end
 
-    subgraph "Data"
-        DT["data/"] --> VEC["vectorstore/ — FAISS + BM25"]
-        DT --> RAW["raw/ — Acquired papers"]
-        DT --> PRO["processed/ — Chunks"]
+    subgraph Data
+        DT[data] --> VEC[vectorstore]
+        DT --> RAW[raw]
+        DT --> PRO[processed]
     end
 
     style AG fill:#9b59b6,stroke:#2c3e50,color:#fff
@@ -361,9 +345,9 @@ graph TD
 
 | Decision | Rationale |
 |----------|-----------|
-| Chain-of-Thought Grounding | 3-step protocol (Extract → Verify → Compose) prevents hallucination |
-| Hybrid Faithfulness | 65% semantic + 35% lexical catches both paraphrases and exact matches |
-| roberta-large for BERTScore | DeBERTa caused OverflowError; roberta-large gives stable F1 ≥ 0.90 |
+| Chain-of-Thought Grounding | 3-step protocol (Extract, Verify, Compose) prevents hallucination |
+| Hybrid Faithfulness | 65% semantic + 35% lexical catches paraphrases and exact matches |
+| roberta-large for BERTScore | DeBERTa caused OverflowError; roberta-large gives stable F1 >= 0.90 |
 | Temperature 0.0 | Deterministic output for reproducible evaluation |
 | Bilingual (ES/EN) | System prompt auto-detects and responds in query language |
 | Pre-computed rerank scores | Sub-millisecond CRAG evaluation without model inference |
