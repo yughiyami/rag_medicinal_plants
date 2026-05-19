@@ -183,8 +183,9 @@ def search_unpaywall(doi: str) -> dict | None:
     return None
 
 
-def acquire_scielo_all() -> dict:
+def acquire_scielo_all(species_list: list[str] | None = None) -> dict:
     """Acquire bilingual literature via CrossRef + SciELO ArticleMeta."""
+    species_list = species_list or TARGET_SPECIES
     print("\n[C4-Literature] Acquiring bilingual scientific literature...")
     results = {"articles": [], "open_access": []}
     seen_hashes = set()
@@ -196,7 +197,7 @@ def acquire_scielo_all() -> dict:
         '"{species}" fitoquimica planta medicinal',
     ]
 
-    for species in TARGET_SPECIES:
+    for species in species_list:
         print(f"  {species}...")
         species_count = 0
 

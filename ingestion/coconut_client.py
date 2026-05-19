@@ -159,13 +159,14 @@ KNOWN_COMPOUNDS = [
 ]
 
 
-def acquire_phytochemical_all() -> dict:
+def acquire_phytochemical_all(species_list: list[str] | None = None) -> dict:
     """Acquire phytochemical data from COCONUT and LOTUS for all species."""
+    species_list = species_list or TARGET_SPECIES
     print("\n[C4-PHYTO] Acquiring phytochemical data...")
     results = {"coconut_by_organism": [], "coconut_by_name": [], "lotus": []}
 
     # Strategy 1: Search COCONUT by organism name
-    for species in TARGET_SPECIES:
+    for species in species_list:
         print(f"  {species}...")
         mols = search_coconut_by_organism(species, limit=20)
         results["coconut_by_organism"].extend(mols)

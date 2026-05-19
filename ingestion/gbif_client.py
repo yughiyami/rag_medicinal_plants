@@ -114,12 +114,13 @@ def fetch_species_details(taxon_key: int) -> Optional[dict]:
         return None
 
 
-def acquire_gbif_all() -> dict:
+def acquire_gbif_all(species_list: list[str] | None = None) -> dict:
     """Acquire GBIF data for all target species."""
+    species_list = species_list or TARGET_SPECIES
     print("\n[C4-GBIF] Acquiring geographic occurrences in Peru...")
     results = {"occurrences": [], "taxonomy": []}
 
-    for species in TARGET_SPECIES:
+    for species in species_list:
         print(f"  {species}...")
 
         # Taxonomy

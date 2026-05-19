@@ -125,11 +125,11 @@ def chunk_article(article: dict) -> list[dict]:
 
 def _detect_species(text: str) -> list[str]:
     """Simple species detection from text."""
-    from config.settings import TARGET_SPECIES
+    from config.settings import EXPANDED_SPECIES
 
     text_lower = text.lower()
     found = []
-    for species in TARGET_SPECIES:
+    for species in EXPANDED_SPECIES:
         if species.lower() in text_lower:
             found.append(species)
     return found

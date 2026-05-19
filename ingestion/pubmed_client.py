@@ -176,12 +176,13 @@ def acquire_for_species(
     return fetch_abstracts(list(all_pmids))
 
 
-def acquire_all(retmax_per_query: int = 100) -> list[dict]:
+def acquire_all(retmax_per_query: int = 100, species_list: list[str] | None = None) -> list[dict]:
     """Acquire articles for all target species. Returns deduplicated list."""
+    species_list = species_list or TARGET_SPECIES
     seen_pmids = set()
     all_articles = []
 
-    for species in TARGET_SPECIES:
+    for species in species_list:
         print(f"[C4] Acquiring: {species}...")
         articles = acquire_for_species(species, retmax=retmax_per_query)
         for art in articles:
