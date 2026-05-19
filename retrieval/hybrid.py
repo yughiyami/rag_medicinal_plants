@@ -54,7 +54,15 @@ class HybridRetriever:
             store = json.load(f)
         self._contents = store["contents"]
         self._metadata = store["metadata"]
-        print(f"[C3] FAISS loaded: {self._faiss_index.ntotal} vectors (dim={self._faiss_index.d})")
+
+        self._embedding_model = "BAAI/bge-m3"
+        info_path = self._vs_path / "vectorization_info.json"
+        if info_path.exists():
+            with open(info_path, "r", encoding="utf-8") as f:
+                info = json.load(f)
+            self._embedding_model = info.get("model", self._embedding_model)
+
+        print(f"[C3] FAISS loaded: {self._faiss_index.ntotal} vectors (dim={self._faiss_index.d}, model={self._embedding_model})")
 
         # BM25 sparse index
         bm25_path = self._vs_path / "bm25_index.pkl"
@@ -68,20 +76,40 @@ class HybridRetriever:
             self._bm25_index.save(self._vs_path)
 
     def _encode_query(self, query: str) -> np.ndarray:
-        """Encode query with BGE-M3."""
+        """Encode query with the same model used for indexing."""
         if self._embedder is None:
-            from FlagEmbedding import BGEM3FlagModel
-            self._embedder = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
-            print("[C3] BGE-M3 encoder loaded for queries")
+            model_name = getattr(self, "_embedding_model", "BAAI/bge-m3")
+            if "e5" in model_name:
+                from sentence_transformers import SentenceTransformer
+                self._embedder = SentenceTransformer(model_name)
+                self._embedder_type = "e5"
+                print(f"[C3] e5 encoder loaded for queries: {model_name}")
+            elif "MiniLM" in model_name or "minilm" in model_name.lower():
+                from sentence_transformers import SentenceTransformer
+                self._embedder = SentenceTransformer(model_name)
+                self._embedder_type = "st"
+                print(f"[C3] SentenceTransformer encoder loaded: {model_name}")
+            else:
+                from FlagEmbedding import BGEM3FlagModel
+                self._embedder = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
+                self._embedder_type = "bge"
+                print("[C3] BGE-M3 encoder loaded for queries")
 
-        output = self._embedder.encode(
-            [query],
-            batch_size=1,
-            return_dense=True,
-            return_sparse=False,
-            return_colbert_vecs=False,
-        )
-        return output["dense_vecs"][0]
+        if self._embedder_type == "e5":
+            vec = self._embedder.encode([f"query: {query}"], normalize_embeddings=True)
+            return vec[0]
+        elif self._embedder_type == "st":
+            vec = self._embedder.encode([query], normalize_embeddings=True)
+            return vec[0]
+        else:
+            output = self._embedder.encode(
+                [query],
+                batch_size=1,
+                return_dense=True,
+                return_sparse=False,
+                return_colbert_vecs=False,
+            )
+            return output["dense_vecs"][0]
 
     def _dense_search(self, query: str, top_k: int) -> list[dict]:
         """FAISS dense retrieval."""
