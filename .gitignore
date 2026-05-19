@@ -7,3 +7,21 @@ dist/
 build/
 .ipynb_checkpoints/
 *.log
+
+# Data (too large for git — regenerable via pipeline.py)
+data/raw/
+data/processed/
+data/vectorstore/
+
+# Model cache
+models/
+*.bin
+*.safetensors
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
