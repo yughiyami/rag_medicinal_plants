@@ -194,9 +194,29 @@ async def query(req: QueryRequest):
 
 
 @app.get("/api/species")
-async def list_species():
-    from config.settings import TARGET_SPECIES
-    return {"species": TARGET_SPECIES}
+async def list_species(department: str | None = None):
+    from config.settings import (
+        EXPANDED_SPECIES, SPECIES_CATALOG,
+        get_species_by_department, SOUTH_PERU_DEPARTMENTS,
+    )
+    if department:
+        species = get_species_by_department(department)
+        return {"species": species, "department": department, "count": len(species)}
+    return {
+        "species": EXPANDED_SPECIES,
+        "count": len(EXPANDED_SPECIES),
+        "departments": SOUTH_PERU_DEPARTMENTS,
+    }
+
+
+@app.get("/api/species/{species_name}")
+async def species_detail(species_name: str):
+    from config.settings import SPECIES_CATALOG
+    info = SPECIES_CATALOG.get(species_name)
+    if not info:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=f"Species '{species_name}' not found")
+    return {"species": species_name, **info}
 
 
 if __name__ == "__main__":
