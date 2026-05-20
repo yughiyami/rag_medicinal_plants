@@ -125,6 +125,40 @@ sirca_rag/
 | Ollama (Qwen3.5) | Local | ~10-30s | Good | Ollama running |
 | Template | Passthrough | < 1ms | Test only | Nothing |
 
+## Evaluation
+
+### Benchmark (50 test cases)
+
+| Category | Count | Languages |
+|----------|-------|-----------|
+| Factual | 20 | EN + ES |
+| Exploratory | 15 | EN + ES |
+| Comparative | 15 | EN + ES |
+
+12 species covered across 9 metrics: BERTScore F1, Semantic Similarity, Context Precision/Recall, MRR, NDCG@5, Entity Recall, Faithfulness, Answer Relevancy.
+
+### Ablation Study (6 configurations)
+
+| Config | Description |
+|--------|-------------|
+| `full` | Complete pipeline (baseline) |
+| `dense_only` | FAISS dense retrieval only (alpha=1.0) |
+| `sparse_only` | BM25 sparse retrieval only (alpha=0.0) |
+| `no_reranker` | Hybrid without cross-encoder reranking |
+| `no_crag` | Skip CRAG evaluation, always accept |
+| `no_classifier` | No query classification, default alpha |
+
+```bash
+# Run benchmark
+python run_evaluation.py --backend deepseek
+
+# Run ablation study
+python run_evaluation.py --ablation --backend deepseek
+
+# Run specific configs
+python run_evaluation.py --ablation --configs full dense_only sparse_only
+```
+
 ## Key Design Decisions
 
 | Decision | Why |
