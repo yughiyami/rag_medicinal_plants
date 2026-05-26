@@ -103,7 +103,6 @@ sirca_rag/
     query_classifier.py      # Factual/exploratory/comparative
 
   config/settings.py         # Species catalog, search queries, all config
-  embeddings/bge_m3.py       # BGE-M3 embedder (reference implementation)
   evaluation/                # BERTScore, faithfulness, retrieval metrics
   generation/                # Grounded generator (DeepSeek/Ollama/template)
   ingestion/                 # 7 data source clients (PubMed, EPMC, S2, CrossRef, GBIF, PeruNPDB, WFO, COCONUT)
