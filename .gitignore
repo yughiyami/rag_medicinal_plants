@@ -12,6 +12,7 @@ build/
 data/raw/
 data/processed/
 data/vectorstore/
+data/evaluation/
 
 # Model cache
 models/
