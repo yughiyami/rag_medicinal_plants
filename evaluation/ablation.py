@@ -314,17 +314,47 @@ def save_ablation_results(results: dict, backend: str, output_dir: Path | None =
     return path
 
 
+def select_diverse_subset(benchmark: list[TestCase], n: int = 20) -> list[TestCase]:
+    """Select a diverse subset balancing categories and languages."""
+    from collections import defaultdict
+    by_cat = defaultdict(list)
+    for tc in benchmark:
+        by_cat[tc.category].append(tc)
+
+    # Proportional allocation
+    selected = []
+    for cat in ["factual", "exploratory", "comparative"]:
+        items = by_cat[cat]
+        count = max(2, round(n * len(items) / len(benchmark)))
+        # Alternate EN/ES
+        en = [t for t in items if not any(c in t.query.lower() for c in ["cual", "como", "que ", "actividad", "distribucion", "contenido", "comparar", "diferencia"])]
+        es = [t for t in items if t not in en]
+        picked = []
+        for src in [en, es]:
+            take = min(len(src), count // 2 + 1)
+            picked.extend(src[:take])
+        selected.extend(picked[:count])
+
+    return selected[:n]
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="SIRCA-RAG Ablation Study")
     parser.add_argument("--backend", default="template", choices=["template", "deepseek", "ollama"])
     parser.add_argument("--configs", nargs="*", default=None, help="Config names to run (default: all)")
+    parser.add_argument("--subset", type=int, default=0, help="Use N diverse queries instead of all 50")
     args = parser.parse_args()
 
     configs = ABLATION_CONFIGS
     if args.configs:
         configs = [c for c in ABLATION_CONFIGS if c.name in args.configs]
 
-    results = run_ablation(configs=configs, backend=args.backend)
+    benchmark = BENCHMARK_SET
+    if args.subset > 0:
+        benchmark = select_diverse_subset(BENCHMARK_SET, args.subset)
+        print(f"Using {len(benchmark)}/{len(BENCHMARK_SET)} diverse queries")
+
+    results = run_ablation(configs=configs, benchmark=benchmark, backend=args.backend)
     print_ablation_table(results)
     save_ablation_results(results, args.backend)
