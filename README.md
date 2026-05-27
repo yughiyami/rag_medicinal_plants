@@ -2,7 +2,6 @@
 
 **Semi-Autonomous RAG for Peruvian Medicinal Plant Knowledge Integration**
 
-> SimBig / WAIMLAp 2026
 
 ## What is this?
 
