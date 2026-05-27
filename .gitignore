@@ -9,10 +9,7 @@ build/
 *.log
 
 # Data (too large for git — regenerable via pipeline.py)
-data/raw/
-data/processed/
-data/vectorstore/
-data/evaluation/
+data/
 
 # Model cache
 models/
