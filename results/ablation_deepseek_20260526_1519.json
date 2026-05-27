@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-05-26T15:19:21.050091",
+  "backend": "deepseek",
+  "num_queries": 50,
+  "configs": {
+    "full": "Complete pipeline (baseline)",
+    "dense_only": "FAISS dense retrieval only",
+    "sparse_only": "BM25 sparse retrieval only",
+    "no_reranker": "Hybrid without cross-encoder reranking",
+    "no_crag": "Skip CRAG evaluation, always accept",
+    "no_classifier": "No query classification, default alpha"
+  },
+  "results": {
+    "full": {
+      "bertscore_f1": 0.8441028594970703,
+      "semantic_similarity": 0.8777793645858765,
+      "context_precision": 0.85,
+      "context_recall": 1.0,
+      "mrr": 0.85,
+      "ndcg@5": 0.85,
+      "entity_recall": 0.49886904761904766,
+      "faithfulness": 0.6326684242358069,
+      "answer_relevancy": 0.9981647729873657
+    },
+    "sparse_only": {
+      "bertscore_f1": 0.8420384526252747,
+      "semantic_similarity": 0.9357132911682129,
+      "context_precision": 0.7683333333333333,
+      "context_recall": 1.0,
+      "mrr": 0.7666666666666666,
+      "ndcg@5": 0.7771885654576012,
+      "entity_recall": 0.399265873015873,
+      "faithfulness": 0.6341833550440403,
+      "answer_relevancy": 0.998524010181427
+    },
+    "no_reranker": {
+      "bertscore_f1": 0.8345667719841003,
+      "semantic_similarity": 0.840563952922821,
+      "context_precision": 0.85,
+      "context_recall": 1.0,
+      "mrr": 0.85,
+      "ndcg@5": 0.85,
+      "entity_recall": 0.45095238095238094,
+      "faithfulness": 0.538453882688888,
+      "answer_relevancy": 0.9992669224739075
+    },
+    "no_classifier": {
+      "bertscore_f1": 0.8439973592758179,
+      "semantic_similarity": 0.9031695127487183,
+      "context_precision": 0.9,
+      "context_recall": 1.0,
+      "mrr": 0.9,
+      "ndcg@5": 0.9,
+      "entity_recall": 0.5088690476190476,
+      "faithfulness": 0.5482602358862045,
+      "answer_relevancy": 0.971460223197937
+    }
+  }
+}
