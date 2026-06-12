@@ -215,4 +215,3 @@ python run_evaluation.py --ablation --configs full dense_only sparse_only
 
 ---
 
-*Built for SimBig 2025 / WAIMLAp 2026 / SIPAIM.*
