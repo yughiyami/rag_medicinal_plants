@@ -7,8 +7,6 @@ services:
     container_name: sirca-rag
     expose:
       - "8000"
-    ports:
-      - "8000:8000"
     environment:
       - HOST=0.0.0.0
       - PORT=8000
@@ -18,7 +16,7 @@ services:
       - SENTENCE_TRANSFORMERS_HOME=/models/sentence-transformers
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      test: [ "CMD", "curl", "-fsS", "http://localhost:8000/api/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
