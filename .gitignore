@@ -8,8 +8,15 @@ build/
 .ipynb_checkpoints/
 *.log
 
-# Data (too large for git — regenerable via pipeline.py)
-data/
+# Data — only the prebuilt vectorstore ships for runtime/Dokploy deploy.
+# Raw + processed corpora and evaluation dumps are large and regenerable.
+data/raw/
+data/processed/
+data/cache/
+data/scraped/
+data/evaluation/
+data/*.json
+!data/vectorstore/vectorization_info.json
 
 # Model cache
 models/

@@ -1,0 +1,10 @@
+{
+  "model": "intfloat/multilingual-e5-base",
+  "dimension": 768,
+  "total_vectors": 6098,
+  "elapsed_seconds": 5231.4,
+  "mode": "balanced",
+  "max_per_species": 100,
+  "species_count": 91,
+  "unclassified_included": 0
+}
