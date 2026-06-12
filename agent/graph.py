@@ -121,12 +121,13 @@ class SIRCAAgent:
             original_alpha = self._retriever.alpha
             self._retriever.alpha = alpha_override
 
-        result = self._retriever.retrieve_with_context(query, top_k=5)
+        from config.settings import RERANK_TOP_K
+        result = self._retriever.retrieve_with_context(query, top_k=RERANK_TOP_K)
 
         if alpha_override is not None:
             self._retriever.alpha = original_alpha
 
-        state["retrieval_results"] = self._retriever.retrieve(query, rerank_top_k=5)
+        state["retrieval_results"] = self._retriever.retrieve(query, rerank_top_k=RERANK_TOP_K)
         state["context"] = result["context"]
         state["citations"] = result["citations"]
         state.setdefault("trace", []).append({

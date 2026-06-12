@@ -16,6 +16,11 @@ models/
 *.bin
 *.safetensors
 
+# Fine-tuning artifacts (model + dataset are large and regenerable)
+finetuning/model/
+finetuning/data/
+finetuning/eval_similarity_results.json
+
 # OS
 Thumbs.db
 .DS_Store

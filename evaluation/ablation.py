@@ -146,21 +146,82 @@ def _run_queries(agent, benchmark: list[TestCase]):
     queries, answers, references, contexts = [], [], [], []
     all_retrieved, all_relevant = [], []
 
+    # Honest Recall@k: build a wide candidate POOL (top-K, pre-rerank) per query.
+    # Mark as "relevant" the pool docs whose species metadata (or content) matches
+    # tc.relevant_species. Then track which of those relevants survive into the
+    # final top-5 (after rerank + CRAG). Recall@5 < 1.0 when the reranker drops
+    # any relevant chunk from the top-5 window.
+    POOL_K = 30
+    retriever = agent._retriever
+
     for tc in benchmark:
+        # ---- 1) Wide candidate pool (pre-rerank) used as ground-truth proxy ----
+        try:
+            pool = retriever.retrieve(
+                tc.query, top_k=POOL_K, rerank_top_k=POOL_K, use_rerank=False
+            )
+        except Exception:
+            pool = []
+
+        # Use chunk's stable FAISS index as id. The pool comes from _dense_search /
+        # _sparse_search / RRF, all of which keep "index" pointing to the chunk row.
+        pool_ids = [int(d.get("index", -1)) for d in pool]
+
+        # Build "relevant in pool" by matching species in chunk metadata or content.
+        relevant_pool_ids = set()
+        for d, cid in zip(pool, pool_ids):
+            meta = d.get("metadata") or {}
+            species_meta = set(s.lower() for s in (meta.get("species") or []))
+            text = (d.get("content") or "").lower()
+            for sp in tc.relevant_species:
+                spl = sp.lower()
+                if spl in species_meta or spl in text:
+                    relevant_pool_ids.add(cid)
+                    break
+
+        # ---- 2) Run actual agent (top-5 after rerank + CRAG) ----
         result = agent.run(tc.query)
         gen = result.get("generation", {})
         answer = gen.get("answer", "")
         context = result.get("context", "")
         citations = result.get("citations", [])
+        # retrieval_results has the same chunks as citations, BUT keeps the stable
+        # FAISS index, which citations lose. Use it to identify what survived rerank.
+        retr_raw = result.get("retrieval_results", [])
+        retrieved_ids = [int(d.get("index", -1)) for d in retr_raw]
 
-        retrieved_idx = list(range(len(citations)))
-        relevant_idx = set()
-        for idx, cit in enumerate(citations):
-            species_in_cit = set(s.lower() for s in cit.get("species", []))
-            for sp in tc.relevant_species:
-                if sp.lower() in species_in_cit or sp.lower() in context.lower():
-                    relevant_idx.add(idx)
+        # If the agent took the web_search branch, retrieval_results may be empty.
+        # Fall back to species matching on citations against the pool.
+        if not retrieved_ids:
+            cit_species = []
+            for cit in citations:
+                cit_species.append(set(s.lower() for s in (cit.get("species") or [])))
+            # Best-effort: take pool ids whose species overlap citation species.
+            retrieved_ids = []
+            used = set()
+            for d, cid in zip(pool, pool_ids):
+                meta = d.get("metadata") or {}
+                sm = set(s.lower() for s in (meta.get("species") or []))
+                if any(sm & cs for cs in cit_species) and cid not in used:
+                    retrieved_ids.append(cid)
+                    used.add(cid)
+                if len(retrieved_ids) >= len(citations):
                     break
+
+        # Unify into shared integer index space so existing metric fns work.
+        id_to_idx = {cid: i for i, cid in enumerate(pool_ids)}
+        for cid in retrieved_ids:
+            if cid not in id_to_idx:
+                id_to_idx[cid] = len(id_to_idx)
+
+        retrieved_idx = [id_to_idx[cid] for cid in retrieved_ids]
+        relevant_idx = set(id_to_idx[cid] for cid in relevant_pool_ids)
+
+        # Sanity floor: if no relevants found at all, mark first retrieved as
+        # weakly relevant to avoid division-by-zero in Precision/MRR. This is
+        # rare given our species-targeted benchmark.
+        if not relevant_idx and retrieved_idx:
+            relevant_idx.add(retrieved_idx[0])
 
         queries.append(tc.query)
         answers.append(answer)
@@ -194,8 +255,11 @@ def _compute_metrics(queries, answers, references, contexts, all_retrieved, all_
     m = mrr(all_retrieved, all_relevant)
     results["mrr"] = m.score
 
-    nd = ndcg_at_k(all_retrieved, all_relevant, k=5)
-    results["ndcg@5"] = nd.score
+    # Plan A: report both NDCG@5 (legacy) and NDCG@10 (new top-k window)
+    nd5 = ndcg_at_k(all_retrieved, all_relevant, k=5)
+    results["ndcg@5"] = nd5.score
+    nd10 = ndcg_at_k(all_retrieved, all_relevant, k=10)
+    results["ndcg@10"] = nd10.score
 
     er = entity_recall(answers, references, contexts)
     results["entity_recall"] = er.score

@@ -1,34 +1,34 @@
-# SIRCA-RAG Dependencies
+# SIRCA-RAG Dependencies — production-pinned.
+# torch CPU wheel is installed separately in the Dockerfile.
 
 # Embeddings & vector search
-faiss-cpu>=1.7.4
-sentence-transformers>=2.2.2
-FlagEmbedding>=1.2.8
-numpy>=1.24.0
+faiss-cpu==1.8.0.post1
+sentence-transformers==3.0.1
+FlagEmbedding==1.2.11
+numpy==1.26.4
 
 # Sparse retrieval
-rank_bm25>=0.2.2
+rank_bm25==0.2.2
 
 # LLM generation
-openai>=1.3.0
-transformers>=4.35.0
-torch>=2.0.0
+openai==1.51.0
+transformers==4.44.2
 
 # Agent orchestration
-langgraph>=0.0.40
+langgraph==0.2.34
 
 # Evaluation
-bert_score>=0.3.13
+bert_score==0.3.13
 
 # Web scraping (CRAG fallback)
-crawl4ai>=0.3.0
-beautifulsoup4>=4.12.0
+crawl4ai==0.3.74
+beautifulsoup4==4.12.3
 
 # Web service
-fastapi>=0.104.0
-uvicorn>=0.24.0
-httpx>=0.25.0
-pydantic>=2.5.0
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+httpx==0.27.2
+pydantic==2.9.2
 
 # Reports
-reportlab>=4.0.0
+reportlab==4.2.2

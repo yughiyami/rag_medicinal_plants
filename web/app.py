@@ -17,11 +17,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 _agent_deepseek = None
 _agent_ollama = None
+_agent_template = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _agent_deepseek, _agent_ollama
+    global _agent_deepseek, _agent_ollama, _agent_template
     from agent.graph import SIRCAAgent
 
     from retrieval.hybrid import HybridRetriever
@@ -35,12 +36,15 @@ async def lifespan(app: FastAPI):
     _agent_deepseek = SIRCAAgent(retriever=retriever, generator_backend="deepseek")
     print("[SIRCA-RAG] DeepSeek agent ready.")
 
+    _agent_template = SIRCAAgent(retriever=retriever, generator_backend="template")
+    print("[SIRCA-RAG] Template agent ready (shared retriever).")
+
     try:
         import httpx
         r = httpx.get("http://localhost:11434/api/tags", timeout=5)
         if r.status_code == 200:
             _agent_ollama = SIRCAAgent(
-                retriever=_agent_deepseek._retriever,
+                retriever=retriever,
                 generator_backend="ollama",
             )
             print("[SIRCA-RAG] Ollama agent ready (shared retriever).")
@@ -127,28 +131,24 @@ async def health():
 
 @app.post("/api/query", response_model=QueryResponse)
 async def query(req: QueryRequest):
+    import asyncio, traceback as tb
+
     agent = None
     if req.backend == "deepseek":
         agent = _agent_deepseek
     elif req.backend == "ollama":
         agent = _agent_ollama
     elif req.backend == "template":
-        agent = _agent_deepseek
+        agent = _agent_template
 
     if agent is None:
         raise HTTPException(400, f"Backend '{req.backend}' not available")
 
-    if req.backend == "template" and _agent_deepseek:
-        from agent.graph import SIRCAAgent
-        agent = SIRCAAgent(
-            retriever=_agent_deepseek._retriever,
-            generator_backend="template",
-        )
-
     start = time.perf_counter()
     try:
-        result = agent.run(req.query)
+        result = await asyncio.to_thread(agent.run, req.query)
     except Exception as e:
+        tb.print_exc()
         raise HTTPException(500, f"Pipeline error: {e}")
     latency = int((time.perf_counter() - start) * 1000)
 

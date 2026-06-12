@@ -1,9 +1,62 @@
-__pycache__
-*.pyc
+# --- VCS / IDE ---
 .git
 .gitignore
-*.ipynb_checkpoints
-.env
+.gitattributes
+.idea
+.vscode
+
+# --- Python ---
+__pycache__
+*.pyc
+*.pyo
+*.pyd
 *.egg-info
+.eggs
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.ipynb_checkpoints
+
+# --- Virtualenvs ---
+.venv
+venv
+env
+
+# --- Secrets / env ---
+.env
+.env.*
+*.secrets
+*.key
+
+# --- Build artifacts ---
 dist
 build
+
+# --- Paper / docs (huge, irrelevant for runtime) ---
+papper/
+docs/
+*.pdf
+*.tex
+*.bib
+
+# --- Evaluations / experiment artifacts ---
+evaluations/
+tests/
+**/results_*.json
+**/eval_*.json
+**/eval_*_results.json
+
+# --- Fine-tuning artifacts (prod uses baseline e5-base) ---
+finetuning/model/
+finetuning/data/
+finetuning/*.json
+finetuning/*.jsonl
+
+# --- Logs / runtime junk ---
+*.log
+*.tmp
+*.bak
+nohup.out
+
+# --- Node / misc ---
+node_modules/

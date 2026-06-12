@@ -897,8 +897,8 @@ CHUNK_SIZE = 512
 CHUNK_OVERLAP = 64
 CHUNK_SEPARATORS = ["\n\n", "\n", ". ", "; ", ", "]
 
-RETRIEVAL_TOP_K = 20
-RERANK_TOP_K = 5
+RETRIEVAL_TOP_K = 30   # Plan A: was 20. Wider pool → better reranker input.
+RERANK_TOP_K = 10      # Plan A: was 5. More survivors → higher Recall@k.
 HYBRID_ALPHA = 0.6  # weight for dense retrieval (1-alpha for BM25)
 
 GENERATOR_MODEL = "Qwen/Qwen2.5-7B-Instruct"

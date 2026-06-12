@@ -116,9 +116,13 @@ def classify_query(query: str) -> QueryClassification:
         category = "exploratory"
         confidence = 0.5
 
+    # Plan A: tuned per-category alpha. Factual → favor BM25 (exact terms).
+    # Exploratory → favor dense (semantic). Comparative → balanced.
     alpha_override = None
     if category == "factual":
-        alpha_override = 0.4
+        alpha_override = 0.3
+    elif category == "exploratory":
+        alpha_override = 0.7
     elif category == "comparative":
         alpha_override = 0.5
 
