@@ -1,0 +1,411 @@
+{
+  "judged": [
+    {
+      "query": "What are the main anti-inflammatory alkaloids in Uncaria tomentosa?",
+      "category": "factual",
+      "answer": "Mitraphylline is the most abundant pentacyclic oxindolic alkaloid (POA) from Uncaria tomentosa and has been reported to modify the inflammatory response [1]. It is the major pentacyclic oxindolic alkaloid present in the bark chloroformic extract of this plant, and its activity against cytokines involved in the inflammation process was tested in a murine model in vivo [3]. The anti-inflammatory activity of mitraphylline isolated from Uncaria tomentosa bark is documented [5].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context and includes accurate citations.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context and includes accurate citations."
+    },
+    {
+      "query": "What is the wound healing mechanism of taspine from Croton lechleri?",
+      "category": "factual",
+      "answer": "The alkaloid thaspine from the cortex of Croton lechleri is described as a dual topoisomerase inhibitor effective in cells overexpressing drug efflux transporters and induces wide-spread apoptosis in multicellular spheroids [4]. However, the provided context does not contain any information regarding a wound healing mechanism specifically for taspine (or thaspine) from Croton lechleri. Wound healing properties are attributed to the red latex (Sangre de Drago) of Croton lechleri in general [1][5], but no mechanism for taspine in that context is reported.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the specific claims about thaspine from [4] and correctly notes that wound healing is attributed to the latex/sap in [1] and [5] without a specific mechanism linked to thaspine.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the specific claims about thaspine from [4] and correctly notes that wound healing is attributed to the latex/sap in [1] and [5] without a specific mechanism linked to thaspine."
+    },
+    {
+      "query": "What is the geographic distribution of Buddleja incana in Peru?",
+      "category": "factual",
+      "answer": "The provided context does not contain information on the geographic distribution of Buddleja incana in Peru. The sources mention Buddleja incana in studies on gastrointestinal inflammation [2] and antioxidant/hypoglycemic activities [5], but neither describes its range or location within Peru. No other sources in the context address the distribution of this species.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects that the context mentions Buddleja incana in studies [2] and [5] but provides no information regarding its geographic distribution in Peru.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects that the context mentions Buddleja incana in studies [2] and [5] but provides no information regarding its geographic distribution in Peru."
+    },
+    {
+      "query": "What are the fructooligosaccharides in yacon and their prebiotic effects?",
+      "category": "factual",
+      "answer": "Yacon (Smallanthus sonchifolius) is an abundant source of fructooligosaccharides (FOS) [3]. FOS intake favors the growth of health-promoting bacteria while reducing pathogenic bacteria populations [3], and yacon-derived fructooligosaccharides improves the immune parameters in the mouse [4]. These properties position Andean yacon root (Smallanthus sonchifolius Poepp. Endl) fructooligosaccharides as a potential novel source of prebiotics [1].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim in the answer is directly supported by the provided context with accurate citations.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim in the answer is directly supported by the provided context with accurate citations."
+    },
+    {
+      "query": "What is the taxonomic classification of Lepidium meyenii?",
+      "category": "factual",
+      "answer": "Lepidium meyenii (Walp.), commonly called maca, is an Andean crop belonging to the Brassicaceae family [1]. It is also known as Peruvian ginseng [2]. Its nutritious hypocotyl is traditionally used as food and medicine [3].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context segments [1], [2], and [3].\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context segments [1], [2], and [3]."
+    },
+    {
+      "query": "Cual es la composicion quimica del aceite esencial de Minthostachys mollis?",
+      "category": "factual",
+      "answer": "No se encontró información sobre la composición química del aceite esencial de Minthostachys mollis en los fragmentos de contexto proporcionados. Los documentos citados abordan la actividad antioxidante [1], antibacteriana [2] y antimicótica [3][4][5] del aceite, pero ninguno detalla los compuestos químicos específicos ni sus concentraciones.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that while the context mentions antioxidant, antibacterial, and antifungal activities, it does not provide the specific chemical composition.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that while the context mentions antioxidant, antibacterial, and antifungal activities, it does not provide the specific chemical composition."
+    },
+    {
+      "query": "PMID references for Uncaria tomentosa immunomodulatory studies",
+      "category": "factual",
+      "answer": "The provided context does not include any PubMed ID (PMID) references for Uncaria tomentosa immunomodulatory studies. The sources [1], [2], [3], [4], and [5] are listed only with titles, authors, and years; no PMID numbers are present. Therefore, no PMID information can be retrieved from the given context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that no PMID references are present in the provided context.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that no PMID references are present in the provided context."
+    },
+    {
+      "query": "Contenido de macamidas en Lepidium meyenii",
+      "category": "factual",
+      "answer": "Los fragmentos proporcionados no contienen información sobre el contenido de macamidas en *Lepidium meyenii* (maca). Las fuentes mencionan otros compuestos como alcaloides oxindólicos e indólicos, flavonoides, glucosinolatos, esteroles y ácidos grasos poliinsaturados [1], así como la revisión estructural de macaridina [5], pero no hacen referencia a las macamidas.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that macamides are not mentioned and correctly lists the compounds that are explicitly mentioned in the provided context.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that macamides are not mentioned and correctly lists the compounds that are explicitly mentioned in the provided context."
+    },
+    {
+      "query": "What alkaloids are found in Erythroxylum coca leaves?",
+      "category": "factual",
+      "answer": "The leaves of *Erythroxylum coca* contain cocaine and other alkaloids, as well as phenolics [1]. The two principal tropane alkaloids of *E. coca* are cocaine and cinnamoyl cocaine, present in highest concentrations in buds and rolled leaves [3].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim in the answer is directly supported by the provided context, with accurate citations.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim in the answer is directly supported by the provided context, with accurate citations."
+    },
+    {
+      "query": "Distribucion geografica de Physalis peruviana en el sur del Peru",
+      "category": "factual",
+      "answer": "No hay información en el contexto sobre la distribución geográfica de Physalis peruviana en el sur del Perú.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly states that the context provides no information regarding the geographic distribution of Physalis peruviana, as the context only mentions its leaf transcriptome.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly states that the context provides no information regarding the geographic distribution of Physalis peruviana, as the context only mentions its leaf transcriptome."
+    },
+    {
+      "query": "What phenolic compounds are present in Physalis peruviana fruit?",
+      "category": "factual",
+      "answer": "The provided context does not specify which phenolic compounds are present in Physalis peruviana fruit. It mentions the presence of \"phenolics\" and \"ascorbic acid\" in the fruit [1], and includes \"polyphenols, flavonoids, flavanols\" in extracts of cape gooseberry [5], but no specific phenolic compound names (such as quercetin, caffeic acid, etc.) are identified for the fruit in any of the cited sources. Information on specific compounds from other parts of the plant, such as roots containing alkaloids and withanolides, is not applicable to the fruit [4].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the contents of the context, correctly identifying that while general classes of compounds are mentioned, no specific phenolic compound names for the fruit are provided.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the contents of the context, correctly identifying that while general classes of compounds are mentioned, no specific phenolic compound names for the fruit are provided."
+    },
+    {
+      "query": "Que compuestos bioactivos tiene Smallanthus sonchifolius en las hojas?",
+      "category": "factual",
+      "answer": "El contexto proporcionado no especifica compuestos bioactivos presentes específicamente en las hojas de Smallanthus sonchifolius. La fuente [4] menciona que esta planta contiene \"germacranolide-type sesquiterpene lactones\" con actividad contra Leishmania mexicana y Trypanosoma cruzi, pero no indica que dichos compuestos provengan de las hojas. La fuente [5] describe hongos endófitos asociados a la planta, cuyos extractos mostraron actividad citotóxica, sin detallar el órgano vegetal. Por tanto, no hay datos en el contexto sobre compuestos bioactivos de las hojas de Smallanthus sonchifolius.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the context, correctly identifying that while compounds are mentioned for the plant and its endophytes, the context does not explicitly link them to the leaves.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the context, correctly identifying that while compounds are mentioned for the plant and its endophytes, the context does not explicitly link them to the leaves."
+    },
+    {
+      "query": "IC50 values reported for Croton lechleri latex antimicrobial activity",
+      "category": "factual",
+      "answer": "The provided context does not contain IC50 values for the antimicrobial activity of Croton lechleri latex. The only IC50 value reported directly for Croton lechleri latex is its in vitro antiproliferative effect on the human myelogenous leukemia K562 cell line, with an IC50 of 2.5 +/- 0.3 microg ml(-1) [1]. No antimicrobial IC50 data for Croton lechleri latex appear in any of the given sources.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the context, correctly identifying the specific IC50 for K562 cells and noting the absence of antimicrobial IC50 values for C. lechleri.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the context, correctly identifying the specific IC50 for K562 cells and noting the absence of antimicrobial IC50 values for C. lechleri."
+    },
+    {
+      "query": "Buddleja incana common names in Peru",
+      "category": "factual",
+      "answer": "El nombre común de Buddleja incana en Perú es Quishuar [2]. No se mencionan otros nombres comunes en los contextos proporcionados.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly identifies the common name 'Quishuar' for Buddleja incana from source [2] and accurately states that no other common names for this species are mentioned.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly identifies the common name 'Quishuar' for Buddleja incana from source [2] and accurately states that no other common names for this species are mentioned."
+    },
+    {
+      "query": "Cantusia quercifolia usos medicinales tradicionales",
+      "category": "factual",
+      "answer": "No se encuentra información en el contexto proporcionado sobre los usos medicinales tradicionales de *Cantusia quercifolia*. Las fuentes disponibles abordan otras especies como *Baccharis latifolia*, *Xenophyllum poposum* y *Verbena litoralis*, pero ninguna menciona a *Cantusia quercifolia*.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly states that the context contains no information about Cantusia quercifolia and accurately lists the species that are mentioned.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly states that the context contains no information about Cantusia quercifolia and accurately lists the species that are mentioned."
+    },
+    {
+      "query": "What is the protein content of Chenopodium quinoa seeds?",
+      "category": "factual",
+      "answer": "The total protein content of Chenopodium quinoa seeds varies, with quinoa Salta having 16.3g/100g [1]. This value is higher than that reported for rice samples (6.7g/100g) [1]. No other protein content data for Chenopodium quinoa seeds is present in the provided context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer is fully grounded in the provided context, accurately reporting the protein values for quinoa Salta and rice from source [1] and correctly noting the absence of other quinoa protein data.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer is fully grounded in the provided context, accurately reporting the protein values for quinoa Salta and rice from source [1] and correctly noting the absence of other quinoa protein data."
+    },
+    {
+      "query": "Actividad antifungica de Minthostachys mollis",
+      "category": "factual",
+      "answer": "No se encontró información en los contextos proporcionados sobre la actividad antifúngica de Minthostachys mollis. Los estudios incluidos abordan únicamente actividad antibacteriana frente a Helicobacter pylori, Shigella dysenteriae, Salmonella typhi y Pseudomonas aeruginosa [1][3], actividad antioxidante [2][5], actividad analgésica y gastroprotectora [4], así como composición química y metabolitos secundarios [2][5]. No hay datos sobre ensayos con hongos o valores de concentración inhibitoria frente a especies fúngicas.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that antifungal activity is not mentioned and correctly lists all other activities and topics present in the provided context.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that antifungal activity is not mentioned and correctly lists all other activities and topics present in the provided context."
+    },
+    {
+      "query": "Gentianella alborosea active compounds",
+      "category": "factual",
+      "answer": "Gentianella alborosea (\"Hercampure\") contains the sesterterpenoid **alborosin**, a new type of sesterterpenoid isolated and characterized by spectroscopic investigation [2]. The plant also yields the C‑glucoside **mangiferina**, which can be purified from the species; the preparative recovery from Gentianella alborosea was **0.17%** (compared to 1.88% from Mangifera indica) [3][5]. The methanolic extract of G. alborosea exhibits noticeable **free radical scavenging activity** (DPPH assay) and induces **dose-dependent apoptosis** in human uterus tumor HeLa cells [1].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim regarding alborosin, mangiferina (including the 0.17% yield), and the biological effects of the methanolic extract is directly supported by the provided context.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim regarding alborosin, mangiferina (including the 0.17% yield), and the biological effects of the methanolic extract is directly supported by the provided context."
+    },
+    {
+      "query": "Taxonomia de Erythroxylum coca segun WFO",
+      "category": "factual",
+      "answer": "",
+      "judge_raw": "{\"score\": 0, \"reason\": \"No answer was provided to evaluate.\"}",
+      "judge_score": 0,
+      "judge_reason": "No answer was provided to evaluate."
+    },
+    {
+      "query": "Schinus molle essential oil composition",
+      "category": "factual",
+      "answer": "The essential oil composition of Schinus molle was analyzed by gas chromatography-mass spectrometry (GC/MS) from hydrodistilled volatile oils of fresh and dried leaves and fruits collected from three geographical regions of Jordan: Amman, Madaba, and Sahab [4]. The actual composition of the emitted volatiles was determined using Solid Phase Micro-Extraction (SPME) [4]. Specific compounds, concentrations, or percentages of the essential oil are not reported in the provided context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the information in the context and correctly notes the absence of specific compound concentrations.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the information in the context and correctly notes the absence of specific compound concentrations."
+    },
+    {
+      "query": "Cuales son las propiedades medicinales de la maca para la fertilidad?",
+      "category": "exploratory",
+      "answer": "La maca (Lepidium meyenii Walp.) es una planta andina cuyos hipocótilos se utilizan por sus propiedades nutritivas y propuestas propiedades mejoradoras de la fertilidad [1]. En la medicina tradicional, la maca se consume como remedio para condiciones patológicas como la infertilidad [3]. Además, se ha reportado su uso principalmente en la mejora de la motilidad espermática y los niveles de hormonas séricas [5].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context, with accurate citations for the plant name, parts used, and medicinal properties.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context, with accurate citations for the plant name, parts used, and medicinal properties."
+    },
+    {
+      "query": "How does Erythroxylum coca differ from cocaine pharmacologically?",
+      "category": "exploratory",
+      "answer": "The context does not provide any direct pharmacological comparison between Erythroxylum coca and cocaine. It notes that cocaine, chemically known as benzoylmethylecgonine, is a naturally occurring substance found in the leaves of the Erythroxylum coca plant [1]. Additionally, Erythroxylum coca is indigenous to the Andean region and has been grown historically as a source of homeopathic medicine [3], while homeopathic Q-potencies of Erythroxylum coca have been tested in the integrative treatment of cocaine craving [5]. However, no information on specific pharmacological differences between the plant and the isolated alkaloid is available in the provided sources.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the information provided in the context and correctly identifies the absence of a pharmacological comparison.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the information provided in the context and correctly identifies the absence of a pharmacological comparison."
+    },
+    {
+      "query": "Actividad antimicrobiana de Minthostachys mollis aceite esencial",
+      "category": "exploratory",
+      "answer": "El aceite esencial de Minthostachys mollis Griseb “Ruyaq muña” presenta actividad antibacteriana frente a Helicobacter pylori, Shigella dysenteriae, Salmonella typhi y Pseudomonas aeruginosa [1][3]. Además, se determinó su efecto antimicótico en cepas de Cándida albicans mediante el método de Kirby – Bauer [4]. Se detectó presencia de fenoles, los que validan la actividad antimicrobiana del aceite esencial de M. mollis [5].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim in the answer is directly supported by the provided context segments [1], [3], [4], and [5].\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim in the answer is directly supported by the provided context segments [1], [3], [4], and [5]."
+    },
+    {
+      "query": "How do Peruvian medicinal plants reduce inflammation?",
+      "category": "exploratory",
+      "answer": "",
+      "judge_raw": "{\"score\": 0, \"reason\": \"No answer was provided to evaluate against the context.\"}",
+      "judge_score": 0,
+      "judge_reason": "No answer was provided to evaluate against the context."
+    },
+    {
+      "query": "Mecanismos de accion neuroprotectora de la maca",
+      "category": "exploratory",
+      "answer": "Los mecanismos de acción neuroprotectora de *Lepidium meyenii* (Maca) se asocian con el mejoramiento de la actividad mitocondrial y la regulación positiva de proteínas relacionadas con la autofagia en la corteza de ratones de mediana edad [2]. La disminución de la función mitocondrial y la reducción en la señalización de autofagia pueden participar en el proceso de deterioro cognitivo relacionado con la edad, y la Maca contrarresta estos efectos [1].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer is fully grounded in the provided context, accurately reflecting the mechanisms and effects described in sources [1] and [2].\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer is fully grounded in the provided context, accurately reflecting the mechanisms and effects described in sources [1] and [2]."
+    },
+    {
+      "query": "What are the traditional uses of Buddleja incana in Andean medicine?",
+      "category": "exploratory",
+      "answer": "The provided context does not describe the traditional uses of *Buddleja incana* in Andean medicine. Source [2] studies the modulation of cyclooxygenase-2 in acute gastrointestinal inflammation with an extract of *Buddleja incana* in rats, but this is a scientific investigation, not an ethnobotanical report of traditional use. Source [3] mentions *Buddleja inkana* (quisuar) as a plant evaluated for potential medicinal, cosmetic, and anticorrosive applications, without specifying traditional uses. Therefore, no information on the traditional medicinal uses of *Buddleja incana* is available in the given context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately identifies that the context contains scientific studies and potential applications for Buddleja incana, but lacks information on its traditional medicinal uses.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately identifies that the context contains scientific studies and potential applications for Buddleja incana, but lacks information on its traditional medicinal uses."
+    },
+    {
+      "query": "Potencial antidiabetico de Smallanthus sonchifolius",
+      "category": "exploratory",
+      "answer": "Smallanthus sonchifolius (yacon) ha sido utilizado por personas que padecen diabetes [5]. Sus hojas fueron encontradas efectivas en el control de la hiperglucemia postprandial [4]. La enhidrina, un constituyente de las hojas de yacon, fue observada por sus propiedades hipoglucémicas significativas en ratas diabéticas [4].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context in sources [4] and [5].\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context in sources [4] and [5]."
+    },
+    {
+      "query": "How can cat's claw be used in cancer research?",
+      "category": "exploratory",
+      "answer": "Uncaria tomentosa (cat's claw) is used in folk medicine for cancer treatment [1]. Its antitumor activity has been mostly ascribed to pentacyclic oxindole alkaloids (POA) from stem bark and leaves, while the activity of tetracyclic oxindole alkaloids (TOA) remains unknown [1]. Additionally, cat's claw has been scientifically investigated for a wide range of therapeutic uses including as a specific anti-cancer agent [2].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided text in sources [1] and [2].\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided text in sources [1] and [2]."
+    },
+    {
+      "query": "Aplicaciones de la sangre de grado en dermatologia",
+      "category": "exploratory",
+      "answer": "La sangre de grado (Croton lechleri) es un látex viscoso rojo extraído de la corteza, reconocido en la medicina popular sudamericana por sus propiedades cicatrizantes [4]. Sus aplicaciones dermatológicas documentadas incluyen el tratamiento de heridas, infección por herpes, picaduras de insectos (aliviando picazón, dolor e hinchazón) y otras afecciones cutáneas [2]. Además, se ha evaluado su potencial antiproliferativo in vitro sobre la línea celular K562 de leucemia mielógena humana, con una IC50 = 2.5 ± 0.3 µg ml⁻¹ [4]. Los estudios clínicos han reportado resultados positivos en el tratamiento de los síntomas de picaduras de insectos [2][5].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim in the answer is directly supported by the provided context, including specific scientific names, concentrations, and clinical applications.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim in the answer is directly supported by the provided context, including specific scientific names, concentrations, and clinical applications."
+    },
+    {
+      "query": "What role do withanolides play in Physalis peruviana bioactivity?",
+      "category": "exploratory",
+      "answer": "Withanolides isolated from *Physalis peruviana* inhibit the growth of colon cancer monolayer and spheroid cultures, with detailed mechanistic evaluation performed using 4β‑hydroxywithanolide E (4HWE) [1]. Additionally, 4β‑hydroxywithanolide E and withanolide E from *Physalis peruviana* inhibit adipocyte differentiation of 3T3‑L1 cells through modulation of mitotic clonal expansion [2].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every factual claim in the answer is directly supported by the provided context in sources [1] and [2].\"}",
+      "judge_score": 4,
+      "judge_reason": "Every factual claim in the answer is directly supported by the provided context in sources [1] and [2]."
+    },
+    {
+      "query": "Como se utiliza la etnobotanica para descubrir nuevos farmacos en Peru?",
+      "category": "exploratory",
+      "answer": "La etnomedicina es una disciplina idónea para elegir especies vegetales con el fin de ser estudiadas farmacológicamente [1]. En Perú, se seleccionan plantas como las cuatro especies usadas como hipoglucemiantes en la medicina tradicional de la Amazonía peruana, y luego se evalúa su capacidad inhibitoria in vitro sobre la actividad de la α-glucosidasa, una enzima involucrada en la regulación de la glicemia [1]. Además, se realizan estudios fitoquímicos de los macerados de distintas partes de la planta, como flores y hojas, para identificar sus propiedades y garantizar la calidad microbiológica en el desarrollo de productos nutracéuticos y fitoterapéuticos [3][4].",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context, with accurate citations and no drift in terminology.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context, with accurate citations and no drift in terminology."
+    },
+    {
+      "query": "Potential of Andean plants for treating gastrointestinal diseases",
+      "category": "exploratory",
+      "answer": "",
+      "judge_raw": "{\"score\": 0, \"reason\": \"The ANSWER is empty, providing no claims to evaluate against the CONTEXT.\"}",
+      "judge_score": 0,
+      "judge_reason": "The ANSWER is empty, providing no claims to evaluate against the CONTEXT."
+    },
+    {
+      "query": "Efectos adaptogenos de Lepidium meyenii en altitud",
+      "category": "exploratory",
+      "answer": "Los contextos proporcionados no describen específicamente efectos adaptógenos de *Lepidium meyenii* en altitud. No obstante, se menciona que *Lepidium meyenii* (Maca) es \"one of the few plants that can be cultivated in the harsh climate of the Andes\" [1] y que sus productos son \"increasingly becoming popular in the western world as tonics\" [1]. Además, se reporta que \"Lepidium meyenii Walp Exhibits Anti-Inflammatory Activity against ConA-Induced Acute Hepatitis\" [4] y que \"Lepidium meyenii (Maca) enhances the serum levels of luteinising hormone in female rats during the pro-oestrus phase\" [5]. Sin embargo, ningún fragmento aborda directamente un efecto adaptógeno ni su relación con la altitud.",
+      "judge_raw": "{\"score\": 2, \"reason\": \"The answer fabricates a specific result regarding luteinising hormone in female rats that is not present in the provided text of context [5].\"}",
+      "judge_score": 2,
+      "judge_reason": "The answer fabricates a specific result regarding luteinising hormone in female rats that is not present in the provided text of context [5]."
+    },
+    {
+      "query": "How do cross-encoder rerankers improve retrieval for medicinal plant queries?",
+      "category": "exploratory",
+      "answer": "The context does not provide any information about cross-encoder rerankers or their role in improving retrieval for medicinal plant queries.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly states that the provided context contains no information regarding cross-encoder rerankers.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly states that the provided context contains no information regarding cross-encoder rerankers."
+    },
+    {
+      "query": "Importancia de la conservacion de plantas medicinales en los Andes peruanos",
+      "category": "exploratory",
+      "answer": "",
+      "judge_raw": "{\"score\": 0, \"reason\": \"No answer was provided to evaluate against the context.\"}",
+      "judge_score": 0,
+      "judge_reason": "No answer was provided to evaluate against the context."
+    },
+    {
+      "query": "Compare the antioxidant activity of Physalis peruviana and Smallanthus sonchifolius",
+      "category": "comparative",
+      "answer": "Both *Physalis peruviana* and *Smallanthus sonchifolius* exhibit antioxidant activity. *Physalis peruviana* has been confirmed to have antioxidant properties [1], and its co-administration with *Lactobacillus* bacterial lysates enhanced hepatic antioxidant activity [2][3]. *Smallanthus sonchifolius* leaf extracts contain a high content of phenolic compounds and have demonstrated in vitro antioxidant activity, including effects on oxidative damage induced by *tert*-butyl hydroperoxide and allyl alcohol [5]. No direct comparative data between the two species regarding antioxidant potency or specific assay values are provided in the context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context, with accurate citations and no fabrication.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context, with accurate citations and no fabrication."
+    },
+    {
+      "query": "Comparar los alcaloides de Uncaria tomentosa vs Erythroxylum coca",
+      "category": "comparative",
+      "answer": "Uncaria tomentosa contiene alcaloides oxindólicos, siendo la mitrafilina (MTP) el alcaloide oxindólico pentacíclico más abundante [1]. En contraste, Erythroxylum coca es una especie portadora de cocaína utilizada históricamente como medicina homeopática, pero en el contexto proporcionado no se detallan otros alcaloides específicos ni su perfil comparativo con U. tomentosa [3]. Mientras que los alcaloides de U. tomentosa se asocian con actividad antiinflamatoria y modulación de la respuesta inflamatoria [1,2], la información sobre E. coca se limita a su uso en la producción de cocaína ilícita [3]. No hay datos en los fragmentos sobre concentraciones, porcentajes o valores de ensayo para ninguno de los dos.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer is fully grounded, accurately reflecting the chemical constituents, traditional uses, and limitations of the provided text for both species.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer is fully grounded, accurately reflecting the chemical constituents, traditional uses, and limitations of the provided text for both species."
+    },
+    {
+      "query": "Differences between dense and sparse retrieval for ethnobotanical queries",
+      "category": "comparative",
+      "answer": "The provided context does not contain any information regarding dense or sparse retrieval methods for ethnobotanical queries. The sources describe data collection through semi-structured interviews, group discussions, and quantitative indices such as informant consensus factor (ICF), fidelity level (FL), use values (UV), and cultural importance [1][2][3][4][5]. No computational retrieval techniques are mentioned.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that retrieval methods are absent and correctly lists the data collection methods and indices mentioned across all five context snippets.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that retrieval methods are absent and correctly lists the data collection methods and indices mentioned across all five context snippets."
+    },
+    {
+      "query": "Compare wound healing properties of Croton lechleri and Buddleja incana",
+      "category": "comparative",
+      "answer": "The context provides information only on Croton lechleri (Sangre de Drago) regarding wound healing. Croton lechleri is \"renowned in South American popular medicine for its wound-healing properties\" [2] and \"clinical studies reflect wound healing\" [1][3]. However, there is no mention of Buddleja incana in any of the provided sources, so a comparison of wound healing properties between the two species is not possible based on the given context.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately reflects the context regarding Croton lechleri and correctly identifies the absence of Buddleja incana.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately reflects the context regarding Croton lechleri and correctly identifies the absence of Buddleja incana."
+    },
+    {
+      "query": "Maca vs quinoa: perfil nutricional comparado",
+      "category": "comparative",
+      "answer": "La quinua (Chenopodium quinoa) presenta un contenido de proteína total que varía entre 16.3 g/100g y 13.1 g/100g, y es una fuente excelente de fibra dietética (hasta 198 g/kg) [2][4]. En contraste, la maca (Lepidium meyenii) es una crucífera cultivada en las tierras altas del Perú cuyo contenido absoluto de glucosinolatos en los hipocótilos es relativamente más alto que el reportado en otros cultivos crucíferos [5]. El contexto no proporciona valores de proteína, fibra ni otros nutrientes para la maca, por lo que no es posible realizar una comparación nutricional completa entre ambos productos.",
+      "judge_raw": "{\"score\": 2, \"reason\": \"The answer incorrectly attributes the protein range (16.3g to 13.1g/100g) to quinoa alone, whereas the context states this range covers quinoa, amaranth, and buckwheat.\"}",
+      "judge_score": 2,
+      "judge_reason": "The answer incorrectly attributes the protein range (16.3g to 13.1g/100g) to quinoa alone, whereas the context states this range covers quinoa, amaranth, and buckwheat."
+    },
+    {
+      "query": "Compare antimicrobial activities of Minthostachys mollis and Schinus molle essential oils",
+      "category": "comparative",
+      "answer": "",
+      "judge_raw": "Please provide the ANSWER you would like me to evaluate.",
+      "judge_score": -1,
+      "judge_reason": "Please provide the ANSWER you would like me to evaluate."
+    },
+    {
+      "query": "Physalis peruviana vs Smallanthus sonchifolius: actividad hipoglucemiante",
+      "category": "comparative",
+      "answer": "Los contextos proporcionados no contienen información sobre actividad hipoglucemiante de Physalis peruviana ni de Smallanthus sonchifolius. Los estudios citados se centran en regeneración in vitro, desarrollo de marcadores microsatélites, actividad citotóxica frente a cáncer de colon y metabolismo de withanólidos en insectos. No se dispone de datos que permitan comparar un posible efecto hipoglucemiante entre ambas especies.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that the context contains no information on hypoglycemic activity and correctly summarizes the actual topics present in the provided texts.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that the context contains no information on hypoglycemic activity and correctly summarizes the actual topics present in the provided texts."
+    },
+    {
+      "query": "Compare immunomodulatory properties of Uncaria tomentosa and Lepidium meyenii",
+      "category": "comparative",
+      "answer": "The context provides immunomodulatory properties for Uncaria to tomentosa but does not describe any immunomodulatory properties for Lepidium meyenii. Uncaria tomentosa is best known for its anti-inflammatory properties [3]; treatment with its extracts inhibits the production of the pro-inflammatory cytokine TNF-alpha [3]. The species also has scientifically proven immunomodulating activities [5]. No comparable data on Lepidium meyenii are present in the provided sources.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"Every claim in the answer is directly supported by the provided context, and the absence of data for Lepidium meyenii is accurately noted.\"}",
+      "judge_score": 4,
+      "judge_reason": "Every claim in the answer is directly supported by the provided context, and the absence of data for Lepidium meyenii is accurately noted."
+    },
+    {
+      "query": "Diferencias entre aguaymanto y yacon como alimentos funcionales",
+      "category": "comparative",
+      "answer": "No se encontró información en el contexto proporcionado sobre el aguaymanto ni el yacón como alimentos funcionales. Ninguno de los documentos citados menciona estas especies ni sus propiedades funcionales. Por lo tanto, no es posible establecer diferencias entre ambos basándose en las fuentes disponibles.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly states that the provided context contains no information about aguaymanto or yacón.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly states that the provided context contains no information about aguaymanto or yacón."
+    },
+    {
+      "query": "Compare GBIF occurrence data: Uncaria tomentosa vs Croton lechleri in southern Peru",
+      "category": "comparative",
+      "answer": "The provided context does not contain any GBIF occurrence data for Uncaria tomentosa or Croton lechleri in southern Peru. The sources mention these species as endemic to Peru[1], as part of the Peruvian Amazon flora[2], and list them among plants used in traditional Peruvian medicine[3][5], but no geographic coordinates, distribution maps, or occurrence records are included. Therefore, a comparison of GBIF occurrence data between the two species in southern Peru cannot be made using the available information.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that the context lacks GBIF occurrence data and correctly identifies the information that is present regarding the species' origins and uses.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that the context lacks GBIF occurrence data and correctly identifies the information that is present regarding the species' origins and uses."
+    },
+    {
+      "query": "Croton lechleri vs Uncaria tomentosa: cual tiene mas estudios en PubMed?",
+      "category": "comparative",
+      "answer": "El contexto no proporciona información sobre la cantidad de estudios en PubMed para Croton lechleri ni para Uncaria tomentosa. Las fuentes citadas mencionan que ambas plantas han sido investigadas, por ejemplo, en [2] se indica que \"those most studied include\" estas dos especies, y en [5] se refiere a ellas como plantas endémicas de Perú investigadas para usos terapéuticos, pero no se ofrece ningún dato cuantitativo que permita comparar su número de publicaciones en PubMed. Por lo tanto, no es posible responder a la pregunta basándose exclusivamente en el contexto proporcionado.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that the context lacks quantitative PubMed data while correctly citing the qualitative mentions of the plants in [2] and [5].\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that the context lacks quantitative PubMed data while correctly citing the qualitative mentions of the plants in [2] and [5]."
+    },
+    {
+      "query": "Dense retrieval vs BM25 for species name queries",
+      "category": "comparative",
+      "answer": "The provided context does not contain any information about dense retrieval, BM25, or retrieval methods for species name queries. The sources focus solely on physicochemical characteristics of essential oils, pharmacology of ayahuasca, chloroplast genome characterization, cushion plant ecology, and reproductive effects of Maytenus macrocarpa. No comparison or discussion of information retrieval techniques is present.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer correctly identifies that the context contains no information on the requested retrieval methods and accurately summarizes the actual content of the provided snippets.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer correctly identifies that the context contains no information on the requested retrieval methods and accurately summarizes the actual content of the provided snippets."
+    },
+    {
+      "query": "Compare prebiotic potential of yacon FOS versus commercial inulin",
+      "category": "comparative",
+      "answer": "",
+      "judge_raw": "{\"score\": 0, \"reason\": \"The answer is empty, providing no claims to evaluate against the context.\"}",
+      "judge_score": 0,
+      "judge_reason": "The answer is empty, providing no claims to evaluate against the context."
+    },
+    {
+      "query": "Erythroxylum coca hoja vs extracto purificado: diferencias farmacologicas",
+      "category": "comparative",
+      "answer": "El contexto proporcionado no contiene información sobre diferencias farmacológicas entre la hoja de *Erythroxylum coca* y su extracto purificado. Las fuentes [1–3] se centran en la identificación taxonómica, domesticación y efectos de preservantes en el contenido de alcaloides de especímenes de herbario, sin comparar la actividad farmacológica de la hoja *versus* el extracto. No se mencionan datos como concentraciones, mecanismos o valores de ensayo (IC50, CMI) que permitan establecer dicha diferencia. Por lo tanto, con la evidencia disponible no es posible responder a la consulta.",
+      "judge_raw": "{\"score\": 4, \"reason\": \"The answer accurately states that the context does not contain the requested pharmacological comparison and correctly summarizes the actual content of the provided sources.\"}",
+      "judge_score": 4,
+      "judge_reason": "The answer accurately states that the context does not contain the requested pharmacological comparison and correctly summarizes the actual content of the provided sources."
+    },
+    {
+      "query": "Compare anti-inflammatory mechanisms: alkaloids vs phenolic compounds in Peruvian plants",
+      "category": "comparative",
+      "answer": "Phenolic compounds, specifically three caffe",
+      "judge_raw": "{\"score\": 0, \"reason\": \"The answer is an incomplete sentence fragment that does not provide a factual claim to evaluate.\"}",
+      "judge_score": 0,
+      "judge_reason": "The answer is an incomplete sentence fragment that does not provide a factual claim to evaluate."
+    }
+  ],
+  "correlation": {
+    "n_valid": 0,
+    "pearson_r": null,
+    "pearson_p": null,
+    "spearman_r": null,
+    "spearman_p": null
+  }
+}

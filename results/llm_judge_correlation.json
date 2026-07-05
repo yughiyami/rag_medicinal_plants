@@ -1,0 +1,12 @@
+{
+  "n_valid": 49,
+  "n_perfect": 41,
+  "n_intermediate": 2,
+  "n_zero": 6,
+  "pearson_r": 0.39799353300728296,
+  "pearson_p": 0.004624866362226957,
+  "spearman_r": 0.4068793353465625,
+  "spearman_p": 0.003716103831043251,
+  "judge_mean_01": 0.8571428571428571,
+  "fidelity_mean": 0.4735021222176322
+}

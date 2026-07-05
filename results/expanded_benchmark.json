@@ -1,0 +1,352 @@
+{
+  "probes": [
+    {
+      "query": "What phytochemical compounds are reported for Maytenus macrocarpa?",
+      "relevant_species": [
+        "Maytenus macrocarpa"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Amaranthus caudatus?",
+      "relevant_species": [
+        "Amaranthus caudatus"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "How does Matricaria chamomilla compare to related Andean medicinal species in traditional use?",
+      "relevant_species": [
+        "Matricaria chamomilla"
+      ],
+      "category": "comparative"
+    },
+    {
+      "query": "Describe the pharmacological activities of Banisteriopsis caapi.",
+      "relevant_species": [
+        "Banisteriopsis caapi"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Describe the pharmacological activities of Sambucus peruviana.",
+      "relevant_species": [
+        "Sambucus peruviana"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Describe the pharmacological activities of Copaifera paupera.",
+      "relevant_species": [
+        "Copaifera paupera"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Parastrephia lucida?",
+      "relevant_species": [
+        "Parastrephia lucida"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Punica granatum extracts?",
+      "relevant_species": [
+        "Punica granatum"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Solanum americanum?",
+      "relevant_species": [
+        "Solanum americanum"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Malva sylvestris extracts?",
+      "relevant_species": [
+        "Malva sylvestris"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What antioxidant or anti-inflammatory effects have been documented in Lupinus mutabilis?",
+      "relevant_species": [
+        "Lupinus mutabilis"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Ilex guayusa?",
+      "relevant_species": [
+        "Ilex guayusa"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Tessaria integrifolia?",
+      "relevant_species": [
+        "Tessaria integrifolia"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Calendula officinalis?",
+      "relevant_species": [
+        "Calendula officinalis"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Describe the pharmacological activities of Annona muricata.",
+      "relevant_species": [
+        "Annona muricata"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Describe the pharmacological activities of Tetraglochin cristatum.",
+      "relevant_species": [
+        "Tetraglochin cristatum"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Rosmarinus officinalis extracts?",
+      "relevant_species": [
+        "Rosmarinus officinalis"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Uncaria guianensis extracts?",
+      "relevant_species": [
+        "Uncaria guianensis"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Opuntia soehrensii?",
+      "relevant_species": [
+        "Opuntia soehrensii"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Chuquiraga spinosa extracts?",
+      "relevant_species": [
+        "Chuquiraga spinosa"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Describe the pharmacological activities of Piper aduncum.",
+      "relevant_species": [
+        "Piper aduncum"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Brunfelsia grandiflora extracts?",
+      "relevant_species": [
+        "Brunfelsia grandiflora"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "What antioxidant or anti-inflammatory effects have been documented in Ullucus tuberosus?",
+      "relevant_species": [
+        "Ullucus tuberosus"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Describe the pharmacological activities of Mauritia flexuosa.",
+      "relevant_species": [
+        "Mauritia flexuosa"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "What antioxidant or anti-inflammatory effects have been documented in Satureja boliviana?",
+      "relevant_species": [
+        "Satureja boliviana"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "Which alkaloids or flavonoids appear in Clinopodium bolivianum extracts?",
+      "relevant_species": [
+        "Clinopodium bolivianum"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "How does Passiflora ligularis compare to related Andean medicinal species in traditional use?",
+      "relevant_species": [
+        "Passiflora ligularis"
+      ],
+      "category": "comparative"
+    },
+    {
+      "query": "What phytochemical compounds are reported for Carica papaya?",
+      "relevant_species": [
+        "Carica papaya"
+      ],
+      "category": "factual"
+    },
+    {
+      "query": "Describe the pharmacological activities of Plantago major.",
+      "relevant_species": [
+        "Plantago major"
+      ],
+      "category": "exploratory"
+    },
+    {
+      "query": "What antioxidant or anti-inflammatory effects have been documented in Stipa ichu?",
+      "relevant_species": [
+        "Stipa ichu"
+      ],
+      "category": "exploratory"
+    }
+  ],
+  "metrics": {
+    "context_precision": 0.4939555494424691,
+    "context_recall": 0.5619533273128108,
+    "mrr": 0.87,
+    "ndcg@10": 0.862932570811733,
+    "per_query": {
+      "context_precision": [
+        0.625,
+        0.7142857142857143,
+        0.37083333333333335,
+        0.2880815544608648,
+        0.25311791383219956,
+        0.40576341647770214,
+        0.9,
+        0.3706529581529581,
+        0.7416666666666667,
+        0.3214105339105339,
+        0.43478260869565216,
+        0.5263157894736842,
+        0.7692307692307693,
+        0.36874999999999997,
+        0.3333333333333333,
+        1.0,
+        0.2946263227513228,
+        0.35714285714285715,
+        0.05,
+        0.556957671957672,
+        0.3448275862068966,
+        0.47318948412698414,
+        0.2702380952380953,
+        0.5882352941176471,
+        0.6666666666666666,
+        0.5096478174603174,
+        0.2951127819548872,
+        0.6554639804639805,
+        0.3333333333333333,
+        1.0
+      ],
+      "context_recall": [
+        0.625,
+        0.7142857142857143,
+        0.375,
+        0.3103448275862069,
+        0.7142857142857143,
+        0.42857142857142855,
+        0.9,
+        0.4090909090909091,
+        0.75,
+        0.4090909090909091,
+        0.43478260869565216,
+        0.5263157894736842,
+        0.7692307692307693,
+        0.5833333333333334,
+        0.3333333333333333,
+        1.0,
+        0.375,
+        0.35714285714285715,
+        0.5,
+        0.6,
+        0.3448275862068966,
+        0.5625,
+        0.625,
+        0.5882352941176471,
+        0.6666666666666666,
+        0.5625,
+        0.3684210526315789,
+        0.6923076923076923,
+        0.3333333333333333,
+        1.0
+      ],
+      "mrr": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.16666666666666666,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        1.0,
+        1.0,
+        0.5,
+        1.0,
+        0.1,
+        1.0,
+        1.0,
+        1.0,
+        0.3333333333333333,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "ndcg@10": [
+        1.0,
+        1.0,
+        0.933745776545611,
+        0.914856882358379,
+        0.4384552988869386,
+        0.9216017310213247,
+        0.9363792118010483,
+        0.9052116356304493,
+        0.933745776545611,
+        0.7799082337019199,
+        1.0,
+        1.0,
+        1.0,
+        0.611755947233009,
+        1.0,
+        1.0,
+        0.7799082337019199,
+        1.0,
+        0.17723928678404774,
+        0.914856882358379,
+        1.0,
+        0.8611375561264454,
+        0.4615485572812328,
+        1.0,
+        0.7653606369886217,
+        0.9052116356304493,
+        0.725452110735279,
+        0.9216017310213247,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "n_species": 30,
+  "seed": 42
+}
