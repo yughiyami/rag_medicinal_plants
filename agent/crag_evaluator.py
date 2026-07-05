@@ -1,5 +1,5 @@
 """
-Corrective RAG (CRAG) Evaluator for SIRCA-RAG.
+Corrective RAG (CRAG) Evaluator for CHARM.
 Implements the CRAG decision loop: given retrieved documents and a query,
 decides whether to ACCEPT, REFINE, or trigger WEB_SEARCH.
 
@@ -23,8 +23,13 @@ class CRAGDecision:
     refined_query: str | None = None
 
 
-RELEVANCE_ACCEPT = 0.35
-RELEVANCE_PARTIAL = 0.15
+# Absolute sigmoid-calibrated thresholds (see paper Sec. "Calibration finding").
+# The previous min-max normalization made these thresholds relative to the
+# best/worst document of the SAME query, so every query reached "accept". The
+# sigmoid over raw cross-encoder logits restores an absolute-quality signal, so
+# the corrective branches (refine / web_search) fire on out-of-distribution input.
+RELEVANCE_ACCEPT = 0.60
+RELEVANCE_PARTIAL = 0.30
 MIN_RELEVANT_RATIO = 0.2
 
 
@@ -111,13 +116,18 @@ class CRAGEvaluator:
 
 
 def _normalize_scores(scores: np.ndarray) -> np.ndarray:
-    """Normalize cross-encoder scores to [0, 1] range."""
+    """
+    Map raw cross-encoder logits to [0, 1] via an ABSOLUTE sigmoid.
+
+    This is a per-document calibration (each score transformed independently),
+    NOT a within-batch min-max. Absolute calibration is what makes the fixed
+    accept/refine thresholds meaningful across queries; min-max normalization
+    (the previous implementation) always sent the best-of-batch to 1.0 and thus
+    collapsed the corrective routing to always-accept.
+    """
     if len(scores) == 0:
         return scores
-    min_s, max_s = scores.min(), scores.max()
-    if max_s - min_s < 1e-6:
-        return np.full_like(scores, 0.5)
-    return (scores - min_s) / (max_s - min_s)
+    return 1.0 / (1.0 + np.exp(-np.asarray(scores, dtype=float)))
 
 
 def _refine_query(query: str, results: list[dict], partial_indices: list[int]) -> str:

@@ -1,0 +1,259 @@
+{
+  "summary": {
+    "accept": 35,
+    "web_search": 10,
+    "refine": 5
+  },
+  "per_query": [
+    {
+      "q": "What are the main anti-inflammatory alkaloids in Uncaria tomentosa?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "What is the wound healing mechanism of taspine from Croton lechleri?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "What is the geographic distribution of Buddleja incana in Peru?",
+      "action": "web_search",
+      "cat": "factual"
+    },
+    {
+      "q": "What are the fructooligosaccharides in yacon and their prebiotic effects?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "What is the taxonomic classification of Lepidium meyenii?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Cual es la composicion quimica del aceite esencial de Minthostachys mollis?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "PMID references for Uncaria tomentosa immunomodulatory studies",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Contenido de macamidas en Lepidium meyenii",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "What alkaloids are found in Erythroxylum coca leaves?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Distribucion geografica de Physalis peruviana en el sur del Peru",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "What phenolic compounds are present in Physalis peruviana fruit?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Que compuestos bioactivos tiene Smallanthus sonchifolius en las hojas?",
+      "action": "refine",
+      "cat": "factual"
+    },
+    {
+      "q": "IC50 values reported for Croton lechleri latex antimicrobial activity",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Buddleja incana common names in Peru",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Cantusia quercifolia usos medicinales tradicionales",
+      "action": "refine",
+      "cat": "factual"
+    },
+    {
+      "q": "What is the protein content of Chenopodium quinoa seeds?",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Actividad antifungica de Minthostachys mollis",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Gentianella alborosea active compounds",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Taxonomia de Erythroxylum coca segun WFO",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Schinus molle essential oil composition",
+      "action": "accept",
+      "cat": "factual"
+    },
+    {
+      "q": "Cuales son las propiedades medicinales de la maca para la fertilidad?",
+      "action": "web_search",
+      "cat": "exploratory"
+    },
+    {
+      "q": "How does Erythroxylum coca differ from cocaine pharmacologically?",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Actividad antimicrobiana de Minthostachys mollis aceite esencial",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "How do Peruvian medicinal plants reduce inflammation?",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Mecanismos de accion neuroprotectora de la maca",
+      "action": "web_search",
+      "cat": "exploratory"
+    },
+    {
+      "q": "What are the traditional uses of Buddleja incana in Andean medicine?",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Potencial antidiabetico de Smallanthus sonchifolius",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "How can cat's claw be used in cancer research?",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Aplicaciones de la sangre de grado en dermatologia",
+      "action": "web_search",
+      "cat": "exploratory"
+    },
+    {
+      "q": "What role do withanolides play in Physalis peruviana bioactivity?",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Como se utiliza la etnobotanica para descubrir nuevos farmacos en Peru?",
+      "action": "refine",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Potential of Andean plants for treating gastrointestinal diseases",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Efectos adaptogenos de Lepidium meyenii en altitud",
+      "action": "refine",
+      "cat": "exploratory"
+    },
+    {
+      "q": "How do cross-encoder rerankers improve retrieval for medicinal plant queries?",
+      "action": "web_search",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Importancia de la conservacion de plantas medicinales en los Andes peruanos",
+      "action": "accept",
+      "cat": "exploratory"
+    },
+    {
+      "q": "Compare the antioxidant activity of Physalis peruviana and Smallanthus sonchifolius",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Comparar los alcaloides de Uncaria tomentosa vs Erythroxylum coca",
+      "action": "refine",
+      "cat": "comparative"
+    },
+    {
+      "q": "Differences between dense and sparse retrieval for ethnobotanical queries",
+      "action": "web_search",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare wound healing properties of Croton lechleri and Buddleja incana",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Maca vs quinoa: perfil nutricional comparado",
+      "action": "web_search",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare antimicrobial activities of Minthostachys mollis and Schinus molle essential oils",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Physalis peruviana vs Smallanthus sonchifolius: actividad hipoglucemiante",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare immunomodulatory properties of Uncaria tomentosa and Lepidium meyenii",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Diferencias entre aguaymanto y yacon como alimentos funcionales",
+      "action": "web_search",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare GBIF occurrence data: Uncaria tomentosa vs Croton lechleri in southern Peru",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Croton lechleri vs Uncaria tomentosa: cual tiene mas estudios en PubMed?",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Dense retrieval vs BM25 for species name queries",
+      "action": "web_search",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare prebiotic potential of yacon FOS versus commercial inulin",
+      "action": "accept",
+      "cat": "comparative"
+    },
+    {
+      "q": "Erythroxylum coca hoja vs extracto purificado: diferencias farmacologicas",
+      "action": "web_search",
+      "cat": "comparative"
+    },
+    {
+      "q": "Compare anti-inflammatory mechanisms: alkaloids vs phenolic compounds in Peruvian plants",
+      "action": "accept",
+      "cat": "comparative"
+    }
+  ]
+}

@@ -84,10 +84,11 @@ def fig_crag_routing():
 
 
 def fig_cross_llm():
+    # From results/multi_llm_metrics.json + results/multi_llm_ttests.json
     metrics = ["BERTScore F1", "Sem. Sim.", "Entity Recall", "Answer Rel.", "Fidelity"]
-    deepseek = [0.844, 0.789, 0.415, 0.996, 0.611]
-    gemma = [0.827, 0.772, 0.396, 0.963, 0.772]
-    sig = [False, False, False, False, True]
+    deepseek = [0.705, 0.802, 0.339, 0.819, 0.441]
+    gemma = [0.827, 0.773, 0.385, 0.963, 0.641]
+    sig = [True, False, False, True, True]  # paired t-test, alpha=0.05
     x = range(len(metrics))
     w = 0.38
     fig, ax = plt.subplots(figsize=(8.2, 4.2))
@@ -98,7 +99,7 @@ def fig_cross_llm():
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Score")
     ax.set_title("Cross-LLM robustness (same pipeline, 50 queries)\n"
-                 "only Fidelity differs significantly (paired t-test, p<0.001)")
+                 "Gemma-4 wins on Fidelity, BERTScore, Answer Relevancy (paired t-test)")
     for i, s in enumerate(sig):
         if s:
             ax.text(i, max(deepseek[i], gemma[i]) + 0.03, "*", ha="center",
