@@ -30,24 +30,24 @@ plt.rcParams.update({
 
 
 def fig_ablation_fidelity():
-    # Table 4 (primary ablation, DeepSeek) Fidelity per configuration
-    cfgs = ["full", "sparse_only", "dense_only", "no_classifier", "no_crag", "no_reranker"]
-    fid = [0.611, 0.587, 0.582, 0.577, 0.574, 0.529]
-    colors = [GREEN] + [BLUE] * 4 + [RED]
-    fig, ax = plt.subplots(figsize=(7.5, 4.2))
-    bars = ax.bar(cfgs, fid, color=colors, width=0.62)
-    ax.axhline(0.611, ls="--", lw=1, color=GRAY)
-    ax.set_ylim(0.45, 0.66)
+    # From results/n5_fidelity_wilcoxon.json (fixed CRAG evaluator, DeepSeek)
+    cfgs = ["full", "no_reranker"]
+    fid = [0.534, 0.467]
+    colors = [GREEN, RED]
+    fig, ax = plt.subplots(figsize=(6.0, 4.2))
+    bars = ax.bar(cfgs, fid, color=colors, width=0.5)
+    ax.set_ylim(0.40, 0.60)
     ax.set_ylabel("Fidelity (hybrid 65/35)")
-    ax.set_title("Ablation — Fidelity by configuration\n"
-                 "removing the cross-encoder reranker is the biggest hit (-13.4%, "
-                 "Wilcoxon p=0.036)")
+    ax.set_title("Reranker → Fidelity: paired Wilcoxon on 50 queries\n"
+                 "-12.6% relative when removing the cross-encoder, p=0.016")
     for b, v in zip(bars, fid):
-        ax.text(b.get_x() + b.get_width() / 2, v + 0.004, f"{v:.3f}",
-                ha="center", va="bottom", fontsize=9)
-    ax.annotate("-13.4%\nvs full", xy=(5, 0.529), xytext=(4.35, 0.555),
-                color=RED, fontsize=9.5, fontweight="bold", ha="center",
-                arrowprops=dict(arrowstyle="->", color=RED, lw=1.2))
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.005, f"{v:.3f}",
+                ha="center", va="bottom", fontsize=11, fontweight="bold")
+    ax.annotate("", xy=(1, 0.475), xytext=(0, 0.545),
+                arrowprops=dict(arrowstyle="->", color=RED, lw=1.6))
+    ax.text(0.5, 0.51, "-12.6%\np=0.016", ha="center", va="center",
+            color=RED, fontsize=11, fontweight="bold",
+            bbox=dict(facecolor="white", edgecolor=RED, lw=0.8))
     plt.xticks(rotation=18, ha="right")
     plt.tight_layout()
     fig.savefig(IMG / "ablation_fidelity.png", bbox_inches="tight")
