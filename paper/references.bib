@@ -1,0 +1,285 @@
+% ============================================================
+% references.bib — SIRCA-RAG paper (only cited references)
+% ============================================================
+
+% --- RAG Core & Variants ---
+
+@inproceedings{lewis2020retrieval,
+  title     = {Retrieval-Augmented Generation for Knowledge-Intensive {NLP} Tasks},
+  author    = {Lewis, Patrick and Perez, Ethan and Piktus, Aleksandra and Petroni, Fabio and Karpukhin, Vladimir and Goyal, Naman and K{\"u}ttler, Heinrich and Lewis, Mike and Yih, Wen-tau and Rockt{\"a}schel, Tim and Riedel, Sebastian and Kiela, Douwe},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {33},
+  pages     = {9459--9474},
+  year      = {2020},
+  url       = {https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html}
+}
+
+@article{gao2024retrieval,
+  title   = {Retrieval-Augmented Generation for Large Language Models: A Survey},
+  author  = {Gao, Yunfan and Xiong, Yun and Gao, Xinyu and Jia, Kangxiang and Pan, Jinliu and Bi, Yuxi and Dai, Yi and Sun, Jiawei and Wang, Haofen},
+  journal = {arXiv preprint arXiv:2312.10997},
+  year    = {2024},
+  doi     = {10.48550/arXiv.2312.10997}
+}
+
+@inproceedings{asai2024selfrag,
+  title     = {Self-{RAG}: Learning to Retrieve, Generate, and Critique through Self-Reflection},
+  author    = {Asai, Akari and Wu, Zeqiu and Wang, Yizhong and Sil, Avirup and Hajishirzi, Hannaneh},
+  booktitle = {Proceedings of the Twelfth International Conference on Learning Representations},
+  year      = {2024},
+  url       = {https://openreview.net/forum?id=hSyW5go0v8}
+}
+
+@article{yan2024crag,
+  title   = {Corrective Retrieval Augmented Generation},
+  author  = {Yan, Shi-Qi and Gu, Jia-Chen and Zhu, Yun and Ling, Zhen-Hua},
+  journal = {arXiv preprint arXiv:2401.15884},
+  year    = {2024},
+  doi     = {10.48550/arXiv.2401.15884}
+}
+
+% --- Dense Retrieval ---
+
+@inproceedings{karpukhin2020dense,
+  title     = {Dense Passage Retrieval for Open-Domain Question Answering},
+  author    = {Karpukhin, Vladimir and Oguz, Barlas and Min, Sewon and Lewis, Patrick and Wu, Ledell and Edunov, Sergey and Chen, Danqi and Yih, Wen-tau},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {6769--6781},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.emnlp-main.550}
+}
+
+@article{wang2024e5,
+  title   = {Multilingual {E5} Text Embeddings: A Technical Report},
+  author  = {Wang, Liang and Yang, Nan and Huang, Xiaolong and Yang, Linjun and Majumder, Rangan and Wei, Furu},
+  journal = {arXiv preprint arXiv:2402.05672},
+  year    = {2024},
+  doi     = {10.48550/arXiv.2402.05672}
+}
+
+
+% --- Sparse Retrieval ---
+
+@article{robertson2009bm25,
+  title     = {The Probabilistic Relevance Framework: {BM25} and Beyond},
+  author    = {Robertson, Stephen and Zaragoza, Hugo},
+  journal   = {Foundations and Trends in Information Retrieval},
+  volume    = {3},
+  number    = {4},
+  pages     = {333--389},
+  year      = {2009},
+  publisher = {Now Publishers},
+  doi       = {10.1561/1500000019}
+}
+
+% --- Hybrid Retrieval & Rank Fusion ---
+
+@inproceedings{cormack2009rrf,
+  title     = {Reciprocal Rank Fusion Outperforms {Condorcet} and Individual Rank Learning Methods},
+  author    = {Cormack, Gordon V and Clarke, Charles LA and Buettcher, Stefan},
+  booktitle = {Proceedings of the 32nd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+  pages     = {758--759},
+  year      = {2009},
+  doi       = {10.1145/1571941.1572114}
+}
+
+% --- Chain-of-Thought Prompting ---
+
+@inproceedings{wei2022chain,
+  title     = {{Chain-of-Thought} Prompting Elicits Reasoning in Large Language Models},
+  author    = {Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Ichter, Brian and Xia, Fei and Chi, Ed H and Le, Quoc V and Zhou, Denny},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {35},
+  pages     = {24824--24837},
+  year      = {2022},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/9d5609613524ecf4f15af0f7b31abca4-Abstract-Conference.html}
+}
+
+% --- Reranking ---
+
+@article{nogueira2019passage,
+  title   = {Passage Re-ranking with {BERT}},
+  author  = {Nogueira, Rodrigo and Cho, Kyunghyun},
+  journal = {arXiv preprint arXiv:1901.04085},
+  year    = {2019},
+  doi     = {10.48550/arXiv.1901.04085}
+}
+
+% --- Vector Search ---
+
+@article{johnson2021billion,
+  title     = {Billion-Scale Similarity Search with {GPUs}},
+  author    = {Johnson, Jeff and Douze, Matthijs and J{\'e}gou, Herv{\'e}},
+  journal   = {IEEE Transactions on Big Data},
+  volume    = {7},
+  number    = {3},
+  pages     = {535--547},
+  year      = {2021},
+  publisher = {IEEE},
+  doi       = {10.1109/TBDATA.2019.2921572}
+}
+
+% --- Evaluation ---
+
+@inproceedings{zhang2020bertscore,
+  title     = {{BERTScore}: Evaluating Text Generation with {BERT}},
+  author    = {Zhang, Tianyi and Kishore, Varsha and Wu, Felix and Weinberger, Kilian Q and Artzi, Yoav},
+  booktitle = {Proceedings of the Eighth International Conference on Learning Representations},
+  year      = {2020},
+  url       = {https://openreview.net/forum?id=SkeHuCVFDr}
+}
+
+@article{ji2023survey,
+  title     = {Survey of Hallucination in Natural Language Generation},
+  author    = {Ji, Ziwei and Lee, Nayeon and Frieske, Rita and Yu, Tiezheng and Su, Dan and Xu, Yan and Ishii, Etsuko and Bang, Ye Jin and Madotto, Andrea and Fung, Pascale},
+  journal   = {ACM Computing Surveys},
+  volume    = {55},
+  number    = {12},
+  pages     = {1--38},
+  year      = {2023},
+  publisher = {ACM},
+  doi       = {10.1145/3571730}
+}
+
+% --- Biomedical NLP ---
+
+@article{lee2020biobert,
+  title     = {{BioBERT}: a pre-trained biomedical language representation model for biomedical text mining},
+  author    = {Lee, Jinhyuk and Yoon, Wonjin and Kim, Sungdong and Kim, Donghyeon and Kim, Sunkyu and So, Chan Ho and Kang, Jaewoo},
+  journal   = {Bioinformatics},
+  volume    = {36},
+  number    = {4},
+  pages     = {1234--1240},
+  year      = {2020},
+  publisher = {Oxford University Press},
+  doi       = {10.1093/bioinformatics/btz682}
+}
+
+@article{gu2021domain,
+  title     = {Domain-Specific Language Model Pretraining for Biomedical Natural Language Processing},
+  author    = {Gu, Yu and Tinn, Robert and Cheng, Hao and Lucas, Michael and Usber, Naoto and Liu, Xiaodong and Naumann, Tristan and Gao, Jianfeng and Poon, Hoifung},
+  journal   = {ACM Transactions on Computing for Healthcare},
+  volume    = {3},
+  number    = {1},
+  pages     = {1--23},
+  year      = {2021},
+  publisher = {ACM},
+  doi       = {10.1145/3458754}
+}
+
+% --- RAG vs Fine-Tuning comparative evidence ---
+
+@inproceedings{xiong2024mirage,
+  title     = {Benchmarking Retrieval-Augmented Generation for Medicine},
+  author    = {Xiong, Guangzhi and Jin, Qiao and Lu, Zhiyong and Zhang, Aidong},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL 2024},
+  pages     = {6233--6251},
+  year      = {2024},
+  doi       = {10.18653/v1/2024.findings-acl.372}
+}
+
+
+% --- Peruvian NLP — Complementary approaches ---
+
+@inproceedings{collanqui2026cagrag,
+  title     = {Faithfulness and Relevance in Stable Normative Domains: A Comparative Analysis of {CAG} vs.\ {RAG}},
+  author    = {Collanqui, Elmer A and Coaguila, Maribel E and Flores, Anibal and Apaza, Honorio},
+  booktitle = {SimBig 2025: Information Management and Big Data},
+  series    = {Communications in Computer and Information Science},
+  volume    = {2895},
+  pages     = {137--153},
+  year      = {2026},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-032-20322-9_10}
+}
+
+@inproceedings{monroy2026finetuning,
+  title     = {Fine-Tuning of Small Language Models for Ecological Monitoring: A Comparative Analysis Based on Perplexity},
+  author    = {Monroy Barrios, Jhon Edilberto and Paco Cusi, Enrique Miguel and Portella Huincho, Miguel Angel and Valdivia Eguiluz, Jeymi Melanie and Basurco Zapata, Gerald Francis and Jara Rosales, Fiorella},
+  booktitle = {SimBig 2025: Information Management and Big Data},
+  series    = {Communications in Computer and Information Science},
+  volume    = {2895},
+  pages     = {300--313},
+  year      = {2026},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-032-20322-9_21}
+}
+
+% --- Ethnobotany & Peruvian Medicinal Plants ---
+
+@article{bussmann2011toxicity,
+  title     = {Toxicity of medicinal plants used in traditional medicine in {Northern Peru}},
+  author    = {Bussmann, Rainer W and Malca-Garc{\'i}a, Glenn and Glenn, Ashley and Sharon, Douglas and Chait, Gail and D{\'i}az, David and Pourmand, Kambiz and Jonat, Bent and Somogy, Stephen and Guardado, Gerardo},
+  journal   = {Journal of Ethnopharmacology},
+  volume    = {137},
+  number    = {1},
+  pages     = {121--140},
+  year      = {2011},
+  publisher = {Elsevier},
+  doi       = {10.1016/j.jep.2011.04.071}
+}
+
+@article{bussmann2006traditional,
+  title     = {Traditional Medicinal Plant Use in {Northern Peru}: Tracking Two Thousand Years of Healing Culture},
+  author    = {Bussmann, Rainer W and Sharon, Douglas},
+  journal   = {Journal of Ethnobiology and Ethnomedicine},
+  volume    = {2},
+  number    = {1},
+  pages     = {47},
+  year      = {2006},
+  publisher = {BioMed Central},
+  doi       = {10.1186/1746-4269-2-47}
+}
+
+@article{gonzales2012ethnobiology,
+  title     = {Ethnobiology and Ethnopharmacology of \textit{{Lepidium meyenii}} ({Maca}), a Plant from the {Peruvian Highlands}},
+  author    = {Gonzales, Gustavo F},
+  journal   = {Evidence-Based Complementary and Alternative Medicine},
+  volume    = {2012},
+  pages     = {193496},
+  year      = {2012},
+  publisher = {Hindawi},
+  doi       = {10.1155/2012/193496}
+}
+
+@article{lock2016bioactive,
+  title     = {Bioactive Compounds from Plants Used in Peruvian Traditional Medicine},
+  author    = {Lock, Olga and Perez, Eleucy and Villar, Martha and Flores, Diana and Rojas, Rosario},
+  journal   = {Natural Product Communications},
+  volume    = {11},
+  number    = {3},
+  pages     = {315--337},
+  year      = {2016},
+  publisher = {SAGE Publications},
+  url       = {https://pubmed.ncbi.nlm.nih.gov/27169179/}
+}
+
+@article{heinrich2020ethnopharmacology,
+  title     = {Best Practice in the Chemical Characterisation of Extracts Used in Pharmacological and Toxicological Research---The {ConPhyMP}-Guidelines},
+  author    = {Heinrich, Michael and Jalil, Banaz and Abdel-Tawab, Mona and Echeverria, Javier and Kulic, Zelijko and McGaw, Lyndy J and Pezzuto, John M and S\"oz Pace, Ay\c{s}eg\"ul and Wagner, Hildebert},
+  journal   = {Frontiers in Pharmacology},
+  volume    = {13},
+  pages     = {953205},
+  year      = {2022},
+  publisher = {Frontiers},
+  doi       = {10.3389/fphar.2022.953205}
+}
+
+% --- LLM as judge / evaluation methodology ---
+
+@inproceedings{zheng2023mtbench,
+  title={Judging {LLM}-as-a-Judge with {MT-Bench} and Chatbot Arena},
+  author={Zheng, Lianmin and Chiang, Wei-Lin and Sheng, Ying and Zhuang, Siyuan and Wu, Zhanghao and Zhuang, Yonghao and Lin, Zi and Li, Zhuohan and Li, Dacheng and Xing, Eric P and Zhang, Hao and Gonzalez, Joseph E and Stoica, Ion},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={36},
+  year={2023},
+  url={https://proceedings.neurips.cc/paper_files/paper/2023/hash/91f18a1287b398d378ef22505bf41832-Abstract-Datasets_and_Benchmarks.html}
+}
+
+@article{es2023ragas,
+  title={{RAGAs}: Automated Evaluation of Retrieval Augmented Generation},
+  author={Es, Shahul and James, Jithin and Espinosa-Anke, Luis and Schockaert, Steven},
+  journal={arXiv preprint arXiv:2309.15217},
+  year={2023},
+  doi={10.48550/arXiv.2309.15217}
+}
