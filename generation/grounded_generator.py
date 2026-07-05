@@ -170,31 +170,46 @@ class GroundedGenerator:
         )
 
     def _deepseek_generate(self, prompt: str, max_tokens: int) -> GenerationResult:
-        """Generate using DeepSeek V4 Flash API."""
+        """Generate using DeepSeek V4 Flash API with retry and fallback."""
+        import time
         from openai import OpenAI
 
         client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
-        response = client.chat.completions.create(
-            model=DEEPSEEK_MODEL,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=max_tokens,
-            temperature=TEMPERATURE,
-            top_p=0.9,
-        )
-
-        answer = response.choices[0].message.content.strip()
-        citations_used = _extract_citation_indices(answer)
-        tokens = response.usage.completion_tokens if response.usage else len(answer.split())
-
-        return GenerationResult(
-            answer=answer,
-            citations_used=citations_used,
-            model=f"deepseek:{DEEPSEEK_MODEL}",
-            tokens_generated=tokens,
-        )
+        last_error = None
+        delay = 2.0
+        for attempt in range(5):
+            try:
+                response = client.chat.completions.create(
+                    model=DEEPSEEK_MODEL,
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": prompt},
+                    ],
+                    max_tokens=max_tokens,
+                    temperature=TEMPERATURE,
+                    top_p=0.9,
+                )
+                answer = response.choices[0].message.content
+                if not answer:
+                    last_error = Exception("DeepSeek returned empty content")
+                    time.sleep(delay)
+                    delay = min(delay * 2, 30)
+                    continue
+                answer = answer.strip()
+                citations_used = _extract_citation_indices(answer)
+                tokens = response.usage.completion_tokens if response.usage else len(answer.split())
+                return GenerationResult(
+                    answer=answer,
+                    citations_used=citations_used,
+                    model=f"deepseek:{DEEPSEEK_MODEL}",
+                    tokens_generated=tokens,
+                )
+            except Exception as e:
+                last_error = e
+                if attempt < 4:
+                    time.sleep(delay)
+                    delay = min(delay * 2, 30)
+        raise RuntimeError(f"DeepSeek API failed after 5 attempts: {last_error}")
 
     def _ollama_generate(self, prompt: str, max_tokens: int) -> GenerationResult:
         """Generate using local Ollama (Qwen3-8B). Handles thinking mode."""

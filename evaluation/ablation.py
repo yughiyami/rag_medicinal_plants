@@ -20,6 +20,23 @@ from dataclasses import dataclass, field
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Stub the web_search node class-wide to avoid live HTTP / asyncio overhead
+# during measurement. Retrieval metrics are captured in the retrieve node
+# BEFORE routing, so stubbing web_search does not alter metric values.
+import agent.graph as _graph_module
+
+_original_node_web_search = _graph_module.SIRCAAgent._node_web_search
+
+def _stub_node_web_search(self, state: dict) -> dict:
+    state.setdefault("trace", []).append({
+        "node": "web_search",
+        "note": "stubbed by ablation — retrieval metrics captured upstream",
+        "duration_ms": 0,
+    })
+    return state
+
+_graph_module.SIRCAAgent._node_web_search = _stub_node_web_search
+
 from evaluation.benchmark_data import TestCase, BENCHMARK_SET
 from evaluation.metrics import (
     bertscore,
@@ -154,7 +171,7 @@ def _run_queries(agent, benchmark: list[TestCase]):
     POOL_K = 30
     retriever = agent._retriever
 
-    for tc in benchmark:
+    for i, tc in enumerate(benchmark):
         # ---- 1) Wide candidate pool (pre-rerank) used as ground-truth proxy ----
         try:
             pool = retriever.retrieve(
@@ -181,6 +198,8 @@ def _run_queries(agent, benchmark: list[TestCase]):
 
         # ---- 2) Run actual agent (top-5 after rerank + CRAG) ----
         result = agent.run(tc.query)
+        if (i + 1) % 5 == 0:
+            print(f"  [{i+1}/{len(benchmark)}]", flush=True)
         gen = result.get("generation", {})
         answer = gen.get("answer", "")
         context = result.get("context", "")

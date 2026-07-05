@@ -1,5 +1,5 @@
 """
-Corrective RAG (CRAG) Evaluator for CHARM.
+Corrective RAG (CRAG) Evaluator for SIRCA-RAG.
 Implements the CRAG decision loop: given retrieved documents and a query,
 decides whether to ACCEPT, REFINE, or trigger WEB_SEARCH.
 

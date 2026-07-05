@@ -11,8 +11,8 @@
       "query": "What phytochemical compounds are reported for Adesmia spinosissima?",
       "expected_route": "refine_or_web_search",
       "action": "web_search",
-      "confidence": 0.8776751614937711,
-      "s_max_sigmoid": 0.12232483850622891,
+      "confidence": 0.8776754686570756,
+      "s_max_sigmoid": 0.12232453134292444,
       "n_docs": 10
     },
     {
@@ -20,8 +20,8 @@
       "query": "What phytochemical compounds are reported for Alternanthera porrigens?",
       "expected_route": "refine_or_web_search",
       "action": "refine",
-      "confidence": 0.4726510427360725,
-      "s_max_sigmoid": 0.4726510427360725,
+      "confidence": 0.47265073074792463,
+      "s_max_sigmoid": 0.47265073074792463,
       "n_docs": 10
     },
     {
@@ -29,8 +29,8 @@
       "query": "What phytochemical compounds are reported for Berberis lutea?",
       "expected_route": "refine_or_web_search",
       "action": "web_search",
-      "confidence": 0.09157236438138261,
-      "s_max_sigmoid": 0.9084276356186174,
+      "confidence": 0.09157248338121926,
+      "s_max_sigmoid": 0.9084275166187807,
       "n_docs": 10
     },
     {
@@ -38,8 +38,8 @@
       "query": "What phytochemical compounds are reported for Diplostephium tovarii?",
       "expected_route": "refine_or_web_search",
       "action": "refine",
-      "confidence": 0.3770128920255447,
-      "s_max_sigmoid": 0.43347860163294677,
+      "confidence": 0.37701278969571317,
+      "s_max_sigmoid": 0.4334785138085195,
       "n_docs": 10
     },
     {
@@ -47,8 +47,8 @@
       "query": "What phytochemical compounds are reported for Gentiana sedifolia?",
       "expected_route": "refine_or_web_search",
       "action": "web_search",
-      "confidence": 0.9328777718296541,
-      "s_max_sigmoid": 0.0671222281703459,
+      "confidence": 0.9328776076102835,
+      "s_max_sigmoid": 0.06712239238971654,
       "n_docs": 10
     },
     {
@@ -56,8 +56,8 @@
       "query": "What phytochemical compounds are reported for Junellia minima?",
       "expected_route": "refine_or_web_search",
       "action": "web_search",
-      "confidence": 0.7992859657488616,
-      "s_max_sigmoid": 0.20071403425113846,
+      "confidence": 0.7992861569937659,
+      "s_max_sigmoid": 0.20071384300623407,
       "n_docs": 10
     },
     {
@@ -65,8 +65,8 @@
       "query": "What phytochemical compounds are reported for Lepidium chichicara?",
       "expected_route": "refine_or_web_search",
       "action": "refine",
-      "confidence": 0.42117534736907575,
-      "s_max_sigmoid": 0.9897860587087416,
+      "confidence": 0.4211756103562608,
+      "s_max_sigmoid": 0.989786068350019,
       "n_docs": 10
     },
     {
@@ -74,8 +74,8 @@
       "query": "What phytochemical compounds are reported for Margiricarpus pinnatus?",
       "expected_route": "refine_or_web_search",
       "action": "web_search",
-      "confidence": 0.8486027904124653,
-      "s_max_sigmoid": 0.1513972095875347,
+      "confidence": 0.8486029741989011,
+      "s_max_sigmoid": 0.1513970258010989,
       "n_docs": 10
     },
     {
@@ -83,8 +83,8 @@
       "query": "What phytochemical compounds are reported for Senecio canescens?",
       "expected_route": "refine_or_web_search",
       "action": "accept",
-      "confidence": 0.8260915271730198,
-      "s_max_sigmoid": 0.9230313899772213,
+      "confidence": 0.8260914580868595,
+      "s_max_sigmoid": 0.9230316271132989,
       "n_docs": 10
     },
     {
@@ -92,8 +92,8 @@
       "query": "How do I configure a Kubernetes deployment for a Node.js service?",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9999792445213227,
-      "s_max_sigmoid": 2.0755478677356413e-05,
+      "confidence": 0.9999792445609097,
+      "s_max_sigmoid": 2.0755439090281957e-05,
       "n_docs": 10
     },
     {
@@ -101,8 +101,8 @@
       "query": "What is the current inflation rate in Argentina for 2026?",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9998397278160347,
-      "s_max_sigmoid": 0.00016027218396528814,
+      "confidence": 0.9998397279688576,
+      "s_max_sigmoid": 0.00016027203114239271,
       "n_docs": 10
     },
     {
@@ -110,8 +110,8 @@
       "query": "Explain the difference between quicksort and mergesort algorithms.",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.999786162414716,
-      "s_max_sigmoid": 0.0002138375852840463,
+      "confidence": 0.9997861626186036,
+      "s_max_sigmoid": 0.00021383738139633873,
       "n_docs": 10
     },
     {
@@ -119,8 +119,8 @@
       "query": "Summarise the plot of the novel Cien Anos de Soledad.",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9999702150433767,
-      "s_max_sigmoid": 2.978495662334264e-05,
+      "confidence": 0.999970215071781,
+      "s_max_sigmoid": 2.978492821905408e-05,
       "n_docs": 10
     },
     {
@@ -128,8 +128,8 @@
       "query": "What are the visa requirements for travelling from Peru to Japan?",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9970187263313829,
-      "s_max_sigmoid": 0.0029812736686170606,
+      "confidence": 0.9970187291660695,
+      "s_max_sigmoid": 0.0029812708339305265,
       "n_docs": 10
     },
     {
@@ -137,8 +137,8 @@
       "query": "How does the Fourier transform apply to audio signal processing?",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9997894960295653,
-      "s_max_sigmoid": 0.0002105039704346743,
+      "confidence": 0.9997894964309849,
+      "s_max_sigmoid": 0.00021050356901511502,
       "n_docs": 10
     },
     {
@@ -146,8 +146,8 @@
       "query": "Describe the training regime of an Olympic marathon runner.",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9999318072673069,
-      "s_max_sigmoid": 6.819273269304054e-05,
+      "confidence": 0.9999318073323361,
+      "s_max_sigmoid": 6.819266766384865e-05,
       "n_docs": 10
     },
     {
@@ -155,8 +155,8 @@
       "query": "What is the chemical composition of stainless steel 316?",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9998459036857257,
-      "s_max_sigmoid": 0.00015409631427435908,
+      "confidence": 0.9998459033918553,
+      "s_max_sigmoid": 0.00015409660814474232,
       "n_docs": 10
     },
     {
@@ -164,8 +164,8 @@
       "query": "Compare Vue and Svelte for building a modern SPA.",
       "expected_route": "web_search",
       "action": "web_search",
-      "confidence": 0.9999865724974883,
-      "s_max_sigmoid": 1.3427502511603813e-05,
+      "confidence": 0.9999865724846831,
+      "s_max_sigmoid": 1.3427515316902252e-05,
       "n_docs": 10
     },
     {
@@ -182,8 +182,8 @@
       "query": "medicinal plant peru ??? xxx antioxidant ????",
       "expected_route": "refine",
       "action": "accept",
-      "confidence": 0.955224689542401,
-      "s_max_sigmoid": 0.9900193891365732,
+      "confidence": 0.9552246992301857,
+      "s_max_sigmoid": 0.9900194032714446,
       "n_docs": 10
     },
     {
@@ -191,8 +191,8 @@
       "query": "uncaria uncaria uncaria alkaloid alkaloid",
       "expected_route": "refine",
       "action": "accept",
-      "confidence": 0.9964336330314305,
-      "s_max_sigmoid": 0.9991746607009843,
+      "confidence": 0.9964336318103639,
+      "s_max_sigmoid": 0.999174661094212,
       "n_docs": 10
     },
     {
@@ -200,8 +200,8 @@
       "query": "plant plant plant plant plant",
       "expected_route": "refine",
       "action": "web_search",
-      "confidence": 0.9377518651806678,
-      "s_max_sigmoid": 0.06224813481933221,
+      "confidence": 0.9377519626015589,
+      "s_max_sigmoid": 0.062248037398441126,
       "n_docs": 10
     },
     {
@@ -227,8 +227,8 @@
       "query": "peruvian andean andean andean andean",
       "expected_route": "refine",
       "action": "accept",
-      "confidence": 0.9345475449833219,
-      "s_max_sigmoid": 0.9899188730016104,
+      "confidence": 0.9345475841538521,
+      "s_max_sigmoid": 0.9899188539672109,
       "n_docs": 10
     },
     {
@@ -236,8 +236,8 @@
       "query": "give me the something interesting maybe",
       "expected_route": "refine",
       "action": "web_search",
-      "confidence": 0.9973947314614111,
-      "s_max_sigmoid": 0.00260526853858893,
+      "confidence": 0.9973947376566654,
+      "s_max_sigmoid": 0.002605262343334526,
       "n_docs": 10
     },
     {
@@ -245,7 +245,7 @@
       "query": "medicinal use compound activity",
       "expected_route": "refine",
       "action": "accept",
-      "confidence": 0.869691649053603,
+      "confidence": 0.8696915117729465,
       "s_max_sigmoid": 0.99632897193722,
       "n_docs": 10
     }

@@ -202,10 +202,18 @@ class SIRCAAgent:
         from scraping.web_searcher import WebSearcher
 
         query = state["current_query"]
-        searcher = WebSearcher()
+
+        async def _search_and_close():
+            searcher = WebSearcher()
+            try:
+                return await searcher.search(query, max_results=5)
+            except Exception:
+                return []
+            finally:
+                await searcher.close()
 
         try:
-            results = asyncio.run(searcher.search(query, max_results=5))
+            results = asyncio.run(_search_and_close())
         except Exception as e:
             results = []
             state.setdefault("trace", []).append({
@@ -214,8 +222,6 @@ class SIRCAAgent:
                 "duration_ms": int((time.time() - start) * 1000),
             })
             return state
-        finally:
-            asyncio.run(searcher.close())
 
         if results:
             web_context_parts = []
