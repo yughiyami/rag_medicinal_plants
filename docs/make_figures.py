@@ -114,7 +114,7 @@ def fig_cross_llm():
 
 def fig_coverage():
     metrics = ["C.Prec.", "C.Recall", "MRR", "NDCG@10"]
-    s12 = [0.475, 0.554, 0.866, 0.825]
+    s12 = [0.474, 0.548, 0.862, 0.821]
     s30 = [0.505, 0.550, 0.883, 0.879]
     x = range(len(metrics))
     w = 0.38
@@ -138,7 +138,7 @@ def fig_coverage():
 
 def fig_headline():
     metrics = ["Recall@10", "MRR", "NDCG@10", "Fidelity"]
-    vals = [0.545, 0.866, 0.818, 0.554]
+    vals = [0.548, 0.862, 0.821, 0.554]
     fig, ax = plt.subplots(figsize=(7.0, 3.8))
     bars = ax.barh(metrics[::-1], vals[::-1], color=[GREEN, BLUE, BLUE, ORANGE][::-1], height=0.6)
     ax.set_xlim(0, 1.0)

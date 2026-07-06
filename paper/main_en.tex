@@ -143,6 +143,13 @@ On the 50-query, 12-species human-verified benchmark, \sirca{} achieves a Contex
 
 Generation metrics are also solid: BERTScore F1 of $0{,}840$ (\texttt{roberta-large}), Semantic Similarity of $0{,}816$, and Answer Relevancy of $0{,}993$. The exception is Entity Coverage ($0{,}408$), which lags behind the rest. We manually inspected what was going on with the queries that scored lowest. We discovered that the generator's final step is extremely selective: it tends to mention a single compound or plant per statement (whichever has the most textual support) and ignores secondary entities that do appear in the reference paragraph. As a result, automated metrics that demand entity exhaustiveness penalize it, even though the answer is technically correct. Fidelity of $0{,}554$, in turn, reflects the effect of the 35\% lexical component: that factor deliberately penalizes paraphrasing of chemical formulas and taxonomic names to reduce the risk of pharmacological hallucination.
 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.75\linewidth]{headline_metrics.png}
+\caption{Full-pipeline headline metrics on the 50-query benchmark.}
+\label{fig:headline}
+\end{figure}
+
 \begin{table}[!ht]
 \centering
 \caption{Retrieval metrics (top-30 pool, hybrid RRF + cross-encoder, same methodology as Table~\ref{tab:full_results}) over the initial subset ($n{=}12$ human-verified species) and an extension of 30 additional species sampled from the catalog (42 unique species in total).}
@@ -152,7 +159,7 @@ Generation metrics are also solid: BERTScore F1 of $0{,}840$ (\texttt{roberta-la
 \toprule
 \textbf{Subset} & $n_{\text{spp}}$ & \textbf{MRR} & \textbf{NDCG@5} & \textbf{NDCG@10} & \textbf{C.\ Precision} & \textbf{C.\ Recall} \\
 \midrule
-Initial human-verified & 12 & $0{,}866$ & $0{,}804$ & $0{,}825$ & $0{,}475$ & $0{,}554$ \\
+Initial human-verified & 12 & $0{,}862$ & $0{,}801$ & $0{,}821$ & $0{,}474$ & $0{,}548$ \\
 Extension (30 new species) & 30 & $0{,}883$ & $0{,}854$ & $0{,}879$ & $0{,}505$ & $0{,}550$ \\
 \bottomrule
 \end{tabular}%
@@ -160,6 +167,13 @@ Extension (30 new species) & 30 & $0{,}883$ & $0{,}854$ & $0{,}879$ & $0{,}505$ 
 \end{table}
 
 \textbf{Retrieval generalization.} Table~\ref{tab:extended_retrieval} shows that retrieval quality holds up — and in fact improves slightly — when the evaluation scope is widened to 30 unseen species from the corpus: on that set MRR rises from $0{,}862$ to $0{,}883$, NDCG@10 rises from $0{,}821$ to $0{,}879$, and Context Recall stays in the same range ($0{,}548 \rightarrow 0{,}550$). We do not interpret this as evidence that the 30 new species are inherently easier, but rather as confirmation that the retrieval engine is not overfit to the 12 human-verified species subset: it generalizes to unseen data without degradation. We also verified these values are reproducible: we ran the script three times independently and got exactly the same numbers all three times, after fixing a genuine source of non-determinism in \texttt{agent/crag\_evaluator.py::\_refine\_query()} (a Python \texttt{set} truncated with \texttt{list()}, whose iteration order varies across processes due to randomized string hashing; replaced with \texttt{sorted()}). Before this fix, successive runs of this same table could differ in which queries triggered CRAG's \textsc{refine} branch.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.75\linewidth]{coverage_generalization.png}
+\caption{Retrieval generalization: quality holds up on 30 unseen species from the corpus.}
+\label{fig:coverage}
+\end{figure}
 
 \subsection{Robustness Across Multiple Models}
 \label{sec:multi_llm}
@@ -186,6 +200,13 @@ Relevancy            & $0{,}993$ & $0{,}930$ & $-0{,}062$ & Not significant ($p{
 }
 \end{table}
 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.85\linewidth]{cross_llm.png}
+\caption{Robustness to swapping the generator: Gemma-4 wins only on Fidelity; DeepSeek wins only on BERTScore F1.}
+\label{fig:cross_llm}
+\end{figure}
+
 The results show a more nuanced pattern than we anticipated: DeepSeek V4-Flash beats Gemma-4-31B on BERTScore F1 ($p{=}0{,}0005$), the only significant difference in DeepSeek's favor; Semantic Similarity, Entity Coverage, and Relevancy show no significant differences (the latter borderline, $p{=}0{,}054$). The only metric where Gemma is clearly superior is Fidelity ($p{=}0{,}0076$). We attribute this advantage to Gemma's more literal compositional style, which tends to reproduce scientific names and phrases from the context almost verbatim — which specifically benefits the lexical component (35\,\%) of our hybrid Fidelity — while on the other general-quality metrics DeepSeek's more fluent writing is not penalized. The architecturally relevant point is twofold: (i)~the \sirca{} pipeline tolerates swapping the generator without additional tuning, and (ii)~the choice of generator does matter for Fidelity specifically, not for generation quality in general. This run recorded no blank or failed answers from either model ($0/50$ each); during the process we found and fixed a separate network issue (a transient DNS resolution failure the HTTP client was not retrying), documented along with the rest of the evaluation-harness bugs in Limitation~(vii).
 
 \subsection{Cross-Validation}
@@ -208,10 +229,17 @@ What is interesting here is the raw gap in the numbers. The judge averaged high 
 \texttt{dense\_only}$^\dagger$ & 0{,}474 & 0{,}548 & 0{,}862 & 0{,}821 & n/a & n/a \\
 \texttt{sparse\_only}   & \textbf{0{,}506} & 0{,}568 & \underline{0{,}828} & \underline{0{,}811} & n/a & n/a \\
 \texttt{no\_reranker}   & \underline{0{,}456} & \underline{0{,}504} & \textbf{0{,}889} & 0{,}812 & \underline{0{,}526} & $-5{,}0\%$ \\
-\texttt{no\_crag}       & 0{,}496 & 0{,}573 & \textbf{0{,}889} & \textbf{0{,}857} & n/a & n/a \\
+\texttt{no\_crag}       & 0{,}496 & \textbf{0{,}573} & \textbf{0{,}889} & \textbf{0{,}857} & n/a & n/a \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.7\linewidth]{ablation_fidelity.png}
+\caption{Fidelity \texttt{full} vs.\ \texttt{no\_reranker}: the direction is consistent, but the final run does not reach conventional significance ($p{=}0{,}160$).}
+\label{fig:ablation_fidelity}
+\end{figure}
 
 \subsection{Findings from Taking the System Apart}
 
@@ -270,6 +298,13 @@ Total (in-domain \emph{benchmark}) & 50 & 35 & 5 & 10 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.85\linewidth]{crag_routing.png}
+\caption{Validation of CRAG's corrective branches on 27 out-of-distribution queries.}
+\label{fig:crag_routing}
+\end{figure}
 
 The observed behavior matched theoretical expectations. Faced with off-topic subjects, the system redirected to external search $100\%$ of the time. When asked about plants absent from the corpus, in $8$ of $9$ attempts it requested reformulating the premise or reached out to the internet. There was a single bypass with \textit{Senecio canescens}, caused by the engine retrieving data from phylogenetically related taxa. On the in-domain benchmark itself (50 queries), the absolute calibration does not always yield \textsc{accept}: $35/50$ route to \textsc{accept}, $5/50$ to \textsc{refine}, and $10/50$ to \textsc{web\_search}. We interpret these $15$ corrective activations as correct behavior rather than false negatives: they are disproportionately concentrated in \textit{exploratory} and \textit{comparative} queries ($12/15$, $80\%$, versus $51\%$ among accepted queries), categories that by design call for synthesis across multiple sources rather than a single fact, and are therefore more prone to genuinely ambiguous retrieval. We prefer the system to declare uncertainty in those cases rather than fabricate an answer. In short, we empirically demonstrate that the redirection mechanism works successfully and that, by replacing intra-batch normalization with absolute sigmoid calibration, the corrective route activates both on out-of-distribution inputs and on low-confidence in-domain queries — the previous normalization bug had suppressed this second case, making it indistinguishable from nominal behavior.
 

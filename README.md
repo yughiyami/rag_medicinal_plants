@@ -16,9 +16,9 @@ Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 
 | Metric | Score | Note |
 |---|---|---|
-| Context Recall@10 | **0.545** | not compared numerically against prior work — the closest related Spanish-language system (Collanqui et al.) evaluates a single-document, k=1-retrieval setup too different from ours for a valid comparison |
-| MRR | **0.866** | most relevant doc at rank 1–2 on the large majority of queries |
-| NDCG@10 | **0.818** | |
+| Context Recall@10 | **0.548** | not compared numerically against prior work — the closest related Spanish-language system (Collanqui et al.) evaluates a single-document, k=1-retrieval setup too different from ours for a valid comparison |
+| MRR | **0.862** | most relevant doc at rank 1–2 on the large majority of queries |
+| NDCG@10 | **0.821** | |
 | BERTScore F1 (`roberta-large`) | **0.840** | |
 | Fidelity (hybrid 65% semantic / 35% lexical) | **0.554** | conservative by design to suppress pharmacological drift |
 
