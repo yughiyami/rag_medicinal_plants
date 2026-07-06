@@ -35,3 +35,12 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Claude Code internal tooling cache
+.atl/
+
+# LaTeX build artifacts (main.pdf is committed; these are regenerable)
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
