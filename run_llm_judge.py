@@ -2,10 +2,18 @@
 LLM-as-judge grounding validation (reviewer O7).
 
 Consumes results/multi_llm_answers.json (produced by run_multi_llm_bench.py)
-and asks Cerebras Gemma-4-31B to score each DeepSeek answer on a strict
-0-4 grounding rubric against the retrieved context, independently of the
-reference answer. Correlates the LLM-judge score with the automatic
-Fidelity metric to validate the construct.
+and asks Cerebras Gemma-4-31B to score each DeepSeek answer's grounding
+against the retrieved context, independently of the reference answer.
+Correlates the LLM-judge score with the automatic Fidelity metric to
+validate the construct.
+
+Rubric v2 (claim-level, continuous): the original v1 rubric asked for a
+single holistic 0-4 integer score and produced 43/50 perfect scores (86%),
+a ceiling effect that mechanically suppresses correlation with a continuous
+metric regardless of whether the construct is valid. v2 instead asks the
+judge to enumerate the answer's factual claims and grade each one, reporting
+a continuous 0-100 score = grounded_claims / total_claims. This gives the
+judge room to express partial grounding instead of collapsing to "perfect."
 """
 import json
 import os
@@ -24,17 +32,17 @@ from evaluation.metrics import faithfulness
 CEREBRAS_KEY = os.environ.get("CEREBRAS_API_KEY", "")
 
 
-JUDGE_PROMPT = """You are an evaluator scoring how well an ANSWER is grounded in the provided CONTEXT.
+JUDGE_PROMPT = """You are an evaluator checking whether an ANSWER's factual claims are grounded in the provided CONTEXT.
 
-Score using this rubric (0 to 4, integer only):
-  4 = Fully grounded. Every factual claim in the ANSWER is directly supported by explicit statements in the CONTEXT. No paraphrase drift on scientific names, compound names, concentrations, or mechanisms.
-  3 = Mostly grounded. Almost every claim is supported; at most one minor paraphrase or omission of a supporting citation.
-  2 = Partially grounded. Some claims supported, but at least one significant claim (compound, mechanism, effect) is unsupported or drifts from the context.
-  1 = Weakly grounded. Most claims are unsupported or generic; the answer looks LLM-general rather than context-derived.
-  0 = Not grounded. The answer fabricates content the context does not support, contradicts the context, or is off-topic.
+Steps:
+1. Break the ANSWER down into its individual factual claims (a claim = one discrete assertion: a compound name, a mechanism, an effect, a species relationship, a numeric value, an absence-of-information statement, etc.). A short answer may have as few as 1-2 claims; a longer one may have 5+.
+2. For each claim, judge independently whether it is directly supported by explicit statements in the CONTEXT (grounded) or not (fabricated, contradicted, off-topic, or drifting from what the CONTEXT actually says).
+3. Count total_claims and grounded_claims.
+
+Be strict: paraphrasing a scientific name, compound, concentration, or mechanism in a way that changes its meaning counts as NOT grounded, even if the general topic is right.
 
 Respond in EXACTLY this JSON format on a single line and nothing else:
-{"score": <0-4>, "reason": "<one sentence>"}
+{"total_claims": <int>, "grounded_claims": <int>, "reason": "<one sentence citing the weakest claim, or 'all claims grounded'>"}
 
 CONTEXT:
 {context}
@@ -82,25 +90,31 @@ def call_cerebras_judge(context: str, answer: str, max_tokens: int = 200):
                 delay = min(delay * 2, 60)
                 continue
             raise
+        except (urllib.error.URLError, ConnectionError, TimeoutError, OSError) as e:
+            # Transient network/DNS failures raise URLError, not HTTPError --
+            # the branch above never caught these (same gap found and fixed
+            # in run_multi_llm_bench.py's _post_json).
+            last_err = e
+            time.sleep(delay)
+            delay = min(delay * 2, 60)
+            continue
     raise last_err
 
 
-def _parse_score(text: str) -> tuple[int, str]:
+def _parse_score(text: str) -> tuple[float, int, int, str]:
+    """Returns (score_0_1, total_claims, grounded_claims, reason). score is -1 on parse failure."""
     for line in text.splitlines():
         line = line.strip()
         if line.startswith("{") and line.endswith("}"):
             try:
                 d = json.loads(line)
-                s = int(d.get("score", -1))
-                if 0 <= s <= 4:
-                    return s, str(d.get("reason", ""))
+                total = int(d.get("total_claims", -1))
+                grounded = int(d.get("grounded_claims", -1))
+                if total > 0 and 0 <= grounded <= total:
+                    return grounded / total, total, grounded, str(d.get("reason", ""))
             except Exception:
                 continue
-    # Fallback: extract first digit 0-4
-    for c in text:
-        if c in "01234":
-            return int(c), text[:120]
-    return -1, text[:120]
+    return -1.0, 0, 0, text[:120]
 
 
 def main():
@@ -123,22 +137,26 @@ def main():
         ctx = rec.get("context", "")
         try:
             raw = call_cerebras_judge(ctx, ans_ds)
-            score, reason = _parse_score(raw)
+            score, total, grounded, reason = _parse_score(raw)
         except Exception as e:
-            raw, score, reason = f"ERR: {e}", -1, str(e)
+            raw, score, total, grounded, reason = f"ERR: {e}", -1.0, 0, 0, str(e)
         judged.append({
             "query": rec["query"],
             "category": rec.get("category", ""),
             "answer": ans_ds,
             "judge_raw": raw,
             "judge_score": score,
+            "judge_total_claims": total,
+            "judge_grounded_claims": grounded,
             "judge_reason": reason,
         })
-        scores.append(score if score >= 0 else 0)
-        print(f"  [{i:02d}] score={score}  reason={reason[:80]}")
+        scores.append(score)
+        print(f"  [{i:02d}] score={score:.2f} ({grounded}/{total} claims)  reason={reason[:70]}")
         time.sleep(2.0)  # pace to respect Cerebras per-second limits
 
     print(f"\nJudged in {time.time()-t0:.1f}s")
+    n_perfect = sum(1 for s in scores if s == 1.0)
+    print(f"Perfect scores (1.0): {n_perfect}/{len(scores)} ({100*n_perfect/len(scores):.0f}%)")
 
     # Correlate with automatic Fidelity
     print("\n" + "=" * 70)
@@ -151,7 +169,7 @@ def main():
     fid_per_query = ff.details.get("per_sample", [])
     valid = [(s, f) for s, f in zip(scores, fid_per_query) if s >= 0]
     if valid:
-        s_arr = np.array([v[0] for v in valid], dtype=float) / 4.0  # normalize 0-1
+        s_arr = np.array([v[0] for v in valid], dtype=float)  # already 0-1
         f_arr = np.array([v[1] for v in valid], dtype=float)
         pear = pearsonr(s_arr, f_arr)
         spear = spearmanr(s_arr, f_arr)

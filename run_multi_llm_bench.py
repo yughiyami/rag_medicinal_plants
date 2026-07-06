@@ -31,7 +31,6 @@ from evaluation.metrics import (
     answer_relevancy,
 )
 from retrieval.hybrid import HybridRetriever
-from agent.query_classifier import classify_query
 from generation.grounded_generator import SYSTEM_PROMPT, CONTEXT_TEMPLATE
 
 DEEPSEEK_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
@@ -59,6 +58,16 @@ def _post_json(url, headers, payload, timeout=120, max_retries=5):
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503, 504) and attempt < max_retries - 1:
+                time.sleep(delay)
+                delay = min(delay * 2, 30)
+                continue
+            raise
+        except (urllib.error.URLError, ConnectionError, TimeoutError, OSError) as e:
+            # Transient network/DNS failures (e.g. "getaddrinfo failed") raise
+            # URLError, not HTTPError -- the branch above never catches these,
+            # so a single DNS blip used to permanently fail that query instead
+            # of retrying (seen as 19/50 blank [ERROR] answers in one run).
+            if attempt < max_retries - 1:
                 time.sleep(delay)
                 delay = min(delay * 2, 30)
                 continue
@@ -144,23 +153,12 @@ def build_prompt(query: str, context_docs, citations):
 
 def _retrieve_context(retriever, query):
     # Replicate the agent's _node_retrieve EXACTLY so the LLM context (and hence
-    # Fidelity) matches the primary ablation (Table 4): classifier alpha, then
-    # retrieve_with_context(top_k=RERANK_TOP_K=10) using full chunk content.
+    # Fidelity) matches the primary ablation (Table 4): retrieve_with_context
+    # at the retriever's default alpha (top_k=RERANK_TOP_K=10, full chunk content).
     from config.settings import RERANK_TOP_K
 
-    original_alpha = retriever.alpha
-    cls = classify_query(query)
-    if cls.alpha_override is not None:
-        retriever.alpha = cls.alpha_override
-
     rc = retriever.retrieve_with_context(query, top_k=RERANK_TOP_K)
-    context_str = rc["context"]
-    citations = rc["citations"]
-    # retrieval-metric docs (same call the agent stores as retrieval_results)
-    docs = retriever.retrieve(query, top_k=30, rerank_top_k=RERANK_TOP_K)
-
-    retriever.alpha = original_alpha
-    return docs, docs[:RERANK_TOP_K], context_str, citations
+    return rc["context"], rc["citations"]
 
 
 def main():
@@ -179,37 +177,13 @@ def main():
     labels = {"deepseek": "DeepSeek V4 Flash", "cerebras": "Cerebras Gemma-4-31B"}
 
     all_records = []
-    per_llm = {name: {"answers": [], "contexts": [], "queries": [],
-                       "references": [], "retrieved": [], "relevant": []}
+    per_llm = {name: {"answers": [], "contexts": [], "queries": [], "references": []}
                for name in llm_calls}
 
     t0 = time.time()
     for i, tc in enumerate(BENCHMARK_SET, 1):
         print(f"\n[{i:02d}/{len(BENCHMARK_SET)}] {tc.query[:70]}")
-        docs, top5, context_str, citations = _retrieve_context(retriever, tc.query)
-
-        pool_ids = [int(d.get("index", -1)) for d in docs]
-        retrieved_ids = [int(d.get("index", -1)) for d in top5]
-
-        relevant_pool_ids = set()
-        for d, cid in zip(docs, pool_ids):
-            meta = d.get("metadata") or {}
-            species_meta = set(s.lower() for s in (meta.get("species") or []))
-            text = (d.get("content") or "").lower()
-            for sp in tc.relevant_species:
-                if sp.lower() in species_meta or sp.lower() in text:
-                    relevant_pool_ids.add(cid)
-                    break
-
-        id_to_idx = {cid: j for j, cid in enumerate(pool_ids)}
-        for cid in retrieved_ids:
-            if cid not in id_to_idx:
-                id_to_idx[cid] = len(id_to_idx)
-        retrieved_idx = [id_to_idx[cid] for cid in retrieved_ids]
-        relevant_idx = set(id_to_idx[cid] for cid in relevant_pool_ids)
-        if not relevant_idx and retrieved_idx:
-            relevant_idx.add(retrieved_idx[0])
-
+        context_str, citations = _retrieve_context(retriever, tc.query)
         prompt = build_prompt(tc.query, context_str, citations)
 
         record = {"query": tc.query, "reference": tc.reference_answer,
@@ -230,8 +204,6 @@ def main():
             per_llm[name]["contexts"].append(context_str)
             per_llm[name]["queries"].append(tc.query)
             per_llm[name]["references"].append(tc.reference_answer)
-            per_llm[name]["retrieved"].append(retrieved_idx)
-            per_llm[name]["relevant"].append(relevant_idx)
             preview = ans[:80].replace(chr(10), " ")
             print(("  %-9s: %s..." % (name, preview)).encode("ascii", "replace").decode("ascii"))
 

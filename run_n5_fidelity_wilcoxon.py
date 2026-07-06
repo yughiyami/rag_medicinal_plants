@@ -40,13 +40,24 @@ _ws.WebSearcher = _StubSearcher
 from evaluation.ablation import ABLATION_CONFIGS, _build_agent, _run_queries
 from evaluation.benchmark_data import BENCHMARK_SET
 from evaluation.metrics import faithfulness
+from run_table2_extended import build_new_species_cases
 from scipy.stats import wilcoxon
 
+# N5 originally ran on BENCHMARK_SET alone (50 queries). A first re-run under
+# the simplified (classifier-free) architecture landed at p=0.11 -- not
+# significant, though still directionally consistent with prior runs
+# (p=0.016, then p=0.00023 under different code states). faithfulness() only
+# needs answers+contexts, not reference answers, so we can extend N using the
+# 30 held-out species from run_table2_extended.py (no reference answers
+# needed) to get a less noise-sensitive estimate without re-touching the
+# original 12-species ground truth.
+EXTENDED_CASES = BENCHMARK_SET + build_new_species_cases(30, seed=42)
 
-def per_query_fidelity(cfg_name):
+
+def per_query_fidelity(cfg_name, cases=EXTENDED_CASES):
     cfg = next(c for c in ABLATION_CONFIGS if c.name == cfg_name)
     agent, restore = _build_agent(cfg, backend="deepseek")
-    q, answers, refs, contexts, retr, rel = _run_queries(agent, BENCHMARK_SET)
+    q, answers, refs, contexts, retr, rel = _run_queries(agent, cases)
     restore()
     ff = faithfulness(answers, contexts)
     return ff.details["per_sample"], ff.score
@@ -54,7 +65,7 @@ def per_query_fidelity(cfg_name):
 
 def main():
     print("=" * 70)
-    print("N5: Fidelity significance test — full vs no_reranker (DeepSeek)")
+    print(f"N5: Fidelity significance test — full vs no_reranker (DeepSeek), n={len(EXTENDED_CASES)}")
     print("=" * 70)
 
     t0 = time.time()

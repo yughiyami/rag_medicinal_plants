@@ -200,12 +200,15 @@ def entity_recall(
     contexts: list[str] | None = None,
 ) -> EvalResult:
     """
-    Entity recall: fraction of scientific entities from reference+context found in answer.
-    Uses union of reference entities and context entities (if provided).
+    Entity recall: fraction of scientific entities from the reference found in the answer.
+    The `contexts` parameter is accepted for interface consistency with other
+    metrics but is not used in scoring -- this measures whether the ANSWER
+    itself surfaces the reference entities, not whether they merely appear
+    somewhere in the retrieved context.
     Scoring: entities found in answer / entities in reference.
     """
     recalls = []
-    for i, (answer, reference) in enumerate(zip(answers, references)):
+    for answer, reference in zip(answers, references):
         ref_entities = set(m.group().lower() for m in ENTITY_PATTERN.finditer(reference))
         for entity in KNOWN_ENTITIES:
             if entity.lower() in reference.lower():
@@ -216,9 +219,6 @@ def entity_recall(
             continue
 
         ans_lower = answer.lower()
-        ctx_lower = contexts[i].lower() if contexts else ""
-        combined = ans_lower + " " + ctx_lower
-
         hits = sum(1 for e in ref_entities if e in ans_lower)
         recalls.append(hits / len(ref_entities))
 
