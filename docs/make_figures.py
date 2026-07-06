@@ -30,22 +30,22 @@ plt.rcParams.update({
 
 
 def fig_ablation_fidelity():
-    # From results/n5_fidelity_wilcoxon.json (fixed CRAG evaluator, DeepSeek)
+    # From results/n5_fidelity_wilcoxon.json (fixed CRAG evaluator + fixed agent alpha, DeepSeek)
     cfgs = ["full", "no_reranker"]
-    fid = [0.534, 0.467]
+    fid = [0.566, 0.465]
     colors = [GREEN, RED]
     fig, ax = plt.subplots(figsize=(6.0, 4.2))
     bars = ax.bar(cfgs, fid, color=colors, width=0.5)
     ax.set_ylim(0.40, 0.60)
     ax.set_ylabel("Fidelity (hybrid 65/35)")
     ax.set_title("Reranker → Fidelity: paired Wilcoxon on 50 queries\n"
-                 "-12.6% relative when removing the cross-encoder, p=0.016")
+                 "-17.8% relative when removing the cross-encoder, p=0.00023")
     for b, v in zip(bars, fid):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.005, f"{v:.3f}",
                 ha="center", va="bottom", fontsize=11, fontweight="bold")
-    ax.annotate("", xy=(1, 0.475), xytext=(0, 0.545),
+    ax.annotate("", xy=(1, 0.475), xytext=(0, 0.556),
                 arrowprops=dict(arrowstyle="->", color=RED, lw=1.6))
-    ax.text(0.5, 0.51, "-12.6%\np=0.016", ha="center", va="center",
+    ax.text(0.5, 0.515, "-17.8%\np=0.00023", ha="center", va="center",
             color=RED, fontsize=11, fontweight="bold",
             bbox=dict(facecolor="white", edgecolor=RED, lw=0.8))
     plt.xticks(rotation=18, ha="right")
@@ -86,8 +86,8 @@ def fig_crag_routing():
 def fig_cross_llm():
     # From results/multi_llm_metrics.json + results/multi_llm_ttests.json
     metrics = ["BERTScore F1", "Sem. Sim.", "Entity Recall", "Answer Rel.", "Fidelity"]
-    deepseek = [0.705, 0.802, 0.339, 0.819, 0.441]
-    gemma = [0.827, 0.773, 0.385, 0.963, 0.641]
+    deepseek = [0.841, 0.852, 0.402, 0.998, 0.517]
+    gemma = [0.830, 0.789, 0.386, 0.988, 0.609]
     sig = [True, False, False, True, True]  # paired t-test, alpha=0.05
     x = range(len(metrics))
     w = 0.38
@@ -99,7 +99,7 @@ def fig_cross_llm():
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Score")
     ax.set_title("Cross-LLM robustness (same pipeline, 50 queries)\n"
-                 "Gemma-4 wins on Fidelity, BERTScore, Answer Relevancy (paired t-test)")
+                 "Gemma-4 wins only on Fidelity; DeepSeek wins BERTScore & Answer Relevancy")
     for i, s in enumerate(sig):
         if s:
             ax.text(i, max(deepseek[i], gemma[i]) + 0.03, "*", ha="center",
@@ -112,8 +112,8 @@ def fig_cross_llm():
 
 def fig_coverage():
     metrics = ["C.Prec.", "C.Recall", "MRR", "NDCG@10"]
-    s12 = [0.488, 0.568, 0.873, 0.845]
-    s30 = [0.472, 0.517, 0.850, 0.846]
+    s12 = [0.415, 0.492, 0.837, 0.750]
+    s30 = [0.463, 0.535, 0.870, 0.841]
     x = range(len(metrics))
     w = 0.38
     fig, ax = plt.subplots(figsize=(7.5, 4.2))
@@ -136,7 +136,7 @@ def fig_coverage():
 
 def fig_headline():
     metrics = ["Recall@10", "MRR", "NDCG@10", "Fidelity"]
-    vals = [0.568, 0.873, 0.845, 0.611]
+    vals = [0.492, 0.837, 0.750, 0.566]
     fig, ax = plt.subplots(figsize=(7.0, 3.8))
     bars = ax.barh(metrics[::-1], vals[::-1], color=[GREEN, BLUE, BLUE, ORANGE][::-1], height=0.6)
     ax.set_xlim(0, 1.0)

@@ -16,11 +16,11 @@ Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 
 | Metric | Score | Note |
 |---|---|---|
-| Context Recall@10 | **0.568** | +36.2% relative over the closest published Spanish-RAG baseline (Context Recall only) |
-| MRR | **0.873** | most relevant doc at rank 1–2 on virtually every query |
-| NDCG@10 | **0.845** | |
-| BERTScore F1 (`roberta-large`) | **0.844** | |
-| Fidelity (hybrid 65% semantic / 35% lexical) | **0.611** | conservative by design to suppress pharmacological drift |
+| Context Recall@10 | **0.492** | +18.0% relative over the closest published Spanish-RAG baseline (Context Recall only) |
+| MRR | **0.837** | most relevant doc at rank 1–2 on the large majority of queries |
+| NDCG@10 | **0.750** | |
+| BERTScore F1 (`roberta-large`) | **0.841** | |
+| Fidelity (hybrid 65% semantic / 35% lexical) | **0.566** | conservative by design to suppress pharmacological drift |
 
 ---
 
@@ -28,7 +28,7 @@ Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 
 ### 1. The cross-encoder reranker is the fidelity guardian
 
-Six-configuration ablation. Removing the reranker causes the largest Fidelity drop (−13.4%), and a paired **Wilcoxon signed-rank test confirms the effect is significant (p = 0.036)** — unlike the retrieval-metric differences, which are statistically equivalent across configs.
+Six-configuration ablation. Removing the reranker causes the largest Fidelity drop (−17.8% relative), and a paired **Wilcoxon signed-rank test confirms the effect is significant (p = 0.00023)**. Retrieval-side metrics tell a more nuanced story: `dense_only` is genuinely invariant to the reranker (0 differing queries out of 50), but disabling the query classifier (`no_classifier`) significantly *improves* measured retrieval (p < 0.01 on 3/4 metrics) — a fixed α outperforms the per-category α the classifier assigns.
 
 ![Ablation Fidelity](docs/images/ablation_fidelity.png)
 
@@ -40,13 +40,13 @@ The default within-batch (min-max) score normalization makes the CRAG threshold 
 
 ### 3. Robust to the choice of generator LLM
 
-Re-running the full pipeline with a second generator (Cerebras Gemma-4-31B) on the same 50 queries: only **Fidelity** differs significantly (paired t-test, p < 0.001) — Gemma is more literal and preserves source wording. Every other generation metric is statistically indistinguishable, so the architecture's conclusions are not an artifact of one model.
+Re-running the full pipeline with a second generator (Cerebras Gemma-4-31B) on the same 50 queries: Gemma wins only on **Fidelity** (paired t-test, p < 0.001) — its more literal, verbatim-preserving style specifically helps the lexical-overlap component. DeepSeek actually wins on BERTScore F1 (p = 0.005) and Answer Relevancy (p = 0.042); Semantic Similarity and Entity Recall show no significant difference. The pipeline's conclusions are not an artifact of one model, but the choice of generator does matter for Fidelity specifically.
 
 ![Cross-LLM](docs/images/cross_llm.png)
 
 ### 4. Retrieval generalizes beyond the evaluation slice
 
-Extending the retrieval evaluation from 12 human-verified species to 30 additional stratified species (42 unique species total) keeps metrics in the same range — the retriever is not overfit to the benchmark subset.
+Extending the retrieval evaluation from 12 human-verified species to 30 additional stratified species (42 unique species total) holds up — metrics on the new species are at least as good as on the original 12 (MRR 0.837→0.870, Context Recall 0.492→0.535) — the retriever is not overfit to the benchmark subset.
 
 ![Coverage generalization](docs/images/coverage_generalization.png)
 
