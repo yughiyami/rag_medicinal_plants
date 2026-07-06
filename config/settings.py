@@ -902,7 +902,7 @@ RERANK_TOP_K = 10      # Plan A: was 5. More survivors → higher Recall@k.
 HYBRID_ALPHA = 0.6  # weight for dense retrieval (1-alpha for BM25)
 
 GENERATOR_MODEL = "Qwen/Qwen2.5-7B-Instruct"
-MAX_NEW_TOKENS = 512
+MAX_NEW_TOKENS = 4000
 TEMPERATURE = 0.0
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
