@@ -16,7 +16,7 @@ Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 
 | Metric | Score | Note |
 |---|---|---|
-| Context Recall@10 | **0.492** | +18.0% relative over the closest published Spanish-RAG baseline (Context Recall only) |
+| Context Recall@10 | **0.492** | not compared numerically against prior work — the closest related Spanish-language system (Collanqui et al.) evaluates a single-document, k=1-retrieval setup too different from ours for a valid comparison |
 | MRR | **0.837** | most relevant doc at rank 1–2 on the large majority of queries |
 | NDCG@10 | **0.750** | |
 | BERTScore F1 (`roberta-large`) | **0.841** | |
