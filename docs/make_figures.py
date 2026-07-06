@@ -30,22 +30,24 @@ plt.rcParams.update({
 
 
 def fig_ablation_fidelity():
-    # From results/n5_fidelity_wilcoxon.json (simplified flat-alpha agent, DeepSeek, n=80)
+    # From results/n5_fidelity_wilcoxon.json (final run, fully bug-fixed agent, DeepSeek, n=80).
+    # Direction (full > no_reranker) held in 5/5 runs across the debugging session, but the
+    # Wilcoxon p-value ranged from 0.00023 to 0.160 run-to-run; this final run is NOT significant.
     cfgs = ["full", "no_reranker"]
-    fid = [0.562, 0.514]
+    fid = [0.554, 0.526]
     colors = [GREEN, RED]
     fig, ax = plt.subplots(figsize=(6.0, 4.2))
     bars = ax.bar(cfgs, fid, color=colors, width=0.5)
     ax.set_ylim(0.40, 0.60)
     ax.set_ylabel("Fidelity (hybrid 65/35)")
     ax.set_title("Reranker → Fidelity: paired Wilcoxon on n=80 queries\n"
-                 "-8.5% relative when removing the cross-encoder, p=0.028")
+                 "-5.0% relative when removing the cross-encoder, p=0.160 (not significant)")
     for b, v in zip(bars, fid):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.005, f"{v:.3f}",
                 ha="center", va="bottom", fontsize=11, fontweight="bold")
-    ax.annotate("", xy=(1, 0.520), xytext=(0, 0.556),
+    ax.annotate("", xy=(1, 0.531), xytext=(0, 0.549),
                 arrowprops=dict(arrowstyle="->", color=RED, lw=1.6))
-    ax.text(0.5, 0.542, "-8.5%\np=0.028", ha="center", va="center",
+    ax.text(0.5, 0.542, "-5.0%\np=0.160 (n.s.)", ha="center", va="center",
             color=RED, fontsize=11, fontweight="bold",
             bbox=dict(facecolor="white", edgecolor=RED, lw=0.8))
     plt.xticks(rotation=18, ha="right")
@@ -136,7 +138,7 @@ def fig_coverage():
 
 def fig_headline():
     metrics = ["Recall@10", "MRR", "NDCG@10", "Fidelity"]
-    vals = [0.545, 0.866, 0.818, 0.562]
+    vals = [0.545, 0.866, 0.818, 0.554]
     fig, ax = plt.subplots(figsize=(7.0, 3.8))
     bars = ax.barh(metrics[::-1], vals[::-1], color=[GREEN, BLUE, BLUE, ORANGE][::-1], height=0.6)
     ax.set_xlim(0, 1.0)

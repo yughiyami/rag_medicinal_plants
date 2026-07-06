@@ -20,15 +20,15 @@ Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 | MRR | **0.866** | most relevant doc at rank 1–2 on the large majority of queries |
 | NDCG@10 | **0.818** | |
 | BERTScore F1 (`roberta-large`) | **0.840** | |
-| Fidelity (hybrid 65% semantic / 35% lexical) | **0.562** | conservative by design to suppress pharmacological drift |
+| Fidelity (hybrid 65% semantic / 35% lexical) | **0.554** | conservative by design to suppress pharmacological drift |
 
 ---
 
 ## What the experiments actually show
 
-### 1. The cross-encoder reranker protects Fidelity
+### 1. The cross-encoder reranker directionally helps Fidelity — but not to a statistically robust degree
 
-Five-configuration ablation. Removing the reranker causes the largest Fidelity drop (−8.5% relative), and a paired **Wilcoxon signed-rank test confirms the effect is significant (p = 0.028, n=80)** — the effect only reached stable significance once we extended the sample from 50 to 80 queries (the 50-query run alone landed at p=0.110, not significant; see "Notes on reproducibility" below). At the retrieval-metric level, all five configurations are statistically equivalent to `full` (no p-value below 0.05) — `dense_only` is exactly invariant to the reranker (0 differing queries out of 50), confirmed as genuine (not a benchmark artifact) via a held-out α sweep that also led us to remove the query classifier's per-category retrieval weighting: it did not beat a flat α even when properly tuned on held-out data.
+Five-configuration ablation. Removing the reranker causes a Fidelity drop, and `full` beat `no_reranker` in **every one of 5 independent re-runs** of this specific test performed during this work (0.534>0.467, 0.566>0.465, 0.517>0.469, 0.562>0.514, 0.554>0.526 — see "Notes on reproducibility" below for the full history). The direction is consistent; **formal statistical significance is not** — the paired Wilcoxon signed-rank p-value ranged from 0.00023 to 0.160 across those 5 runs, including two runs at n=80 giving p=0.028 and p=0.160. The final run, on the fully bug-fixed pipeline, gives **−5.0% relative (0.554→0.526), p=0.160 two-sided / p=0.080 one-sided — not significant at α=0.05**. We report this as a directionally consistent but not robustly significant finding rather than picking the most favorable run. At the retrieval-metric level, all five configurations are statistically equivalent to `full` (no p-value below 0.05) — `dense_only` is exactly invariant to the reranker (0 differing queries out of 50), confirmed as genuine (not a benchmark artifact) via a held-out α sweep that also led us to remove the query classifier's per-category retrieval weighting: it did not beat a flat α even when properly tuned on held-out data.
 
 ![Ablation Fidelity](docs/images/ablation_fidelity.png)
 
@@ -116,6 +116,16 @@ run_*.py      reviewer-response experiment runners
 
 ## Notes on reproducibility
 
-Generation-side metrics depend on a commercial API model (`deepseek-v4-flash`) that is not version-frozen; absolute generation scores can drift between runs. The **direction** of the findings reported here (reranker → Fidelity, cross-LLM comparison, CRAG routing) held stable across every re-run performed during this work — but **formal statistical significance did not**: the reranker→Fidelity Wilcoxon test gave p=0.016, then p=0.00023, then p=0.110 across three successive runs (50 queries each), and only stabilized at p=0.028 once the sample was extended to n=80. We report this instability explicitly rather than picking the run that looks best — it indicates n=50 is close to the statistical-power limit for that specific comparison. Absolute generation values should be read as of the experiment date rather than as fixed constants.
+Generation-side metrics depend on a commercial API model (`deepseek-v4-flash`) that is not version-frozen; absolute generation scores can drift between runs. The **direction** of the findings reported here (reranker → Fidelity, cross-LLM comparison, CRAG routing) held stable across every re-run performed during this work — but **formal statistical significance did not**. Across the full debugging session, the reranker→Fidelity Wilcoxon test was run 5 times, each time on a codebase where at least one real bug had just been fixed:
 
-Two evaluation-harness bugs were found and fixed during this work, both worth knowing about if you extend this code: (1) `evaluation/metrics.py`'s `faithfulness()` details key is `per_sample`, not `per_query` — a mismatch silently zeroed out the LLM-judge correlation in an earlier version of `run_llm_judge.py`; (2) HTTP clients here retry on HTTP-level errors (429/5xx) but transient DNS/socket failures raise `URLError`, which used to bypass retry entirely and silently corrupt aggregate metrics (19/50 blank answers in one run) — both `run_multi_llm_bench.py` and `run_llm_judge.py` now retry on `URLError` too.
+| Run | full | no_reranker | Δ relative | n | p (two-sided) |
+|---|---|---|---|---|---|
+| 1 | 0.534 | 0.467 | −12.6% | 50 | 0.016 |
+| 2 | 0.566 | 0.465 | −17.8% | 50 | 0.00023 |
+| 3 | 0.517 | 0.469 | −9.2% | 50 | 0.110 |
+| 4 | 0.562 | 0.514 | −8.5% | 80 | 0.028 |
+| 5 (final, fully bug-fixed) | 0.554 | 0.526 | −5.0% | 80 | 0.160 |
+
+Extending the sample from 50 to 80 queries did **not** stabilize the result — the same n=80 test gave both a significant (run 4) and a non-significant (run 5) p-value depending on which bugs were still present in the code (an `alpha`-restore-order bug in `agent/graph.py`, an unvalidated per-category classifier weighting, and a hash-randomization non-determinism bug in `agent/crag_evaluator.py::_refine_query()` — see below). We report this instability explicitly, using the final, fully-corrected run (5) as authoritative, rather than picking the run that looks best: the reranker's benefit to Fidelity should be read as a **consistent directional signal (5/5 runs), not a statistically confirmed effect**. Absolute generation values should be read as of the experiment date rather than as fixed constants.
+
+Three evaluation-harness bugs were found and fixed during this work, all worth knowing about if you extend this code: (1) `evaluation/metrics.py`'s `faithfulness()` details key is `per_sample`, not `per_query` — a mismatch silently zeroed out the LLM-judge correlation in an earlier version of `run_llm_judge.py`; (2) HTTP clients here retry on HTTP-level errors (429/5xx) but transient DNS/socket failures raise `URLError`, which used to bypass retry entirely and silently corrupt aggregate metrics (19/50 blank answers in one run) — both `run_multi_llm_bench.py` and `run_llm_judge.py` now retry on `URLError` too; (3) `agent/crag_evaluator.py::_refine_query()` truncated a `set()` of expansion terms with `list(set())[:4]` — Python randomizes string hashing per process, so which terms survived the truncation (and thus the refined query fed into corrective re-retrieval) varied across separate runs. Fixed with `sorted(set())[:4]`. This is very likely a real contributor to the p-value instability documented above.
