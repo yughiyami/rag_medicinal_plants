@@ -253,4 +253,5 @@ class HybridRetriever:
             "context": "\n\n".join(context_parts),
             "citations": citations,
             "num_results": len(results),
+            "results": results,
         }

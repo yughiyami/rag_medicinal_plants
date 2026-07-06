@@ -127,7 +127,11 @@ class SIRCAAgent:
         if alpha_override is not None:
             self._retriever.alpha = original_alpha
 
-        state["retrieval_results"] = self._retriever.retrieve(query, rerank_top_k=RERANK_TOP_K)
+        # Reuse the results retrieve_with_context already computed under the
+        # active alpha (classifier override or ablation-fixed alpha), instead of
+        # calling retrieve() again after alpha was restored — that second call
+        # used to silently discard the override for retrieval metrics.
+        state["retrieval_results"] = result["results"]
         state["context"] = result["context"]
         state["citations"] = result["citations"]
         state.setdefault("trace", []).append({
