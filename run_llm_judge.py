@@ -148,7 +148,7 @@ def main():
     answers = [rec["answers"].get("deepseek", "") for rec in records]
     contexts = [rec.get("context", "") for rec in records]
     ff = faithfulness(answers, contexts)
-    fid_per_query = ff.details.get("per_query", [])
+    fid_per_query = ff.details.get("per_sample", [])
     valid = [(s, f) for s, f in zip(scores, fid_per_query) if s >= 0]
     if valid:
         s_arr = np.array([v[0] for v in valid], dtype=float) / 4.0  # normalize 0-1

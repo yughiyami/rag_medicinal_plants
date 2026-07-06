@@ -39,12 +39,14 @@ CEREBRAS_KEY = os.environ.get("CEREBRAS_API_KEY", "")
 
 
 def _load_env():
-    global DEEPSEEK_KEY
-    if DEEPSEEK_KEY:
+    global DEEPSEEK_KEY, CEREBRAS_KEY
+    if DEEPSEEK_KEY and CEREBRAS_KEY:
         return
     for l in Path(".env").read_text().splitlines():
-        if l.startswith("DEEPSEEK_API_KEY="):
+        if not DEEPSEEK_KEY and l.startswith("DEEPSEEK_API_KEY="):
             DEEPSEEK_KEY = l.split("=", 1)[1].strip()
+        if not CEREBRAS_KEY and l.startswith("CEREBRAS_API_KEY="):
+            CEREBRAS_KEY = l.split("=", 1)[1].strip()
 
 
 def _post_json(url, headers, payload, timeout=120, max_retries=5):
@@ -63,7 +65,13 @@ def _post_json(url, headers, payload, timeout=120, max_retries=5):
             raise
 
 
-def call_deepseek(prompt: str, system: str = SYSTEM_PROMPT, max_tokens: int = 800):
+def call_deepseek(prompt: str, system: str = SYSTEM_PROMPT, max_tokens: int = 1500):
+    """Call DeepSeek V4 Flash, retrying on blank content (not just HTTP errors).
+
+    _post_json already retries 429/5xx, but DeepSeek can return HTTP 200 with an
+    empty message.content (seen in 8/50 queries in the original cross-LLM run).
+    That case bypasses _post_json's retry entirely, so it needs its own loop.
+    """
     payload = {
         "model": "deepseek-v4-flash",
         "messages": [
@@ -74,8 +82,18 @@ def call_deepseek(prompt: str, system: str = SYSTEM_PROMPT, max_tokens: int = 80
         "max_tokens": max_tokens,
     }
     headers = {"Authorization": f"Bearer {DEEPSEEK_KEY}", "Content-Type": "application/json"}
-    r = _post_json("https://api.deepseek.com/v1/chat/completions", headers, payload)
-    return r["choices"][0]["message"]["content"].strip()
+
+    delay = 2.0
+    last_content = ""
+    for attempt in range(5):
+        r = _post_json("https://api.deepseek.com/v1/chat/completions", headers, payload)
+        content = r["choices"][0]["message"]["content"]
+        if content and content.strip():
+            return content.strip()
+        last_content = content or ""
+        time.sleep(delay)
+        delay = min(delay * 2, 30)
+    return last_content.strip()
 
 
 def call_cerebras(prompt: str, system: str = SYSTEM_PROMPT, max_tokens: int = 2000):
