@@ -98,7 +98,6 @@ class SIRCAAgent:
             "category": classification.category,
             "confidence": classification.confidence,
             "features": classification.features,
-            "alpha_override": classification.alpha_override,
         }
         state["current_query"] = query
         state.setdefault("trace", []).append({
@@ -114,23 +113,10 @@ class SIRCAAgent:
         start = time.time()
         self._ensure_retriever()
         query = state["current_query"]
-        classification = state.get("classification", {})
-        alpha_override = classification.get("alpha_override")
-
-        if alpha_override is not None:
-            original_alpha = self._retriever.alpha
-            self._retriever.alpha = alpha_override
 
         from config.settings import RERANK_TOP_K
         result = self._retriever.retrieve_with_context(query, top_k=RERANK_TOP_K)
 
-        if alpha_override is not None:
-            self._retriever.alpha = original_alpha
-
-        # Reuse the results retrieve_with_context already computed under the
-        # active alpha (classifier override or ablation-fixed alpha), instead of
-        # calling retrieve() again after alpha was restored — that second call
-        # used to silently discard the override for retrieval metrics.
         state["retrieval_results"] = result["results"]
         state["context"] = result["context"]
         state["citations"] = result["citations"]

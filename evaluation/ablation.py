@@ -4,12 +4,18 @@ Compares the full pipeline against degraded variants to quantify
 each component's contribution to retrieval and generation quality.
 
 Configurations:
-  full          — Complete pipeline (hybrid + reranker + CRAG + classifier)
+  full          — Complete pipeline (hybrid + reranker + CRAG), flat alpha
   dense_only    — FAISS dense retrieval only (alpha=1.0)
   sparse_only   — BM25 sparse retrieval only (alpha=0.0)
   no_reranker   — Hybrid retrieval without cross-encoder reranking
   no_crag       — Skip CRAG evaluation, always accept all results
-  no_classifier — Skip query classification, use default alpha
+
+Note: a former "no_classifier" config (disabling per-category alpha
+weighting) was removed after a held-out sweep (run_alpha_sweep_heldout.py)
+showed flat alpha consistently beats per-category weighting, including when
+properly tuned. The classifier no longer sets retrieval alpha at all
+(see agent/query_classifier.py), so that ablation axis no longer exists --
+"full" already runs with a flat alpha.
 """
 import json
 import sys
@@ -58,7 +64,6 @@ class AblationConfig:
     alpha: float | None = None
     use_reranker: bool = True
     use_crag: bool = True
-    use_classifier: bool = True
 
 
 ABLATION_CONFIGS = [
@@ -85,11 +90,6 @@ ABLATION_CONFIGS = [
         name="no_crag",
         description="Skip CRAG evaluation, always accept",
         use_crag=False,
-    ),
-    AblationConfig(
-        name="no_classifier",
-        description="No query classification, default alpha",
-        use_classifier=False,
     ),
 ]
 
@@ -135,21 +135,6 @@ def _build_agent(config: AblationConfig, backend: str = "template"):
 
     if not config.use_crag:
         agent._evaluator = _AlwaysAcceptEvaluator()
-
-    if not config.use_classifier:
-        from agent.query_classifier import QueryClassification
-        original_classify = graph_module.classify_query
-
-        def fixed_classify(query):
-            return QueryClassification(
-                category="exploratory",
-                confidence=0.5,
-                features={},
-                alpha_override=None,
-            )
-
-        graph_module.classify_query = fixed_classify
-        restore_fns.append(lambda: setattr(graph_module, "classify_query", original_classify))
 
     def restore():
         for fn in restore_fns:

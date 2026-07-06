@@ -1,11 +1,19 @@
 """
 Query Classifier for SIRCA-RAG (C3 Agent).
-Classifies incoming queries to route them through optimal retrieval strategies.
+Classifies incoming queries into a category for routing/explainability purposes.
 
 Categories:
-  - factual: specific compound/species/property lookup (BM25-heavy)
-  - exploratory: broad research questions (dense-heavy)
-  - comparative: cross-species or cross-compound analysis (balanced)
+  - factual: specific compound/species/property lookup
+  - exploratory: broad research questions
+  - comparative: cross-species or cross-compound analysis
+
+Note: this classifier used to also assign a per-category retrieval alpha
+override (factual->0.3, exploratory->0.7, comparative->0.5). A held-out
+alpha sweep (run_alpha_sweep_heldout.py) showed that a flat alpha (0.6)
+consistently outperforms per-category weighting, including when the
+per-category values are properly tuned on held-out data rather than copied
+from the original untested assumption. The alpha override was removed;
+retrieval always uses the hybrid retriever's default alpha now.
 """
 import re
 from dataclasses import dataclass
@@ -16,7 +24,6 @@ class QueryClassification:
     category: str  # factual | exploratory | comparative
     confidence: float
     features: dict
-    alpha_override: float | None = None
 
 
 COMPARATIVE_MARKERS = [
@@ -116,19 +123,8 @@ def classify_query(query: str) -> QueryClassification:
         category = "exploratory"
         confidence = 0.5
 
-    # Plan A: tuned per-category alpha. Factual → favor BM25 (exact terms).
-    # Exploratory → favor dense (semantic). Comparative → balanced.
-    alpha_override = None
-    if category == "factual":
-        alpha_override = 0.3
-    elif category == "exploratory":
-        alpha_override = 0.7
-    elif category == "comparative":
-        alpha_override = 0.5
-
     return QueryClassification(
         category=category,
         confidence=round(confidence, 3),
         features=features,
-        alpha_override=alpha_override,
     )

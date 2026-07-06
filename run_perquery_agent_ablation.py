@@ -4,8 +4,7 @@ Per-query ablation via the REAL agent pipeline (reviewer N1 fix).
 Uses evaluation/ablation.py's _build_agent + _run_queries so the per-query
 retrieval metrics come from the SAME methodology that produced Table 4
 (agent-based, rerank_top_k=5, CRAG-aware). This guarantees Table 5 (Wilcoxon)
-is internally consistent with Table 4 and that dense_only / no_classifier
-are measured as genuinely distinct configurations.
+is internally consistent with Table 4.
 
 Template backend => no LLM API calls; retrieval metrics are backend-independent.
 """
