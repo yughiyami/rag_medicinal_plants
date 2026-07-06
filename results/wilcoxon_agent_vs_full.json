@@ -27,52 +27,52 @@
   },
   "sparse_only": {
     "context_precision": {
-      "statistic": 422.5,
-      "p_value": 0.2835736554452297,
-      "n_nonzero_diffs": 45,
+      "statistic": 409.5,
+      "p_value": 0.3183715204171579,
+      "n_nonzero_diffs": 44,
       "note": ""
     },
     "context_recall": {
-      "statistic": 354.0,
-      "p_value": 0.22278089827372027,
-      "n_nonzero_diffs": 42,
+      "statistic": 360.0,
+      "p_value": 0.3609206331484247,
+      "n_nonzero_diffs": 41,
       "note": ""
     },
     "mrr": {
-      "statistic": 33.5,
-      "p_value": 0.4003808031520797,
-      "n_nonzero_diffs": 13,
+      "statistic": 30.5,
+      "p_value": 0.5024273587291219,
+      "n_nonzero_diffs": 12,
       "note": ""
     },
     "ndcg@10": {
-      "statistic": 174.5,
-      "p_value": 0.7275207759047769,
-      "n_nonzero_diffs": 27,
+      "statistic": 168.5,
+      "p_value": 0.8588630128278887,
+      "n_nonzero_diffs": 26,
       "note": ""
     }
   },
   "no_reranker": {
     "context_precision": {
-      "statistic": 194.0,
-      "p_value": 0.8376168070245121,
+      "statistic": 191.0,
+      "p_value": 0.7846556047751199,
       "n_nonzero_diffs": 28,
       "note": ""
     },
     "context_recall": {
-      "statistic": 102.0,
-      "p_value": 0.2735436610893661,
+      "statistic": 98.5,
+      "p_value": 0.2295727675118362,
       "n_nonzero_diffs": 23,
       "note": ""
     },
     "mrr": {
       "statistic": 38.5,
-      "p_value": 0.9685914422147505,
-      "n_nonzero_diffs": 12,
+      "p_value": 0.6233185982331436,
+      "n_nonzero_diffs": 13,
       "note": ""
     },
     "ndcg@10": {
-      "statistic": 202.0,
-      "p_value": 0.9818320142291718,
+      "statistic": 195.0,
+      "p_value": 0.8554435936093876,
       "n_nonzero_diffs": 28,
       "note": ""
     }
@@ -86,14 +86,14 @@
     },
     "context_recall": {
       "statistic": 0.0,
-      "p_value": 0.06788915486182899,
+      "p_value": 0.06559969214707187,
       "n_nonzero_diffs": 4,
       "note": ""
     },
     "mrr": {
-      "statistic": 2.5,
-      "p_value": 0.3572725590318747,
-      "n_nonzero_diffs": 4,
+      "statistic": 0.0,
+      "p_value": 0.10880943004054568,
+      "n_nonzero_diffs": 3,
       "note": ""
     },
     "ndcg@10": {

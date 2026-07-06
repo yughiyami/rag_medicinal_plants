@@ -149,6 +149,12 @@ def _refine_query(query: str, results: list[dict], partial_indices: list[int]) -
                     expansion_terms.add(word.lower())
 
     if expansion_terms:
-        additions = " ".join(list(expansion_terms)[:4])
+        # sorted(), not list(): Python randomizes string hashing per process
+        # (PYTHONHASHSEED), so set iteration order -- and thus which terms
+        # survive the [:4] truncation -- used to vary across separate runs,
+        # making the refined query (and everything downstream of it) non-
+        # deterministic. This was the unexplained run-to-run retrieval-metric
+        # variability observed when re-running the 30-species extension.
+        additions = " ".join(sorted(expansion_terms)[:4])
         return f"{query} {additions}"
     return query
