@@ -63,29 +63,33 @@ def fig_headline():
 
 
 def fig_ablation_fidelity():
+    ALL = json.loads((WS / "fidelity_all_configs_uncapped.json").read_text(encoding="utf-8"))
     full, nor = F["full_mean"], F["no_reranker_mean"]
     d = (np.array(F["full_fidelity_per_query"])
          - np.array(F["no_reranker_fidelity_per_query"]))
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(7.0, 3.1),
-                                  gridspec_kw={"width_ratios": [1, 1.25]})
-    bars = ax.bar(["full", "no reranker"], [full, nor], color=[FULL, NOR], width=0.55)
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(7.6, 3.3),
+                                  gridspec_kw={"width_ratios": [1, 1.2], "wspace": 0.32})
+    names = ["full", "dense\nonly", "no\ncrag", "sparse\nonly", "no\nreranker"]
+    vals = [full, ALL["dense_only"]["mean"], ALL["no_crag"]["mean"],
+            ALL["sparse_only"]["mean"], nor]
+    cols = [FULL] + [NOR] * 4
+    bars = ax.bar(names, vals, color=cols, width=0.62)
     ax.set_ylim(0, 0.85)
     ax.set_ylabel("Fidelity (65 % semantic / 35 % lexical)")
-    ax.set_title(f"Removing the cross-encoder costs\n"
-                 f"{(full-nor)/full*100:.1f} % relative Fidelity",
-                 fontsize=9, loc="left")
-    for b, v in zip(bars, [full, nor]):
+    ax.set_title("Reranker: largest movement in the column,\nno pairwise difference significant",
+                 fontsize=8.5, loc="left")
+    for b, v in zip(bars, vals):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.015, f"{v:.3f}",
-                ha="center", fontsize=8.5)
+                ha="center", fontsize=7.5)
+    ax.tick_params(axis="x", labelsize=7)
     ax2.axvline(0, color="0.55", lw=1.0, ls="--")
     ax2.hist(d, bins=20, color=FULL, alpha=0.85, edgecolor="white", linewidth=0.4)
     ax2.axvline(d.mean(), color="#15521a", lw=1.7)
     ax2.set_xlabel("per-query difference (full − no reranker)")
     ax2.set_ylabel("queries")
-    ax2.set_title(f"{(d>0).sum()} of {len(d)} queries favour full, mean +{d.mean():.3f}\n"
-                  f"paired Wilcoxon, n={F['n']}: p={F['wilcoxon_two_sided_p']:.3f} "
-                  f"two-sided ({F['wilcoxon_greater_p']:.3f} one-sided)",
-                  fontsize=9, loc="left")
+    ax2.set_title(f"{(d>0).sum()}/{len(d)} queries favour full, mean +{d.mean():.3f}\n"
+                  f"Wilcoxon p={F['wilcoxon_two_sided_p']:.3f} two-sided",
+                  fontsize=8.5, loc="left")
     fig.tight_layout()
     fig.savefig(OUT / "ablation_fidelity.png", bbox_inches="tight")
     plt.close(fig)

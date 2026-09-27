@@ -54,6 +54,22 @@ favour `full` — a majority, not a uniform improvement. Full history in
 At the retrieval level all five configurations are statistically equivalent to `full` (no
 p below 0.05; `results/ablation_uncapped.json`).
 
+Fidelity is now reported for **all five** configurations — the first submission left three as
+"n/a" (`results/fidelity_all_configs_uncapped.json`):
+
+| Configuration | Fidelity | vs `full` | p |
+|---|---|---|---|
+| `dense_only` | 0.677 | +1.1 % | 0.680 |
+| `no_crag` | 0.676 | +0.9 % | 0.996 |
+| **`full`** | **0.670** | — | — |
+| `sparse_only` | 0.657 | -1.9 % | 0.412 |
+| `no_reranker` | 0.640 | −4.5 % | 0.082 |
+
+No pairwise difference is significant, and removing the reranker is the largest movement in
+the column. `dense_only` returns the **same Top-10 as `full` on every query**, so it feeds the
+generator an identical context: the 0.008 between them is the generator's own run-to-run
+noise, and the reranker effect is about four times that floor.
+
 ![Ablation Fidelity](docs/images/ablation_fidelity.png)
 
 ### 2. The corrective branches work — and here is the head-to-head evidence
