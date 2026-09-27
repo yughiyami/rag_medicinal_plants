@@ -1,0 +1,5 @@
+index,subset,n,mrr,ndcg@5,ndcg@10,context_precision,context_recall
+published_6098,row_12_human_verified,50,0.8623,0.8014,0.8209,0.474,0.5476
+published_6098,row_30new_species,30,0.8833,0.8545,0.8792,0.505,0.5501
+uncapped_32569,row_12_human_verified,50,0.897,0.8813,0.8865,0.43,0.4854
+uncapped_32569,row_30new_species,30,0.8833,0.8676,0.8675,0.4514,0.4889

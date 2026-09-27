@@ -201,7 +201,13 @@ def _load_raw_sources() -> dict[str, list]:
 # VECTORIZE: Encode chunks and build FAISS + BM25 indexes
 # ---------------------------------------------------------------------------
 
-def vectorize(max_per_species: int = 100):
+def vectorize(max_per_species: int | None = None):
+    """Build the FAISS + BM25 indexes from the species-tagged chunks.
+
+    max_per_species=None (the default since the reviewer response) indexes every
+    tagged chunk: 32,569 chunks over 6,481 documents and 91 species. The earlier
+    default of 100 produced the 6,098-chunk index reported in the first submission.
+    """
     import numpy as np
 
     chunks_path = PROCESSED_DIR / "chunks_expanded.json"
@@ -215,18 +221,24 @@ def vectorize(max_per_species: int = 100):
         for sp in c.get("metadata", {}).get("species", []):
             by_species[sp].append(c)
 
-    selected_ids: set[str] = set()
+    # Deduplicate on content_hash, not chunk_id: chunk_id is NOT unique across
+    # documents (ids such as "_c000" recur whenever the id prefix is empty --
+    # "_c000" appears 703 times, "_c001" 702). Deduplicating on it silently
+    # dropped 3,684 legitimate chunks of the 32,631 species-tagged ones.
+    selected_keys: set[str] = set()
     selected: list[dict] = []
     for sp in sorted(by_species.keys()):
         count = 0
         for c in by_species[sp]:
-            cid = c.get("chunk_id", str(id(c)))
-            if cid not in selected_ids and count < max_per_species:
-                selected_ids.add(cid)
+            key = c.get("content_hash") or c.get("content", "")
+            if key not in selected_keys and (max_per_species is None
+                                             or count < max_per_species):
+                selected_keys.add(key)
                 selected.append(c)
                 count += 1
 
-    print(f"  Balanced: {len(selected)} chunks, {len(by_species)} species, max {max_per_species}/sp")
+    print(f"  Selected: {len(selected)} chunks, {len(by_species)} species, "
+          f"cap {max_per_species if max_per_species is not None else 'none'}/sp")
 
     contents = [c["content"] for c in selected]
     metadata = [c.get("metadata", {}) for c in selected]

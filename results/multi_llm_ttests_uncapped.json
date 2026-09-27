@@ -1,0 +1,40 @@
+{
+  "_gen2_model": "gemma-4-31B-it",
+  "_gen2_label": "Gemma-4-31B (SambaNova)",
+  "_note": "2/50 DeepSeek answers were blank in the first pass (reasoning_content exhausted the 1500-token budget) and were regenerated with the same prompt; see report.",
+  "bertscore_f1": {
+    "deepseek": 0.8196536302566528,
+    "gen2": 0.8336405754089355,
+    "delta": 0.013986945152282715,
+    "t": -5.44427482727961,
+    "p": 1.6592313045689908e-06
+  },
+  "semantic_similarity": {
+    "deepseek": 0.7700527310371399,
+    "gen2": 0.7662874460220337,
+    "delta": -0.003765285015106201,
+    "t": 0.08708832449162136,
+    "p": 0.9309562298520285
+  },
+  "entity_recall": {
+    "deepseek": 0.42810317460317454,
+    "gen2": 0.3654285714285714,
+    "delta": -0.06267460317460316,
+    "t": 2.6049335378678853,
+    "p": 0.012132972331439711
+  },
+  "faithfulness": {
+    "deepseek": 0.6037015452221296,
+    "gen2": 0.6861722546554953,
+    "delta": 0.08247070943336565,
+    "t": -2.4232380116262386,
+    "p": 0.019122602487782733
+  },
+  "answer_relevancy": {
+    "deepseek": 0.9988950490951538,
+    "gen2": 0.9789164662361145,
+    "delta": -0.019978582859039307,
+    "t": 1.360821523537424,
+    "p": 0.17979656805629576
+  }
+}

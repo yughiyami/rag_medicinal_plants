@@ -1,0 +1,467 @@
+{
+  "judged": [
+    {
+      "query": "What are the main anti-inflammatory alkaloids in Uncaria tomentosa?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What is the wound healing mechanism of taspine from Croton lechleri?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What is the geographic distribution of Buddleja incana in Peru?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 6, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 6,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What are the fructooligosaccharides in yacon and their prebiotic effects?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What is the taxonomic classification of Lepidium meyenii?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Cual es la composicion quimica del aceite esencial de Minthostachys mollis?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 0, \"grounded_claims\": 0, \"reason\": \"The answer is empty.\"}",
+      "judge_score": -1.0,
+      "judge_total_claims": 0,
+      "judge_grounded_claims": 0,
+      "judge_reason": "{\"total_claims\": 0, \"grounded_claims\": 0, \"reason\": \"The answer is empty.\"}"
+    },
+    {
+      "query": "PMID references for Uncaria tomentosa immunomodulatory studies",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 6, \"reason\": \"The answer fabricates numerous author names and full study titles (e.g., Domingues Alexandre, Núñez César, etc.) that do not appear in the provided context.\"}",
+      "judge_score": 0.375,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 6,
+      "judge_reason": "The answer fabricates numerous author names and full study titles (e.g., Domingues Alexandre, Núñez César, etc.) that do not appear in the provided context."
+    },
+    {
+      "query": "Contenido de macamidas en Lepidium meyenii",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What alkaloids are found in Erythroxylum coca leaves?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 8, \"grounded_claims\": 8, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 8,
+      "judge_grounded_claims": 8,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Distribucion geografica de Physalis peruviana en el sur del Peru",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What phenolic compounds are present in Physalis peruviana fruit?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 10, \"reason\": \"The claim that fruit exudate contains 'Peruvioses A to F, sucrose esters' is not mentioned in the provided context [10].\"}",
+      "judge_score": 0.9090909090909091,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 10,
+      "judge_reason": "The claim that fruit exudate contains 'Peruvioses A to F, sucrose esters' is not mentioned in the provided context [10]."
+    },
+    {
+      "query": "Que compuestos bioactivos tiene Smallanthus sonchifolius en las hojas?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 10, \"grounded_claims\": 10, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 10,
+      "judge_grounded_claims": 10,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "IC50 values reported for Croton lechleri latex antimicrobial activity",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 10, \"grounded_claims\": 10, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 10,
+      "judge_grounded_claims": 10,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Buddleja incana common names in Peru",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 4, \"grounded_claims\": 4, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 4,
+      "judge_grounded_claims": 4,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Cantusia quercifolia usos medicinales tradicionales",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 5, \"grounded_claims\": 5, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 5,
+      "judge_grounded_claims": 5,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What is the protein content of Chenopodium quinoa seeds?",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 9, \"grounded_claims\": 9, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 9,
+      "judge_grounded_claims": 9,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Actividad antifungica de Minthostachys mollis",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Gentianella alborosea active compounds",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 6, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 6,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Taxonomia de Erythroxylum coca segun WFO",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Schinus molle essential oil composition",
+      "category": "factual",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 16, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 16,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Cuales son las propiedades medicinales de la maca para la fertilidad?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "How does Erythroxylum coca differ from cocaine pharmacologically?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Actividad antimicrobiana de Minthostachys mollis aceite esencial",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 10, \"grounded_claims\": 10, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 10,
+      "judge_grounded_claims": 10,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "How do Peruvian medicinal plants reduce inflammation?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 18, \"grounded_claims\": 17, \"reason\": \"The final claim regarding the evaluation of nine plants is cut off and incomplete.\"}",
+      "judge_score": 0.9444444444444444,
+      "judge_total_claims": 18,
+      "judge_grounded_claims": 17,
+      "judge_reason": "The final claim regarding the evaluation of nine plants is cut off and incomplete."
+    },
+    {
+      "query": "Mecanismos de accion neuroprotectora de la maca",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "What are the traditional uses of Buddleja incana in Andean medicine?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 6, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 6,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Potencial antidiabetico de Smallanthus sonchifolius",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "How can cat's claw be used in cancer research?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 21, \"grounded_claims\": 21, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 21,
+      "judge_grounded_claims": 21,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Aplicaciones de la sangre de grado en dermatologia",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 12, \"grounded_claims\": 11, \"reason\": \"The claim that it presents antioxidant and antielastase properties is not explicitly stated as a result, only that the industry seeks plants with those properties and C. lechleri is known for healing [3].\"}",
+      "judge_score": 0.9166666666666666,
+      "judge_total_claims": 12,
+      "judge_grounded_claims": 11,
+      "judge_reason": "The claim that it presents antioxidant and antielastase properties is not explicitly stated as a result, only that the industry seeks plants with those properties and C. lechleri is known for healing [3]."
+    },
+    {
+      "query": "What role do withanolides play in Physalis peruviana bioactivity?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 16, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 16,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Como se utiliza la etnobotanica para descubrir nuevos farmacos en Peru?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Potential of Andean plants for treating gastrointestinal diseases",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 5, \"reason\": \"Claim that native plant species are from the 'Argentinean Puna' is not mentioned in the provided context.\"}",
+      "judge_score": 0.8333333333333334,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 5,
+      "judge_reason": "Claim that native plant species are from the 'Argentinean Puna' is not mentioned in the provided context."
+    },
+    {
+      "query": "Efectos adaptogenos de Lepidium meyenii en altitud",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "How do cross-encoder rerankers improve retrieval for medicinal plant queries?",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Importancia de la conservacion de plantas medicinales en los Andes peruanos",
+      "category": "exploratory",
+      "judge_raw": "{\"total_claims\": 9, \"grounded_claims\": 9, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 9,
+      "judge_grounded_claims": 9,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare the antioxidant activity of Physalis peruviana and Smallanthus sonchifolius",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 12, \"grounded_claims\": 12, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 12,
+      "judge_grounded_claims": 12,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Comparar los alcaloides de Uncaria tomentosa vs Erythroxylum coca",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 7, \"grounded_claims\": 7, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 7,
+      "judge_grounded_claims": 7,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Differences between dense and sparse retrieval for ethnobotanical queries",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 13, \"grounded_claims\": 13, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 13,
+      "judge_grounded_claims": 13,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare wound healing properties of Croton lechleri and Buddleja incana",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 12, \"grounded_claims\": 12, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 12,
+      "judge_grounded_claims": 12,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Maca vs quinoa: perfil nutricional comparado",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 10, \"grounded_claims\": 10, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 10,
+      "judge_grounded_claims": 10,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare antimicrobial activities of Minthostachys mollis and Schinus molle essential oils",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 16, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 16,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Physalis peruviana vs Smallanthus sonchifolius: actividad hipoglucemiante",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 10, \"grounded_claims\": 9, \"reason\": \"The claim that 'peruvioses A to F, sucrose esters' are reported in source [9] is not supported by the provided text.\"}",
+      "judge_score": 0.9,
+      "judge_total_claims": 10,
+      "judge_grounded_claims": 9,
+      "judge_reason": "The claim that 'peruvioses A to F, sucrose esters' are reported in source [9] is not supported by the provided text."
+    },
+    {
+      "query": "Compare immunomodulatory properties of Uncaria tomentosa and Lepidium meyenii",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 6, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 6,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Diferencias entre aguaymanto y yacon como alimentos funcionales",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 11, \"grounded_claims\": 11, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 11,
+      "judge_grounded_claims": 11,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare GBIF occurrence data: Uncaria tomentosa vs Croton lechleri in southern Peru",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 16, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 16,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Croton lechleri vs Uncaria tomentosa: cual tiene mas estudios en PubMed?",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 15, \"grounded_claims\": 15, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 15,
+      "judge_grounded_claims": 15,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Dense retrieval vs BM25 for species name queries",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 6, \"grounded_claims\": 6, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 6,
+      "judge_grounded_claims": 6,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare prebiotic potential of yacon FOS versus commercial inulin",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 0, \"grounded_claims\": 0, \"reason\": \"The answer is empty.\"}",
+      "judge_score": -1.0,
+      "judge_total_claims": 0,
+      "judge_grounded_claims": 0,
+      "judge_reason": "{\"total_claims\": 0, \"grounded_claims\": 0, \"reason\": \"The answer is empty.\"}"
+    },
+    {
+      "query": "Erythroxylum coca hoja vs extracto purificado: diferencias farmacologicas",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 12, \"grounded_claims\": 12, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 12,
+      "judge_grounded_claims": 12,
+      "judge_reason": "all claims grounded"
+    },
+    {
+      "query": "Compare anti-inflammatory mechanisms: alkaloids vs phenolic compounds in Peruvian plants",
+      "category": "comparative",
+      "judge_raw": "{\"total_claims\": 16, \"grounded_claims\": 16, \"reason\": \"all claims grounded\"}",
+      "judge_score": 1.0,
+      "judge_total_claims": 16,
+      "judge_grounded_claims": 16,
+      "judge_reason": "all claims grounded"
+    }
+  ],
+  "correlation": {
+    "judge_model": "gemma-4-31B-it",
+    "judge_label": "Gemma-4-31B (SambaNova)",
+    "n_valid": 48,
+    "n_scored": 50,
+    "pearson_r": 0.0393382286939492,
+    "pearson_p": 0.7906537312831546,
+    "spearman_r": 0.09814420848152502,
+    "spearman_p": 0.5069179266202402,
+    "judge_mean": 0.9766361531986533,
+    "fidelity_mean": 0.5926450320275122,
+    "n_perfect": 42
+  }
+}

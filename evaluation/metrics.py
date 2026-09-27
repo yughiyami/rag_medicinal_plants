@@ -52,14 +52,23 @@ def bertscore(predictions: list[str], references: list[str], lang: str = "en") -
 
 
 def bertscore_lite(predictions: list[str], references: list[str]) -> EvalResult:
-    """Answer quality score via cross-encoder relevance (sigmoid-normalized)."""
+    """Answer quality score via cross-encoder relevance (sigmoid-normalized).
+
+    An empty prediction scores 0. Without this guard the cross-encoder assigned
+    empty answers ~0.95 (measured: 0.945 and 0.961 on two lost DeepSeek
+    responses) while every other metric correctly returned 0, so this column was
+    silently inflated whenever a generation failed.
+    """
     from sentence_transformers import CrossEncoder
     from config.settings import CROSS_ENCODER_MODEL
 
     ce = CrossEncoder(CROSS_ENCODER_MODEL)
+    empty = [i for i, p in enumerate(predictions) if not (p or "").strip()]
     pairs = list(zip(predictions, references))
     scores = ce.predict(pairs)
     norm_scores = _sigmoid(np.array(scores))
+    for i in empty:
+        norm_scores[i] = 0.0
 
     return EvalResult(
         metric="answer_quality",

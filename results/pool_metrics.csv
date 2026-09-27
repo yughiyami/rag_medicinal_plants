@@ -1,0 +1,7 @@
+index,config,context_precision,context_recall@30,mrr,ndcg@10,n_queries
+capped_6098,dense_only,0.5172,0.7153,0.8283,0.7109,47
+capped_6098,sparse_only,0.4107,0.5916,0.6865,0.6055,47
+capped_6098,hybrid_a06,0.541,0.7153,0.8429,0.7547,47
+uncapped_32569,dense_only,0.5404,0.6481,0.8843,0.7986,47
+uncapped_32569,sparse_only,0.4304,0.5765,0.8153,0.7112,47
+uncapped_32569,hybrid_a06,0.5529,0.6481,0.9071,0.8237,47

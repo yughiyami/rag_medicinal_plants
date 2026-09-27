@@ -1,0 +1,11 @@
+index,config,context_precision,context_recall,mrr,ndcg@10
+published_6098,full,0.474,0.5476,0.8623,0.8209
+published_6098,dense_only,0.474,0.5476,0.8623,0.8209
+published_6098,sparse_only,0.5063,0.5685,0.8279,0.8107
+published_6098,no_reranker,0.456,0.5045,0.889,0.8118
+published_6098,no_crag,0.4959,0.5729,0.8885,0.8572
+uncapped_32569,full,0.43,0.4854,0.897,0.8865
+uncapped_32569,dense_only,0.43,0.4854,0.897,0.8865
+uncapped_32569,sparse_only,0.4649,0.5251,0.8672,0.8316
+uncapped_32569,no_reranker,0.4397,0.4845,0.9553,0.8996
+uncapped_32569,no_crag,0.4322,0.4875,0.897,0.8906

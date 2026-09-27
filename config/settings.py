@@ -879,8 +879,11 @@ SEARCH_QUERIES = [
     '"{species}"[Title/Abstract] AND (traditional medicine OR ethnobotany)',
 ]
 
-EMBEDDING_MODEL = "BAAI/bge-m3"
-EMBEDDING_DIMENSION = 1024
+# The index is built with multilingual-e5-base (768-dim); see pipeline.vectorize().
+# These constants previously read "BAAI/bge-m3"/1024, which never matched the
+# shipped vectorstore and misled anyone reading the config instead of the pipeline.
+EMBEDDING_MODEL = "intfloat/multilingual-e5-base"
+EMBEDDING_DIMENSION = 768
 
 def get_embedding_dimension() -> int:
     """Read actual dimension from vectorization_info.json if available."""

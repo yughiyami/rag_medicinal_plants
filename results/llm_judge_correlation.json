@@ -8,5 +8,6 @@
   "spearman_r": 0.4068793353465625,
   "spearman_p": 0.003716103831043251,
   "judge_mean_01": 0.8571428571428571,
-  "fidelity_mean": 0.4735021222176322
+  "fidelity_mean": 0.4735021222176322,
+  "_note": "SUPERSEDED. This file is the 2026-07-01 run of an intermediate LLM-judge rubric whose correlation (r=+0.398, p=0.0046, n=49) does NOT correspond to any figure reported in the paper. It predates both rubrics the paper discusses and was left behind by a script that no longer writes this path. The authoritative judge results are in llm_judge_results.json (claim-level rubric) and llm_judge_results_uncapped.json (same rubric on the final index). Kept for provenance rather than deleted."
 }

@@ -1,0 +1,19 @@
+{
+  "store": "C:\\Users\\marro\\.claude-science\\orgs\\7087367c-f5b2-447c-aebf-c9b2f4da0327\\workspaces\\0b7cd4ef-504c-4962-a0f7-eb4b478098ed\\vs_uncapped",
+  "row_12_human_verified": {
+    "n_queries": 50,
+    "mrr": 0.8969999999999999,
+    "ndcg@5": 0.8813192629986459,
+    "ndcg@10": 0.8865140174836388,
+    "context_precision": 0.43000919421825684,
+    "context_recall": 0.4853880112102317
+  },
+  "row_30new_species": {
+    "n_queries": 30,
+    "mrr": 0.8833333333333334,
+    "ndcg@5": 0.8675579139305751,
+    "ndcg@10": 0.8674893044361149,
+    "context_precision": 0.4514481923196554,
+    "context_recall": 0.48893739915479056
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "model": "intfloat/multilingual-e5-base",
+  "dimension": 768,
+  "total_vectors": 32569,
+  "mode": "uncapped",
+  "max_per_species": null,
+  "dedup_key": "content_hash",
+  "species_count": 91,
+  "docs": 6481,
+  "elapsed_seconds": 3234.6
+}
