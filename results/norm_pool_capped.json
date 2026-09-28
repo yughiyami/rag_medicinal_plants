@@ -1,6 +1,6 @@
 {
   "summary": {
-    "store": "D:\\BaseAvanzado\\sirca_rag\\data\\vectorstore",
+    "store": "./vectorstore",
     "thresholds": {
       "accept": 0.6,
       "partial": 0.3,

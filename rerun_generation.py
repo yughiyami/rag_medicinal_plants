@@ -74,9 +74,7 @@ GEN2 = {
 if args.gen2_model:
     GEN2["model"] = args.gen2_model
 
-OUT = Path(args.out_dir or r"C:\Users\marro\.claude-science\orgs"
-           r"\7087367c-f5b2-447c-aebf-c9b2f4da0327\workspaces"
-           r"\0b7cd4ef-504c-4962-a0f7-eb4b478098ed")
+OUT = Path(args.out_dir or "results")
 STORE = Path(args.store).resolve()
 
 assert os.environ.get("DEEPSEEK_API_KEY"), "DEEPSEEK_API_KEY missing"

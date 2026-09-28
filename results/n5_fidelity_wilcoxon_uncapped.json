@@ -1,5 +1,5 @@
 {
-  "store": "C:\\Users\\marro\\.claude-science\\orgs\\7087367c-f5b2-447c-aebf-c9b2f4da0327\\workspaces\\0b7cd4ef-504c-4962-a0f7-eb4b478098ed\\vs_uncapped",
+  "store": "./vs_uncapped",
   "full_fidelity_per_query": [
     0.9097820663452149,
     0.8380997040298548,
