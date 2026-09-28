@@ -272,6 +272,7 @@ take `--store <vectorstore dir>` and `--tag <name>`; `uncapped` is the tag of th
 | `run_norm_and_pool.py` | `norm_pool_<tag>.json`, `pool_metrics.csv` | min–max vs absolute table, candidate-pool table, routing figure |
 | `run_threshold_sweep.py` | `results/threshold_sweep_uncapped.csv` | accept-threshold table |
 | `docs/make_figures_rev1.py` | `paper/figures/*.png` | every figure in the manuscript |
+| `make_corpus_ids.py` | `data/corpus_ids.csv` | the public corpus record list |
 
 **Known reproducibility gap.** Six CSVs in `results/` were produced ad hoc during the
 revision and have no runner in this repository: `language_breakdown.csv`,
@@ -345,6 +346,27 @@ records its build parameters); at roughly 100 MB it does not belong in ordinary 
 
 Rebuild it locally instead with `python pipeline.py vectorize` (the per-species cap now
 defaults to `None`), which reproduces the 32,569-chunk index.
+
+### The corpus is released as identifiers, not as text
+
+`data/corpus_ids.csv` lists every indexed document with its PMID/DOI, source repository,
+year, journal, matched species and chunk count — **without abstract text**. The abstracts
+are third-party copyrighted material from PubMed, Europe PMC, CrossRef and Semantic
+Scholar, so the corpus is released as a list anyone can re-fetch from the original
+repositories rather than as a redistribution of their content. Regenerate it with:
+
+```bash
+python make_corpus_ids.py --store <vectorstore dir>
+```
+
+The file holds 6,482 rows. The manuscript reports 6,481 indexed documents: the two counts
+use different grouping rules (this CSV groups by PMID, then DOI, then title; the indexing
+pipeline deduplicates on `content_hash`). Grouping by full title alone gives 6,478. The
+difference is definitional, not a data discrepancy.
+
+> Note for anyone repackaging the index: both `metadata.json` (key `contents`) and
+> `bm25_index.pkl` embed the verbatim chunk text, and `retrieval/hybrid.py` requires it at
+> load time. There is no text-free build of the index that is also runnable.
 
 ---
 
