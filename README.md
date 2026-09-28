@@ -339,12 +339,19 @@ Bugs fixed during the revision are listed under
 32,569 chunks over 6,481 documents and 91 species (`results/vectorization_info_uncapped.json`
 records its build parameters); at roughly 100 MB it does not belong in ordinary git history.
 
-> **Pending:** the final index is not yet published. It will be attached to a tagged release
-> (or deposited with a DOI) and the download instructions will replace this note. Until then
-> the paper's claim that the index is available in this repository is **not yet true**, and
-> the manuscript should not be submitted asserting it.
+The final index is published as release
+[`v1.0-index`](https://github.com/yughiyami/rag_medicinal_plants/releases/tag/v1.0-index):
 
-Rebuild it locally instead with `python pipeline.py vectorize` (the per-species cap now
+```bash
+gh release download v1.0-index --repo yughiyami/rag_medicinal_plants
+```
+
+It ships `index.faiss` (32,569 x 768), `metadata_bibliographic.json` (per-chunk PMID, DOI,
+title, authors, journal, year, species), `corpus_ids.csv` and `vectorization_info.json`.
+The abstracts are **not** included, for the copyright reason below, so these assets are not
+a drop-in runnable index — the retriever needs the chunk text at load time.
+
+Rebuild a runnable index with `python pipeline.py vectorize` (the per-species cap now
 defaults to `None`), which reproduces the 32,569-chunk index.
 
 ### The corpus is released as identifiers, not as text
