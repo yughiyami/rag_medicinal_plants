@@ -3,7 +3,7 @@
 **Hybrid Corrective RAG for grounded question answering on Peruvian medicinal plants**
 
 > Support repository for the paper *"Hybrid Corrective RAG for Grounded Generation on
-> Peruvian Medicinal Plants"* (SimBig / WAIMLAp 2026 / ACSAR). Contains the pipeline, the
+> Peruvian Medicinal Plants"* (WAIMLAp 2026 / ACSAR). Contains the pipeline, the
 > corpus tooling, and the full reviewer-response experiment suite with reproducible results.
 
 SIRCA-RAG (System for Intelligent Retrieval and Corrective Answers) answers questions about
@@ -26,7 +26,7 @@ DOI/PMID citation.
 
 Full pipeline on the 50-query bilingual benchmark (DeepSeek V4-Flash generator):
 
-![Headline metrics](docs/images/headline_metrics.png)
+![Headline metrics](paper/figures/headline_metrics.png)
 
 | Metric | Score | Note |
 |---|---|---|
@@ -70,7 +70,7 @@ the column. `dense_only` returns the **same Top-10 as `full` on every query**, s
 generator an identical context: the 0.008 between them is the generator's own run-to-run
 noise, and the reranker effect is about four times that floor.
 
-![Ablation Fidelity](docs/images/ablation_fidelity.png)
+![Ablation Fidelity](paper/figures/ablation_fidelity.png)
 
 ### 2. The corrective branches work — and here is the head-to-head evidence
 
@@ -78,22 +78,32 @@ The default within-batch (min–max) normalization makes the CRAG threshold rela
 batch. Replacing it with a **per-document absolute transformation** (accept ≥ 0.60, refine
 ≥ 0.30) is what makes the corrective branches reachable. Measured on the *same* 27
 out-of-distribution probes, one retrieval pass, two decision functions
-(`results/normalization_comparison.csv`):
+(`results/norm_pool_uncapped.json`, final index):
 
 | Query set | n | min–max accepts | absolute accepts |
 |---|---|---|---|
-| Species with no indexed data | 9 | 7 | 1 |
-| Off-domain | 10 | 4 | **0** |
+| Species with no indexed data | 9 | 8 | 4 |
+| Off-domain | 10 | 7 | **0** |
 | Garbled strings | 8 | 5 | 4 |
-| **All probes** | 27 | **16** | **5** |
+| **All probes** | 27 | **20** | **8** |
 
-Note the qualification: min–max does **not** suppress the corrective routes entirely — it
-still fires 11 of 27 — because the rule also requires 20 % of the batch above threshold.
-The claim is quantitative, not absolute. The accept threshold sits on a plateau: any value
-in [0.50, 0.85] gives the same corrective behaviour
-(`results/threshold_sweep.csv`).
+On the 50-query in-domain benchmark the same comparison gives 46 accepts under min–max
+against 43 under the absolute transformation.
 
-![CRAG routing](docs/images/crag_routing.png)
+Two qualifications, both of which the paper states:
+
+- min–max does **not** suppress the corrective routes entirely — it still fires 7 of 27 —
+  because the rule also requires 20 % of the batch above threshold.
+- On the final index the router accepts **4 of the 9** species that have no indexed
+  literature of their own, against 1 of 9 on the smaller index. The enlarged corpus
+  supplies context from phylogenetically related taxa, so this family gets *harder*, not
+  easier, as the corpus grows. We report it as a cost of scaling rather than a success.
+
+The accept threshold sits on a plateau: every value in [0.55, 0.85] routes both probe
+families identically (`results/threshold_sweep_uncapped.csv`, regenerate with
+`python run_threshold_sweep.py`).
+
+![CRAG routing](paper/figures/crag_routing.png)
 
 ### 3. Robust to the choice of generator — each wins on different metrics
 
@@ -113,7 +123,7 @@ margin is largest at a purely semantic weighting (+0.108) and vanishes at a pure
 one (+0.035, p=0.249) — see `results/fidelity_weight_sweep.csv`. This corrects the
 mechanism stated in the first submission.
 
-![Cross-LLM](docs/images/cross_llm.png)
+![Cross-LLM](paper/figures/cross_llm.png)
 
 ### 4. Retrieval generalizes beyond the evaluation slice
 
@@ -123,7 +133,7 @@ template queries) leaves the two subsets statistically indistinguishable: MRR
 0.887 → 0.867. All
 of those species are present in the index, so this is **not** out-of-corpus generalization.
 
-![Coverage generalization](docs/images/coverage_generalization.png)
+![Coverage generalization](paper/figures/coverage_generalization.png)
 
 ### 5. The bilingual property is asymmetric
 
@@ -201,8 +211,8 @@ evaluation/   metrics, benchmark set, ablation harness
 scraping/     CRAG web-search fallback
 web/          FastAPI service + frontend
 results/      experiment outputs (JSON/CSV) — figures are derived from these
-docs/         figures and figure-generation scripts
-paper/        LaTeX sources (main_en.tex first submission, main_en_rev1.tex revision)
+docs/         figure-generation script (writes into paper/figures/)
+paper/        LaTeX sources + figures/ (the exact PNGs the manuscript compiles)
 run_*.py      first-submission experiment runners
 rerun_*.py    reviewer-response runners (index-parameterised)
 ```
@@ -236,6 +246,122 @@ Found while answering the reviewers; all of them affect this repository, not onl
    prompt at temperature 0 returned a full answer on one call and an empty one on the next),
    so retrying mitigates it probabilistically while raising the budget addresses the cause.
    The reviewer-response runners escalate the budget ×1/×2/×4 on empty content.
+
+---
+
+## Experiment runners
+
+Every number in the paper comes from one of these scripts. The index-parameterised runners
+take `--store <vectorstore dir>` and `--tag <name>`; `uncapped` is the tag of the final
+32,569-chunk index used for every reported result.
+
+| Script | Writes | Feeds |
+|---|---|---|
+| `run_evaluation.py` | agent run over the 50-query benchmark | headline retrieval metrics |
+| `rerun_retrieval_tables.py` | `ablation_<tag>.json`, `table1_<tag>.json` | ablation table (retrieval columns) |
+| `run_table2_extended.py` | `results/table2_extended_consistent.json` | extended-retrieval table |
+| `run_perquery_agent_ablation.py` | `per_query_agent_ablation.json`, `wilcoxon_agent_vs_full.json` | Wilcoxon table |
+| `run_n5_fidelity_wilcoxon.py` | `n5_fidelity_wilcoxon_<tag>.json` | `full` vs `no_reranker` Fidelity; right panel of the ablation figure |
+| `rerun_fidelity_all_configs.py` | `fidelity_all_configs_<tag>.json` | Fidelity column for all five configurations; left panel of the ablation figure |
+| `rerun_generation.py` | `multi_llm_*_<tag>.json`, `llm_judge_results_<tag>.json` | generator-comparison table, cross-LLM figure, LLM-judge section |
+| `run_multi_llm_bench.py` | `multi_llm_{answers,metrics,ttests}.json` | first-submission generator comparison |
+| `run_llm_judge.py` | `results/llm_judge_results.json` | cross-validation section |
+| `run_alpha_sweep_heldout.py` | `results/alpha_sweep_heldout.json` | held-out α sweep claim |
+| `run_crag_stress_test.py` | probe set + `crag_stress_test.json` | defines the 27 OOD probes |
+| `run_crag_stress_absolute.py` | `crag_stress_absolute.json` | routing table |
+| `run_norm_and_pool.py` | `norm_pool_<tag>.json`, `pool_metrics.csv` | min–max vs absolute table, candidate-pool table, routing figure |
+| `run_threshold_sweep.py` | `results/threshold_sweep_uncapped.csv` | accept-threshold table |
+| `docs/make_figures_rev1.py` | `paper/figures/*.png` | every figure in the manuscript |
+
+**Known reproducibility gap.** Six CSVs in `results/` were produced ad hoc during the
+revision and have no runner in this repository: `language_breakdown.csv`,
+`fidelity_runs_history.csv`, `fidelity_weight_sweep.csv`, `retrieval_tables_comparison.csv`,
+`wilcoxon_tables_comparison.csv` and `table1_comparison.csv`. Three of them back tables in
+the paper (per-language, Fidelity weight sweep, Wilcoxon). Their contents are consistent
+with the committed JSON outputs, but regenerating them end-to-end is not yet scripted. We
+state this rather than imply a reproducibility we have not yet delivered.
+
+---
+
+## OOD stress probes (27)
+
+The probe set exists to check that each corrective route fires on input designed to trigger
+it. It is a **diagnostic set, not a statistical sample**, and no significance is claimed
+from it. Only the *route* is scored: the probes have no reference answers, so the quality of
+any web-supported answer is never evaluated.
+
+| Family | n | Construction | Example (verbatim) | Expected route |
+|---|---|---|---|---|
+| A. Species with no indexed literature | 9 | **Exhaustive** — all catalogued species with zero indexed documents | *What phytochemical compounds are reported for Adesmia spinosissima?* | `refine` or `web_search` |
+| B. Outside the botanical domain | 10 | Hand-built across unrelated technical/economic topics | *How do I configure a Kubernetes deployment for a Node.js service?* | `web_search` |
+| C. Lexically degraded strings | 8 | Hand-built: repetition, noise characters, missing diacritics | *medicinal plant peru ??? xxx antioxidant ????* | `refine` |
+
+Family A is exhaustive by construction (there are exactly 9 such species). Families B and C
+were sized to cover the input kinds each route exists for, not drawn from any population.
+This is the difference from the 50-query benchmark, which *does* carry author-validated
+reference answers and on which answer quality is measured.
+
+---
+
+## Development log
+
+The paper condenses this history into one limitation; the full series is here.
+
+The paired Wilcoxon test on Fidelity (`full` vs `no_reranker`) was run six times over the
+course of the work, each on a code or index state that differed by a fixed bug or by the
+retrieval index:
+
+| # | p (two-sided) | n | State |
+|---|---|---|---|
+| 1 | 0.016 | 50 | per-category α classifier still active |
+| 2 | 0.00023 | 50 | before the α-restore-order fix in the agent graph |
+| 3 | 0.110 | 50 | classifier removed |
+| 4 | 0.028 | 80 | query set extended to 80 |
+| 5 | 0.160 | 80 | after fixing the string-hash non-determinism in query refinement |
+| 6 | **0.082** (0.041 one-sided) | 80 | **final index — the reported run** |
+
+Three of six reach two-sided significance and three do not; enlarging the sample from 50 to
+80 did not by itself produce stability. The **direction** held in all six runs
+(0.534>0.467; 0.566>0.465; 0.517>0.469; 0.562>0.514; 0.554>0.526; 0.670>0.640). We
+therefore report the reranker's contribution to Fidelity as a consistent directional signal
+and not as a statistically confirmed effect.
+
+Bugs fixed during the revision are listed under
+[Corrections in this revision](#corrections-in-this-revision).
+
+---
+
+## The retrieval index
+
+`data/vectorstore/` currently ships the **first-submission** index (6,098 chunks,
+`max_per_species: 100`). The final index used for every number in the revised paper is
+32,569 chunks over 6,481 documents and 91 species (`results/vectorization_info_uncapped.json`
+records its build parameters); at roughly 100 MB it does not belong in ordinary git history.
+
+> **Pending:** the final index is not yet published. It will be attached to a tagged release
+> (or deposited with a DOI) and the download instructions will replace this note. Until then
+> the paper's claim that the index is available in this repository is **not yet true**, and
+> the manuscript should not be submitted asserting it.
+
+Rebuild it locally instead with `python pipeline.py vectorize` (the per-species cap now
+defaults to `None`), which reproduces the 32,569-chunk index.
+
+---
+
+## How to cite
+
+> **Author block is intentionally anonymised while the submission is under double-blind
+> review.** Replace the placeholder below with the final author list, in the order
+> registered with the venue, before the camera-ready deposit.
+
+```bibtex
+@inproceedings{sircarag2026,
+  title     = {Hybrid Corrective {RAG} for Grounded Generation on Peruvian Medicinal Plants},
+  author    = {Anonymous Author(s)},
+  booktitle = {WAIMLAp},
+  year      = {2026}
+}
+```
 
 ---
 

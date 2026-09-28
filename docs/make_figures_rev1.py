@@ -19,9 +19,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-WS = Path(__file__).resolve().parent
-OUT = WS / "figures_rev1"
-OUT.mkdir(exist_ok=True)
+REPO = Path(__file__).resolve().parent.parent
+WS = REPO / "results"          # committed result artifacts
+OUT = REPO / "paper" / "figures"  # where main_en_rev1.tex reads them from
+OUT.mkdir(parents=True, exist_ok=True)
 
 DS_BLUE, GEN_ORANGE = "#2c6fbb", "#e08a1e"
 ACC, REF, WEB = "#c0392b", "#e0a030", "#2c6fbb"
@@ -36,7 +37,7 @@ T = json.loads((WS / "multi_llm_ttests_uncapped.json").read_text(encoding="utf-8
 F = json.loads((WS / "n5_fidelity_wilcoxon_uncapped.json").read_text(encoding="utf-8"))
 AB = json.loads((WS / "ablation_uncapped.json").read_text(encoding="utf-8"))
 T1 = json.loads((WS / "table1_uncapped.json").read_text(encoding="utf-8"))
-NP = json.loads((WS / "norm_pool_capped.json").read_text(encoding="utf-8"))["summary"]
+NP = json.loads((WS / "norm_pool_uncapped.json").read_text(encoding="utf-8"))["summary"]
 
 
 def _p(p):
@@ -114,8 +115,14 @@ def fig_crag_routing():
     ax.set_xticklabels(labels, fontsize=8)
     ax.set_ylim(0, 12.4)
     ax.set_ylabel("out-of-distribution probes")
-    ax.set_title("Within-batch normalization accepts 16 of the 27 probes;\n"
-                 "the absolute transformation accepts 5 and rejects off-domain 10/10",
+    n_probes = NP["probes"]["n"]
+    acc_mm = NP["probes"]["action_minmax"]["accept"]
+    acc_sig = NP["probes"]["action_sigmoid"]["accept"]
+    web_b = NP["probes_by_family"]["B_off_domain"]["action_sigmoid"]["web_search"]
+    n_b = sum(NP["probes_by_family"]["B_off_domain"]["action_sigmoid"].values())
+    ax.set_title(f"Within-batch normalization accepts {acc_mm} of the {n_probes} probes;\n"
+                 f"the absolute transformation accepts {acc_sig} "
+                 f"and rejects off-domain {web_b}/{n_b}",
                  fontsize=9, loc="left")
     h = [mp.Patch(color=c, label=l) for c, l in
          ((ACC, "accept"), (REF, "refine"), (WEB, "external search"))]
