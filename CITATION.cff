@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "SIRCA-RAG: Hybrid Corrective RAG for Peruvian Medicinal Plants"
+authors:
+  - given-names: Daniel
+    family-names: Marron Carcausto
+    affiliation: Universidad Nacional de San Agustín de Arequipa
+  - given-names: Ower
+    family-names: Lopez Arela
+    affiliation: Universidad Nacional de San Agustín de Arequipa
+  - given-names: Antonio
+    family-names: Arroyo Paz
+    affiliation: Universidad Nacional de San Agustín de Arequipa
+repository-code: "https://github.com/yughiyami/rag_medicinal_plants"
+preferred-citation:
+  type: conference-paper
+  title: "Hybrid Corrective RAG for Grounded Generation on Peruvian Medicinal Plants"
+  authors:
+    - {given-names: Daniel, family-names: Marron Carcausto}
+    - {given-names: Ower, family-names: Lopez Arela}
+    - {given-names: Antonio, family-names: Arroyo Paz}
+  collection-title: "Artificial Intelligence and Machine Learning Applications 2026 (WAIMLAp 2026)"
+  publisher: {name: Springer}
+  year: 2026

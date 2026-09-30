@@ -166,6 +166,11 @@ entirely in English, so a Spanish query retrieves English context and must answe
 
 ## Reproducing the experiments
 
+> **Note on the index.** `data/vectorstore/` holds the *old* first-submission index
+> (6,098 chunks). The index behind every number in the paper (32,569 chunks) is published
+> in the [`v1.0-index`](https://github.com/yughiyami/rag_medicinal_plants/releases/tag/v1.0-index)
+> release; download it and pass it with `--store` (see [The retrieval index](#the-retrieval-index)).
+
 ```bash
 pip install -r requirements.txt
 # API keys are read from the environment (never hardcoded):
@@ -233,9 +238,9 @@ Found while answering the reviewers; all of them affect this repository, not onl
 3. **`evaluation/metrics.py::bertscore_lite()` scored empty answers ≈0.95** (measured 0.945
    and 0.961) while every other metric correctly returned 0, inflating Semantic Similarity
    whenever a generation was lost. Empty predictions now score 0.
-4. **`results/llm_judge_correlation.json` is superseded and was contradicting the paper.** It
+4. **`results/superseded/llm_judge_correlation.json` is superseded and was contradicting the paper.** It
    stores r=+0.398, p=0.0046 from an intermediate rubric that matches no reported figure. It
-   is now annotated in-file rather than deleted; the authoritative results are
+   is now kept under `results/superseded/`; the authoritative results are
    `llm_judge_results.json` and `llm_judge_results_uncapped.json`.
 5. **README headline numbers were out of sync** with `results/*.json` (it read MRR
    0.866→0.883 where the JSON says 0.862→0.883) and called Entity Coverage "Entity Recall".

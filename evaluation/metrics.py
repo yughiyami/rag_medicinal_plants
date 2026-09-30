@@ -29,7 +29,7 @@ class EvalResult:
 # ---- 1. BERTScore ----
 
 def bertscore(predictions: list[str], references: list[str], lang: str = "en") -> EvalResult:
-    """Compute BERTScore P/R/F1 using microsoft/deberta-xlarge-mnli."""
+    """Compute BERTScore P/R/F1 using roberta-large."""
     from bert_score import score as bert_score_fn
 
     P, R, F1 = bert_score_fn(
@@ -258,10 +258,10 @@ def faithfulness(answers: list[str], contexts: list[str], n: int = 3) -> EvalRes
     Hybrid faithfulness: combines semantic (cross-encoder sentence-level) and
     lexical (content-word overlap) scores. Language-agnostic.
 
-    Semantic component (weight 0.6): each answer sentence scored against full
+    Semantic component (weight 0.65): each answer sentence scored against full
     context via cross-encoder. Measures if the claim is supported by context.
 
-    Lexical component (weight 0.4): content-word overlap after filtering
+    Lexical component (weight 0.35): content-word overlap after filtering
     stopwords and boilerplate. Measures exact term reuse.
     """
     from sentence_transformers import CrossEncoder
