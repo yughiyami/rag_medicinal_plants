@@ -11,7 +11,7 @@ numpy==1.26.4
 rank_bm25==0.2.2
 
 # LLM generation
-openai==1.51.0
+openai==1.59.9  # >=1.53 required by litellm, pulled in by crawl4ai==0.3.74
 transformers==4.44.2
 
 # Agent orchestration

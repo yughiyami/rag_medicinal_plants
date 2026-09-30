@@ -16,10 +16,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # CPU-only torch wheel (saves ~2.5 GB of CUDA we never use).
+# One resolver run: with --prefix, a second pip call cannot see the CPU torch
+# and would pull the CUDA wheel from PyPI as a sentence-transformers dependency.
 RUN pip install --prefix=/install \
         --extra-index-url https://download.pytorch.org/whl/cpu \
         torch==2.4.1+cpu \
-    && pip install --prefix=/install -r requirements.txt
+        -r requirements.txt
 
 # ---------- Stage 2: model warmup ----------
 FROM python:3.11-slim AS model-warmup
