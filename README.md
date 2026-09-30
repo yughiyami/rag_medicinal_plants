@@ -379,15 +379,14 @@ difference is definitional, not a data discrepancy.
 
 ## How to cite
 
-> **Author block is intentionally anonymised while the submission is under double-blind
-> review.** Replace the placeholder below with the final author list, in the order
-> registered with the venue, before the camera-ready deposit.
-
 ```bibtex
 @inproceedings{sircarag2026,
   title     = {Hybrid Corrective {RAG} for Grounded Generation on Peruvian Medicinal Plants},
-  author    = {Anonymous Author(s)},
-  booktitle = {WAIMLAp},
+  author    = {Marron Carcausto, Daniel and Lopez Arela, Ower and Arroyo Paz, Antonio},
+  booktitle = {Artificial Intelligence and Machine Learning Applications 2026:
+               Workshop, WAIMLAp 2026, Lima, Peru, November 18--20, 2026, Proceedings},
+  series    = {Springer ACSAR Series},
+  publisher = {Springer},
   year      = {2026}
 }
 ```

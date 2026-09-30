@@ -28,7 +28,8 @@ DS_BLUE, GEN_ORANGE = "#2c6fbb", "#e08a1e"
 ACC, REF, WEB = "#c0392b", "#e0a030", "#2c6fbb"
 FULL, NOR = "#c0392b", "#8fb0cc"
 plt.rcParams.update({
-    "figure.dpi": 150, "font.size": 9,
+    # Springer asks for >=300 dpi halftones and ~600 dpi line art; save at 600.
+    "figure.dpi": 150, "savefig.dpi": 600, "font.size": 9,
     "axes.spines.top": False, "axes.spines.right": False,
     "axes.grid": True, "grid.alpha": 0.22, "axes.axisbelow": True,
 })
@@ -77,20 +78,19 @@ def fig_ablation_fidelity():
     bars = ax.bar(names, vals, color=cols, width=0.62)
     ax.set_ylim(0, 0.85)
     ax.set_ylabel("Fidelity (65 % semantic / 35 % lexical)")
-    ax.set_title("Reranker: largest movement in the column,\nno pairwise difference significant",
-                 fontsize=8.5, loc="left")
+    # Panel titles would repeat the LaTeX caption; label the panels instead.
+    ax.set_title("(a) mean Fidelity, n=80", fontsize=8.5, loc="left")
     for b, v in zip(bars, vals):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.015, f"{v:.3f}",
                 ha="center", fontsize=7.5)
     ax.tick_params(axis="x", labelsize=7)
-    ax2.axvline(0, color="0.55", lw=1.0, ls="--")
+    ax2.axvline(0, color="0.55", lw=1.0, ls="--", label="zero")
     ax2.hist(d, bins=20, color=FULL, alpha=0.85, edgecolor="white", linewidth=0.4)
-    ax2.axvline(d.mean(), color="#15521a", lw=1.7)
+    ax2.axvline(d.mean(), color="#15521a", lw=1.7, label=f"mean (+{d.mean():.3f})")
     ax2.set_xlabel("per-query difference (full − no reranker)")
     ax2.set_ylabel("queries")
-    ax2.set_title(f"{(d>0).sum()}/{len(d)} queries favour full, mean +{d.mean():.3f}\n"
-                  f"Wilcoxon p={F['wilcoxon_two_sided_p']:.3f} two-sided",
-                  fontsize=8.5, loc="left")
+    ax2.set_title("(b) full − no_reranker, per query", fontsize=8.5, loc="left")
+    ax2.legend(frameon=False, fontsize=7, loc="upper left")
     fig.tight_layout()
     fig.savefig(OUT / "ablation_fidelity.png", bbox_inches="tight")
     plt.close(fig)
@@ -120,10 +120,8 @@ def fig_crag_routing():
     acc_sig = NP["probes"]["action_sigmoid"]["accept"]
     web_b = NP["probes_by_family"]["B_off_domain"]["action_sigmoid"]["web_search"]
     n_b = sum(NP["probes_by_family"]["B_off_domain"]["action_sigmoid"].values())
-    ax.set_title(f"Within-batch normalization accepts {acc_mm} of the {n_probes} probes;\n"
-                 f"the absolute transformation accepts {acc_sig} "
-                 f"and rejects off-domain {web_b}/{n_b}",
-                 fontsize=9, loc="left")
+    # The message (acc_mm vs acc_sig, off-domain web_b/n_b) lives in the LaTeX caption.
+    assert (acc_mm, acc_sig, web_b, n_b, n_probes) == (20, 8, 10, 10, 27)
     h = [mp.Patch(color=c, label=l) for c, l in
          ((ACC, "accept"), (REF, "refine"), (WEB, "external search"))]
     h += [mp.Patch(facecolor="0.75", edgecolor="white", label="within-batch min–max"),
@@ -198,11 +196,10 @@ def fig_coverage():
 
 
 if __name__ == "__main__":
-    fig_headline()
+    # Camera-ready uses only these two plots (+ the TikZ architecture diagram);
+    # headline, cross-LLM and coverage duplicated tables and were dropped (R2-5).
     fig_ablation_fidelity()
     fig_crag_routing()
-    fig_cross_llm()
-    fig_coverage()
     print("figures written to", OUT)
     for p in sorted(OUT.glob("*.png")):
         print(" -", p.name)

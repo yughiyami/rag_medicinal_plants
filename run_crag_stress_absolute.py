@@ -8,7 +8,7 @@ document still triggers `accept`. This is why the original benchmark
 reports 100% `accept` and the corrective branches never fire.
 
 This runner replaces the within-batch normalization with an ABSOLUTE
-sigmoid transform of the raw cross-encoder logit — a standard calibration
+sigmoid transform of the raw cross-encoder logit — a standard score-transformation
 choice for MS MARCO cross-encoders. The absolute threshold then reflects
 true query-document relevance and the corrective branches fire on
 out-of-distribution probes as designed.

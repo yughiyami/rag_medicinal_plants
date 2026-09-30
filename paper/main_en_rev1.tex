@@ -1,7 +1,3 @@
-% ============================================================
-% SIRCA-RAG — Springer LNCS (English version)
-% WAIMLAp 2026 / ACSAR
-% ============================================================
 \documentclass[runningheads]{llncs}
 
 \usepackage[utf8]{inputenc}
@@ -26,46 +22,49 @@
 
 \newcommand{\sirca}{\textsc{SIRCA-RAG}}
 
-% ============================================================
 \title{Hybrid Corrective RAG for Grounded Generation
 on Peruvian Medicinal Plants}
 
 \titlerunning{Hybrid Corrective RAG for Peruvian Medicinal Plants}
 
-\author{Anonymous Author(s)}
+\author{Daniel Marron Carcausto \and
+Ower Lopez Arela \and
+Antonio Arroyo Paz}
 
-\authorrunning{Anonymous Author(s)}
+\authorrunning{D. Marron Carcausto et al.}
 
-\institute{Affiliation withheld for double-blind review}
+\institute{Universidad Nacional de San Agust\'{i}n de Arequipa, Arequipa, Peru\\
+\email{marrondaniel20@gmail.com, olopeza@unsa.edu.pe, aarroyop@unsa.edu.pe}}
 
-% Scrub identifying PDF metadata for double-blind submission.
-\hypersetup{pdfauthor={Anonymous Author(s)},
-            pdftitle={Hybrid Corrective RAG for Peruvian Medicinal Plants},
-            pdfsubject={},pdfkeywords={},pdfcreator={}}
+\hypersetup{pdfauthor={Daniel Marron Carcausto, Ower Lopez Arela, Antonio Arroyo Paz},
+            pdftitle={Hybrid Corrective RAG for Grounded Generation on Peruvian Medicinal Plants},
+            pdfkeywords={Retrieval-Augmented Generation, Corrective RAG, Hybrid Retrieval, Ethnobotany, Large Language Models}}
 
-% ============================================================
 \begin{document}
 \sloppy
 \maketitle
 
-% ============================================================
 \begin{abstract}
-The vast existing literature on Peruvian medicinal plants suffers from a serious fragmentation problem. Being scattered across numerous repositories, extracting real pharmacological evidence is costly. To address this, we propose \sirca{} (System for Intelligent Retrieval and Corrective Answers), a bilingual architecture designed to unify this evidence through corrective techniques. Our solution fuses dense and lexical (BM25) search using \emph{Reciprocal Rank Fusion}, then applies a cross-encoder reranker that contributes in a directionally consistent way to answer fidelity. A CRAG-style router manages final quality. Our central empirical contribution is not a single retrieval score but a scoring finding: we show that the default within-batch normalization suppresses the CRAG corrective routes, and that replacing it with a per-document absolute transformation of the reranker logits is what makes the fallback toward external search reachable. We use \emph{absolute transformation} rather than \emph{calibration} throughout, since we do not verify that the transformed scores match empirical correctness frequencies. We evaluate the architecture on a corpus of 16,486 collected records, of which 6,481 documents (32,569 chunks, 91 species) are retrievable, using a bilingual benchmark of 50 questions with author-validated reference answers and attaining competitive metrics (MRR of $0.897$ on that benchmark; Fidelity of $0.670$ over an extended $n{=}80$ query set).
+Pharmacological evidence on Peruvian medicinal plants is fragmented across bibliographic and biodiversity repositories, which makes systematic consultation slow and error-prone. We present \sirca{} (System for Intelligent Retrieval and Corrective Answers), a bilingual (Spanish/English) retrieval-augmented generation system that fuses dense and BM25 retrieval through weighted Reciprocal Rank Fusion, reranks candidates with a cross-encoder, and routes low-confidence retrievals through a Corrective-RAG (CRAG) stage before citation-bearing generation. Our central finding concerns the router's scoring rule: the default within-batch min--max normalization largely suppresses the corrective routes, accepting 20 of 27 out-of-distribution probes and 7 of 10 off-domain queries, whereas a per-document absolute transformation of the reranker logits accepts 8 of 27 and rejects every off-domain query. We call it an \emph{absolute transformation} rather than a \emph{calibration}, since we do not verify that the transformed scores match empirical correctness frequencies. The system indexes 6,481 documents (32,569 chunks, 91 species) selected from 16,486 collected records. On a 50-question bilingual benchmark with author-validated references it reaches an MRR of $0.897$ and an NDCG@10 of $0.887$, and an experimental grounding proxy (Fidelity) reaches $0.670$ over an extended set of 80 queries. The reranker's contribution to Fidelity is directionally consistent but not statistically significant ($p{=}0.082$), and grounded generation is weaker for Spanish than for English queries. Code, index and per-query results are publicly released.
 
-\keywords{Retrieval-Augmented Generation (RAG) \and Peruvian Ethnobotany \and Large Language Models (LLM) \and Hybrid Retrieval \and Natural Language Processing (NLP)}
+\keywords{Retrieval-Augmented Generation \and Corrective RAG \and Hybrid Retrieval \and Peruvian Ethnobotany \and Large Language Models}
 \end{abstract}
 
-% ============================================================
 \section{Introduction}
 \label{sec:intro}
 
-Peru has around 25,000 plant species, and at least between 1,400 and 5,000 have some degree of pharmacological evidence~\cite{bussmann2006traditional,bussmann2011toxicity}. However, if a researcher wants to track down specific data about \textit{Uncaria tomentosa} or \textit{Croton lechleri}, they will soon run into the central problem: the data is not in one place. Publications are scattered across all of PubMed, as well as local biodiversity databases and international records~\cite{lock2016bioactive,gonzales2012ethnobiology}. Putting together a systematic review under these conditions takes too long and leaves gaps.
+Peru hosts around 25,000 plant species, of which between 1,400 and 5,000 have some documented pharmacological evidence~\cite{bussmann2011toxicity,bussmann2006traditional}. Evidence on a given species, such as \textit{Uncaria tomentosa} or \textit{Croton lechleri}, is nevertheless scattered across PubMed, national biodiversity databases and international records~\cite{gonzales2012ethnobiology,lock2016bioactive}, so assembling a systematic review is slow and prone to gaps.
 
-Lately, Large Language Models (\emph{LLMs}) have attracted interest for summarizing large volumes of text. By injecting context through Retrieval-Augmented Generation (RAG)~\cite{lewis2020retrieval}, the model appears to ``know'' the subject. In medical practice, however, this hits a wall: the system often pulls in paragraphs that are useless and, worse, invents pharmacological conclusions that look true but lack support~\cite{gao2024retrieval,ji2023survey}. Not even models trained specifically on medical text are spared from this~\cite{lee2020biobert,gu2021domain}. To get around this obstacle, Yan et al.~\cite{yan2024crag} published Corrective RAG (CRAG). The idea behind CRAG is simple but effective: measure whether what you just retrieved is actually useful; if it is not, the model asks to rewrite the query or goes to search the web.
+Large Language Models (LLMs) can summarize large volumes of text, and Retrieval-Augmented Generation (RAG)~\cite{lewis2020retrieval} conditions them on retrieved documents. In the medical domain, however, RAG pipelines frequently retrieve irrelevant passages and produce pharmacological statements that are fluent but unsupported~\cite{gao2024retrieval,ji2023survey}; models trained on biomedical text are not exempt~\cite{gu2021domain,lee2020biobert}. Corrective RAG (CRAG)~\cite{yan2024crag} addresses this by assessing the usefulness of the retrieved evidence before generation and, when it is insufficient, reformulating the query or falling back to web search.
 
-The central contribution we present here is \sirca{} (System for Intelligent Retrieval and Corrective Answers), which adapts the CRAG concept to the botanical complexity of Peru through four design decisions. First, retrieval is not committed to a single method: we combine \texttt{multilingual-e5-base} vectors~\cite{wang2024e5} with BM25 keyword search~\cite{robertson2009bm25} using RRF~\cite{cormack2009rrf}. Second, we add a \emph{cross-encoder}~\cite{nogueira2019passage}, since bi-encoders alone miss subtle technical distinctions. Third, we implemented a routing safeguard: if confidence drops, we block the generator. Fourth, we forced the model (via CoT~\cite{wei2022chain}) to extract the data, verify it, and only then write the answer, indicating which passage it used. All of this left us with five specific contributions: a bilingual QA architecture for our flora; a curated corpus of 16,486 collected records, of which 6,481 documents across 91 species are indexed; 50 questions we validated ourselves; a way of measuring fidelity that combines lexical with semantic matching; and finally, direct tests with multiple models.
+We present \sirca{} (System for Intelligent Retrieval and Corrective Answers), which adapts CRAG to Peruvian medicinal flora through four design decisions: (i)~hybrid retrieval that fuses \texttt{multilingual-e5-base} dense vectors~\cite{wang2024e5} with BM25~\cite{robertson2009bm25} through Reciprocal Rank Fusion (RRF)~\cite{cormack2009rrf}; (ii)~a cross-encoder reranker~\cite{nogueira2019passage}, which captures fine-grained technical distinctions that bi-encoders miss; (iii)~a confidence-based router that, instead of generating from weak evidence, reformulates the query or falls back to a live literature search; and (iv)~a Chain-of-Thought protocol~\cite{wei2022chain} that makes the generator extract, verify and only then compose the answer, citing the supporting passage. The contributions of this work are:
+\begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
+  \item a bilingual CRAG architecture for question answering on Peruvian medicinal plants;
+  \item a curated corpus of 16,486 collected records, of which 6,481 documents covering 91 species are indexed, and a 50-question bilingual benchmark with author-validated reference answers;
+  \item the empirical finding that within-batch score normalization suppresses corrective routing, supported by a head-to-head comparison against a per-document absolute transformation on the same queries;
+  \item an evaluation that combines ablations, a generator swap, a per-language analysis and an experimental grounding proxy (Fidelity), with code, index and per-query results publicly released.
+\end{itemize}
 
-% ============================================================
 \section{Related Work}
 \label{sec:related}
 
@@ -73,13 +72,12 @@ The central contribution we present here is \sirca{} (System for Intelligent Ret
 
 \textbf{Reliability of Medical RAG.} In the medical domain, retrieval is not universally beneficial. Xie et al.~\cite{xie2026retrievalhurts} show, on MedQA-USMLE, that several RAG configurations underperform a pure-LLM baseline because retrieval injects distractors roughly as often as it supplies missing evidence---a dual effect that motivates confidence-aware routing rather than unconditional retrieval. Wo{\l}k~\cite{wolk2025clinical} likewise frames hallucination mitigation as the central requirement for clinical decision support. These findings justify our emphasis on a strict faithfulness metric and on a corrective router able to abstain when the retrieved evidence is insufficient.
 
-\textbf{Hybrid Search and Reranking.} There is consistent evidence that combining dense and sparse retrieval outperforms either approach alone~\cite{karpukhin2020dense}, as each closes gaps that the other leaves open~\cite{sinha2026lexicalsemantic}. We therefore use RRF~\cite{cormack2009rrf} to combine \texttt{e5-base}~\cite{wang2024e5} with BM25~\cite{robertson2009bm25}, a method that does not require labeled data to calibrate combination weights; we note that Bruch et al.~\cite{bruch2023fusion} show convex-combination fusion can surpass RRF in some settings, a refinement we leave open. Fusion is particularly valuable for the long-tail taxonomic terms that pervade our corpus, where entity-aware hierarchical retrieval yields substantial recall gains~\cite{peng2026hce}. The fused pool is subsequently refined by a \emph{cross-encoder}~\cite{nogueira2019passage}; consistent with our ablation study, Elkiran and Rasheed~\cite{elkiran2026rerankerpairings} identify the retriever--reranker pairing as the decisive quality--efficiency trade-off in RAG pipelines.
+\textbf{Hybrid Search and Reranking.} There is consistent evidence that combining dense and sparse retrieval outperforms either approach alone~\cite{karpukhin2020dense}, as each closes gaps that the other leaves open~\cite{sinha2026lexicalsemantic}. We therefore use RRF~\cite{cormack2009rrf} to combine \texttt{e5-base}~\cite{wang2024e5} with BM25~\cite{robertson2009bm25}, a method that does not require labeled data to calibrate combination weights; we note that Bruch et al.~\cite{bruch2023fusion} show convex-combination fusion can surpass RRF in some settings, a refinement we leave open. Fusion is particularly valuable for the long-tail taxonomic terms that pervade our corpus, where entity-aware hierarchical retrieval yields substantial recall gains~\cite{peng2026hce}. The fused pool is subsequently refined by a \emph{cross-encoder}~\cite{nogueira2019passage}; consistent with our ablation study, Elkiran and Rasheed~\cite{elkiran2026rerankerpairings} identify the retriever--reranker pairing as a key quality--efficiency trade-off in RAG pipelines.
 
-\textbf{Evaluation Methodology.} We use the RAGAs framework~\cite{es2023ragas}, which is widely adopted as a de facto standard, and complement the evaluation with an \emph{LLM-as-judge} mechanism~\cite{zheng2023mtbench} (detailed in Sec.~\ref{sec:llm_judge}) that provides an independent cross-check.
+\textbf{Evaluation Methodology.} Our generation metrics follow the definitions of the RAGAs framework~\cite{es2023ragas}, reimplemented with cross-encoder scoring so that no external LLM is needed to compute them, and we complement them with an \emph{LLM-as-judge} cross-check~\cite{zheng2023mtbench} (Sec.~\ref{sec:llm_judge}).
 
-\textbf{Regional, Multilingual and Domain-Specific RAG.} Xiong et al.~\cite{xiong2024mirage}, with their MIRAGE project, showed that RAG outperforms models without retrieval on medical tasks, and Aljohani and Alsanoosy~\cite{aljohani2026hybridmedical} confirm the benefit of hybrid retrieval for medical question answering specifically. Bilingual operation is central to our setting: Chirkova et al.~\cite{chirkova2024multilingual} characterize the components required for a well-performing multilingual RAG pipeline, while low-resource medical deployments---such as medication question answering over Yor\`ub\'a drug labels~\cite{adebesin2026yoruba}---show that hybrid signals become indispensable when data is scarce. For medicinal-plant knowledge specifically, Riddhi et al.~\cite{riddhi2025indianplants} integrate Indian flora through a RAG pipeline, but without corrective routing or a faithfulness-oriented evaluation. In the Latin American context, Monroy Barrios et al.~\cite{monroy2026finetuning} fine-tuned a model on Peruvian flora texts, achieving a substantial reduction in perplexity, although the acquired knowledge remains encapsulated in the model's parameters and is not externally auditable. We favor RAG precisely because it allows the source document of each claim to be traced, an important requirement in the pharmacological domain. As a complementary architecture, Collanqui et al.~\cite{collanqui2026cagrag} contrasted RAG with \emph{Cache-Augmented Generation} over a single institutional regulation; we do not compare against it numerically, since its corpus (one document), domain (administrative), and $k{=}1$ retrieval differ too much from ours (16,486 collected records, 91 indexed species) for an isolated figure to be informative. To the best of our knowledge, based on an exhaustive literature review, no prior work combines a CRAG pipeline with hybrid retrieval applied to Andean medicinal plants.
+\textbf{Regional, Multilingual and Domain-Specific RAG.} Xiong et al.~\cite{xiong2024mirage}, with their MIRAGE project, showed that RAG outperforms models without retrieval on medical tasks, and Aljohani and Alsanoosy~\cite{aljohani2026hybridmedical} confirm the benefit of hybrid retrieval for medical question answering specifically. Bilingual operation is central to our setting: Chirkova et al.~\cite{chirkova2024multilingual} characterize the components required for a well-performing multilingual RAG pipeline, while low-resource medical deployments---such as medication question answering over Yor\`ub\'a drug labels~\cite{adebesin2026yoruba}---show that hybrid signals are especially useful when data is scarce. For medicinal-plant knowledge specifically, Riddhi et al.~\cite{riddhi2025indianplants} integrate Indian flora through a RAG pipeline, but without corrective routing or a faithfulness-oriented evaluation. In the Latin American context, Monroy Barrios et al.~\cite{monroy2026finetuning} fine-tuned a model on Peruvian flora texts, achieving a substantial reduction in perplexity, although the acquired knowledge remains encapsulated in the model's parameters and is not externally auditable. We favor RAG precisely because it allows the source document of each claim to be traced, an important requirement in the pharmacological domain. As a complementary architecture, Collanqui et al.~\cite{collanqui2026cagrag} contrasted RAG with \emph{Cache-Augmented Generation} over a single institutional regulation; we do not compare against it numerically, since its corpus (one document), domain (administrative), and $k{=}1$ retrieval differ too much from ours (16,486 collected records, 91 indexed species) for an isolated figure to be informative. To the best of our knowledge, no prior work combines a CRAG pipeline with hybrid retrieval applied to Andean medicinal plants.
 
-% ============================================================
 \section{System Architecture}
 \label{sec:architecture}
 
@@ -100,55 +98,54 @@ The central contribution we present here is \sirca{} (System for Intelligent Ret
   ]
   \node[io] (query) at (0,0) {\textbf{Query}\\{\scriptsize EN/ES}};
   \node[phase, right=3mm of query] (cls)
-    {\textbf{1. Classify}\\{\scriptsize factual/explor./comp.}\\{\scriptsize (routing/logging)}};
+    {\textbf{1. Classify}\\{\scriptsize factual/explor./comp.}\\{\scriptsize (trace only)}};
   \node[phase, right=3mm of cls] (hyb)
     {\textbf{2. Hybrid Retr.}\\{\scriptsize e5-base+BM25}\\{\scriptsize RRF, top-30}};
   \node[phase, right=3mm of hyb] (crag)
-    {\textbf{3. Rerank+CRAG}\\{\scriptsize Cross-enc. MiniLM}\\{\scriptsize eval. $s_{\sigma}{=}\sigma(s_{\max})$}};
+    {\textbf{3. Rerank+CRAG}\\{\scriptsize Cross-enc. MiniLM}\\{\scriptsize eval. $s_{\sigma}{=}\sigma(s)$, top-10}};
   \draw[flow] (query)--(cls); \draw[flow] (cls)--(hyb); \draw[flow] (hyb)--(crag);
   \node[phase, below=8mm of cls.south, anchor=north] (ctx)
-    {\textbf{4. Context}\\{\scriptsize Top-5 docs+cites}};
+    {\textbf{4. Context}\\{\scriptsize top-10 passages+cites}};
   \node[phase, right=3mm of ctx] (gen)
     {\textbf{5. Grounded Gen.}\\{\scriptsize CoT: Extr.$\rightarrow$Verif.}\\{\scriptsize $\rightarrow$Compose (DeepSeek)}};
   \node[io, right=3mm of gen] (ans) {\textbf{Answer}\\{\scriptsize + citations}};
   \draw[flow] (ctx)--(gen); \draw[flow] (gen)--(ans);
   \draw[flow] (crag.south)--++(0,-4mm)-|(ctx.north)
-    node[pos=0.2, font=\scriptsize\bfseries, fill=white, inner sep=1pt]{accept ($s_{\sigma}{\geq}0.60$)};
+    node[pos=0.2, font=\scriptsize\bfseries, fill=white, inner sep=1pt]{accept ($\geq$20\,\% of top-10 with $s_{\sigma}{\geq}0.60$)};
   \draw[branch] (crag.north)--++(0,4mm)-|(cls.north)
-    node[pos=0.5, blab, anchor=south]{refine ($0.30{\leq}s_{\sigma}{<}0.60$) / web search ($s_{\sigma}{<}0.30$)};
+    node[pos=0.5, blab, anchor=south]{refine (some $0.30{\leq}s_{\sigma}{<}0.60$) / live search (otherwise)};
   \end{tikzpicture}
-  \caption{\sirca{}'s five-phase pipeline. Classification labels the query (factual/exploratory/comparative) for traceability; hybrid retrieval uses RRF with a fixed $\alpha$ ($0.6$); cross-encoder reranking feeds the CRAG router; and grounded generation applies Chain-of-Thought. Dashed arrows mark CRAG's corrective routes.}
+  \caption{\sirca{}'s five-phase pipeline. Classification labels the query (factual/exploratory/comparative) for traceability; hybrid retrieval uses weighted RRF with a fixed $\alpha{=}0.6$ (Eq.~\ref{eq:rrf}); the cross-encoder scores each of the top-10 passages, $s_\sigma$ is the logistic transform of its logit, and the CRAG router decides between accepting the batch and the corrective routes (dashed arrows); generation follows a Chain-of-Thought protocol.}
   \label{fig:architecture}
 \end{figure}
 
-The full process is split into phases connected to one another. The first thing the system does is read the question and decide what type of query it is. Depending on the verbal patterns we find, we bucket it as \textit{factual}, \textit{exploratory}, or \textit{comparative}; this label travels in the execution trace for explainability and debugging purposes. In an early version of the system, this classification also set a different $\alpha$ per category (factual $\rightarrow$ BM25, exploratory $\rightarrow$ semantic). A held-out $\alpha$ sweep (Section~\ref{sec:wilcoxon}) showed that this per-category weighting, even when properly tuned, does not beat a fixed $\alpha$; we therefore removed it, and retrieval always uses $\alpha{=}0.6$.
+The pipeline first labels each query as \textit{factual}, \textit{exploratory} or \textit{comparative} from lexical patterns; the label is recorded in the execution trace for explainability. An earlier version also used it to select a category-specific fusion weight $\alpha$; a held-out $\alpha$ sweep (Sec.~\ref{sec:wilcoxon}) showed that a per-category weight, even when tuned, does not improve on a fixed one, so retrieval always uses $\alpha{=}0.6$.
 
-Once classification is done, parallel retrieval kicks in. On one track runs \texttt{multilingual-e5-base}~\cite{wang2024e5}, turning the text into 768-dimensional vectors that are compared mathematically in FAISS~\cite{johnson2021billion}. On the other track runs BM25~\cite{robertson2009bm25}, searching for specific terms the vector might have missed. The two ranked lists are merged by a weighted variant of Reciprocal Rank Fusion~\cite{cormack2009rrf}. Writing $r_d(q,x)$ and $r_s(q,x)$ for the rank of chunk $x$ under dense and sparse retrieval, the fused score is
+Retrieval then runs two branches in parallel: \texttt{multilingual-e5-base}~\cite{wang2024e5} embeds the query into a 768-dimensional space searched with FAISS~\cite{johnson2021billion}, and BM25~\cite{robertson2009bm25} matches exact terms that the dense representation may miss. The two ranked lists are merged by a weighted variant of RRF~\cite{cormack2009rrf}. Writing $r_d(q,x)$ and $r_s(q,x)$ for the rank of chunk $x$ under dense and sparse retrieval, counted from $0$, the fused score is
 \begin{equation}
 \label{eq:rrf}
 \mathrm{RRF}_\alpha(q,x) \;=\; \frac{\alpha}{k + r_d(q,x) + 1} \;+\; \frac{1-\alpha}{k + r_s(q,x) + 1},
 \end{equation}
-with $k{=}60$, $\alpha{=}0.6$, and a term omitted when the chunk is absent from that list. Note that $\alpha$ weights the two \emph{rank-reciprocal} contributions; it is not a convex combination of similarity scores. The top 30 fused chunks form the candidate pool. This parameterisation has a consequence we quantify in Sec.~\ref{sec:pool}.
+with $k{=}60$, $\alpha{=}0.6$, and a term omitted when the chunk is absent from that list. Each branch returns its top 30 chunks. Note that $\alpha$ weights the two \emph{rank-reciprocal} contributions; it is not a convex combination of similarity scores. The top 30 fused chunks form the candidate pool. This parameterization has a consequence we quantify in Sec.~\ref{sec:pool}.
 
-Reranking uses \texttt{ms-marco-MiniLM-L-12-v2}~\cite{nogueira2019passage}. This module takes the 30 texts and the original question, and reads them together to refine the relevance score. We keep only the top 10. At this point, the system evaluates the maximum score obtained. We pass that score through a sigmoid function to flatten it and decide: if it exceeds $0.60$ (and the rest of the documents are not deficient), we approve the batch. If it falls between $0.30$ and $0.60$, we raise a ``refinement'' alert. And if it is below $0.30$, the system abandons the local index and signals the external-search fallback. Section~\ref{sec:crag_validation} quantifies why this choice of transformation is what makes the corrective branches reachable.
+The 30 candidates are reranked by \texttt{ms-marco-MiniLM-L-12-v2}~\cite{nogueira2019passage}, which scores each query--passage pair jointly, and the top 10 are retained. Each retained passage receives the logistic transform of its raw logit, $s_\sigma{=}\sigma(s)$, and the router applies a three-way rule: it \textsc{accept}s the batch when at least $20\,\%$ of the passages reach $s_\sigma{\geq}0.60$; otherwise it triggers \textsc{refine} (query reformulation and re-retrieval, at most twice) when some passage lies in $[0.30,\,0.60)$; and otherwise it takes the \textsc{web\_search} route, a live search of PubMed and Europe PMC for records outside the local index. Sec.~\ref{sec:crag_validation} shows that this per-document transformation, rather than a normalization over the batch, is what makes the corrective routes reachable.
 
-Finally, if the batch was approved, we take the top 5 excerpts and pass them to the DeepSeek V4-Flash model~\cite{deepseek2026v4}\footnote{Accessed through the official DeepSeek API (\url{https://api.deepseek.com}), under the model identifier \texttt{deepseek-v4-flash}.}. We do not simply demand the answer outright; we impose a logical flow of extracting, comparing, and only then drafting. And most critically: its ability to infer data not present in those paragraphs is explicitly blocked.
+The ten retained passages, with their bibliographic metadata, are passed to DeepSeek V4-Flash~\cite{deepseek2026v4}\footnote{Accessed through the official DeepSeek API (\url{https://api.deepseek.com}), model identifier \texttt{deepseek-v4-flash}.} with a prompt that imposes an extract--verify--compose sequence, requires a citation for every statement, and explicitly forbids content not supported by the passages.
 
-% ============================================================
 \section{Corpus and Evaluation}
 \label{sec:experiments}
 
-\textbf{On the data handled.} The corpus was assembled from eight repositories: the bibliographic sources PubMed, Europe PMC, Semantic Scholar and CrossRef, and the structured databases GBIF, PeruNPDB, WFO and COCONUT. We targeted 100 plants from southern Peru and removed duplicate articles by cross-checking DOIs, retaining 16,486 unique records. It is important to separate what was \emph{collected} from what is \emph{retrievable}: only records whose text mentions one of the catalogued species are indexed, which yields the retrieval index actually used in every experiment below --- 6,481 documents split into 32,569 chunks covering 91 species. What is indexed is title plus abstract, not full text (median $1,461$ characters per document); chunks are 512 \emph{characters} with 64 characters of overlap, which is a median of 51 words. Of the eight repositories, the four bibliographic ones contribute all indexed material (PubMed 1,002 documents, CrossRef 227, Europe PMC 46, Semantic Scholar 3 before lifting a per-species cap); the four structured databases (GBIF, PeruNPDB, WFO, COCONUT) were queried for taxonomic and phytochemical validation but contribute no indexed chunks, since their records are field-structured rather than prose. Nine of the 100 species have no indexed literature (\textit{Adesmia spinosissima}, \textit{Berberis lutea}, among other high-altitude taxa); we keep them deliberately as a stress-test family for the corrective router (Sec.~\ref{sec:crag_validation}). The index embeddings, the per-chunk bibliographic metadata and the list of indexed records are released in the public repository. The abstracts themselves are third-party copyrighted material, so the corpus is released as identifiers that can be re-fetched from their source repositories rather than as redistributed text; re-running the indexing script on those records reproduces the same 32,569 chunks.
+\textbf{Corpus.} The corpus was assembled from eight repositories: the bibliographic sources PubMed, Europe PMC, Semantic Scholar and CrossRef, and the structured databases GBIF, PeruNPDB, WFO and COCONUT. We targeted 100 plants from southern Peru and removed duplicate articles by cross-checking DOIs, retaining 16,486 unique records. It is important to separate what was \emph{collected} from what is \emph{retrievable}: only records whose text mentions one of the catalogued species are indexed, which yields the retrieval index actually used in every experiment below --- 6,481 documents split into 32,569 chunks covering 91 species. What is indexed is title plus abstract, not full text (a median of 1,461 characters per document); chunks are 512 \emph{characters} with 64 characters of overlap, which is a median of 51 words. Of the eight repositories, the four bibliographic ones supply every indexed document (PubMed 3,263, Europe PMC 2,016, CrossRef 943 and Semantic Scholar 260 records in the released record list); the four structured databases (GBIF, PeruNPDB, WFO, COCONUT) were queried for taxonomic and phytochemical validation but contribute no indexed chunks, since their records are field-structured rather than prose. Nine of the 100 species have no indexed literature (e.g., \textit{Adesmia spinosissima} and \textit{Berberis lutea}, mostly high-altitude taxa); we keep them deliberately as a stress-test family for the corrective router (Sec.~\ref{sec:crag_validation}). The index embeddings, the per-chunk bibliographic metadata and the list of indexed records are released in the public repository. The abstracts themselves are third-party copyrighted material, so the corpus is released as identifiers that can be re-fetched from their source repositories rather than as redistributed text; re-fetching those records and re-running the indexing script rebuilds the index.
 
-\textbf{On the experiments.} We created a set of 50 questions in Spanish and English (mixing concept questions, comparisons, and hard facts) about 12 species, and validated what the ideal answer should be. To avoid relying on that alone, we set up the evaluation on three fronts: the 50 base questions; an extended set covering 30 additional species, to test whether quality degrades outside the verified subset; and a set of out-of-distribution probes designed to force the corrective branches to activate.
+\textbf{Benchmark.} The benchmark comprises 50 questions in Spanish and English (factual, exploratory and comparative) about 12 species, each with a reference answer validated by the authors. The evaluation covers three query sets: the 50 benchmark questions; 30 template queries on 30 additional catalogued species, which test whether retrieval quality degrades outside the verified subset; and a set of out-of-distribution probes designed to exercise the corrective routes.
 
-\textbf{On the out-of-distribution probe set.} Alongside the benchmark we use 27 probes,
+\textbf{Out-of-distribution probe set.} Alongside the benchmark we use 27 probes,
 grouped in three families (Table~\ref{tab:probe_families}). Family~A is not a sample: it
 is the complete set of the 9 catalogued species that have no indexed literature, so it is
-exhaustive by construction. Families~B and~C are hand-built diagnostic sets, sized to
-cover the kinds of input each corrective route exists for --- 10 queries drawn from
-unrelated technical and economic domains, and 8 strings degraded by repetition, noise
-characters or missing diacritics. They are deliberately \emph{not} a statistical sample of
+exhaustive by construction. Families~B and~C are hand-built diagnostic sets that target
+the inputs each corrective route is designed for: 10 queries from unrelated technical,
+economic and general-interest domains (B), and 8 strings degraded by repetition, noise
+characters or missing words (C). They are deliberately \emph{not} a statistical sample of
 any population, and we draw no significance claims from them; their purpose is to check
 that each route fires on input designed to trigger it. The probes also differ from the
 50-query benchmark in what can be measured: they have no author-validated reference
@@ -162,95 +159,140 @@ indexed literature); B and C are diagnostic sets, not random samples. Only the r
 evaluated, since the probes carry no reference answers.}
 \label{tab:probe_families}
 \footnotesize
-\begin{tabular}{p{0.24\linewidth} c p{0.38\linewidth} p{0.20\linewidth}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\linewidth} c >{\raggedright\arraybackslash}p{0.40\linewidth} >{\raggedright\arraybackslash}p{0.19\linewidth}}
 \toprule
 \textbf{Family} & $n$ & \textbf{Example probe (verbatim)} & \textbf{Expected route} \\
 \midrule
-A. Catalogued species with no indexed literature & 9 & \emph{What phytochemical compounds are reported for Adesmia spinosissima?} & \textsc{refine} or \textsc{web\_search} \\
+A. Catalogued species without indexed literature & 9 & \emph{What phytochemical compounds are reported for Adesmia spinosissima?} & \textsc{refine} or \textsc{web\_search} \\
 \addlinespace
-B. Outside the botanical domain & 10 & \emph{How do I configure a Kubernetes deployment for a Node.js service?} & \textsc{web\_search} \\
+B. Outside the botanical domain & 10 & \emph{Compare Vue and Svelte for building a modern SPA.} & \textsc{web\_search} \\
 \addlinespace
 C. Lexically degraded strings & 8 & \emph{medicinal plant peru ??? xxx antioxidant ????} & \textsc{refine} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-As for how we measure success, we follow standard parameters. On the retrieval side we use Context Precision, Recall, MRR, and NDCG. On the generation side, we use BERTScore F1~\cite{zhang2020bertscore}. To detect unsupported pharmacological claims, we devised a ``Fidelity'' metric that blends semantic evaluation with literal text matches. We also removed components one at a time (ablation) to isolate their contribution.
+\textbf{Metrics.} Retrieval is evaluated with Context Precision, Context Recall, MRR and NDCG, and generation with BERTScore F1~\cite{zhang2020bertscore}, Semantic Similarity, Entity Coverage (fraction of reference entities named in the answer) and Answer Relevancy~\cite{es2023ragas}. To detect unsupported pharmacological claims we also define \emph{Fidelity}, an experimental grounding proxy that combines a sentence-level cross-encoder support score ($65\,\%$) with content-word overlap against the retrieved context ($35\,\%$); Sec.~\ref{sec:fidelity_weight} examines its sensitivity to this weighting. Component contributions are isolated by ablation, removing one component at a time.
 
-% ============================================================
 \section{Results}
 \label{sec:results}
 
-On the 50-query, 12-species human-verified benchmark, \sirca{} achieves a Context Recall of $0.485$, an MRR of $0.897$ and an NDCG@10 of $0.887$; Fidelity, which is computed over the wider $n{=}80$ set, is $0.670$ (Table~\ref{tab:full_results}, \texttt{full} column). The MRR indicates that, for the large majority of queries, the most relevant document lands in the first or second rank position. We do not compare these values numerically against published prior work: the only related work we identified in Spanish (Collanqui et al.~\cite{collanqui2026cagrag}, Sec.~\ref{sec:related}) evaluates a domain, corpus, and retrieval strategy too different from ours — a single institutional regulation with $k{=}1$ retrieval — for a direct quantitative comparison to be valid.
+On the 50-query, 12-species human-verified benchmark, \sirca{} achieves a Context Recall of $0.485$, an MRR of $0.897$ and an NDCG@10 of $0.887$; Fidelity, which is computed over the wider $n{=}80$ set, is $0.670$ (Table~\ref{tab:full_results}, \texttt{full} column). The MRR indicates that, for the large majority of queries, the most relevant document lands in the first or second rank position. No numerical comparison with prior work is attempted, for the reasons given in Sec.~\ref{sec:related}.
 
-Generation metrics are also solid: BERTScore F1 of $0.820$ (\texttt{roberta-large}), Semantic Similarity of $0.770$, and Answer Relevancy of $0.999$. The exception is Entity Coverage ($0.428$), which lags behind the rest. We manually inspected the lowest-scoring queries. The generator's final step is highly selective: it tends to mention a single compound or plant per statement (whichever has the most textual support) and ignores secondary entities that do appear in the reference paragraph. As a result, automated metrics that demand entity exhaustiveness penalize it, even though the answer is technically correct. Fidelity of $0.670$ is the $n{=}80$ headline value; its $35\,\%$ lexical term deliberately penalizes paraphrasing of chemical formulas and taxonomic names to reduce the risk of pharmacological hallucination. On the 50-query subset used for the generator comparison, where the two components were measured separately, DeepSeek scores $0.613$ semantic and $0.587$ lexical, which combine to the $0.604$ reported in Table~\ref{tab:multi_llm} (Sec.~\ref{sec:fidelity_weight}).
+On generation, the system attains a BERTScore F1 of $0.820$ (\texttt{roberta-large}), a Semantic Similarity of $0.770$ and an Answer Relevancy of $0.999$. The lowest value is Entity Coverage ($0.428$). Manual inspection of the lowest-scoring answers shows that the generator tends to name only the best-supported compound or species in each statement and omits secondary entities present in the reference, which entity-exhaustive metrics penalize even when the answer is correct. The $35\,\%$ lexical term of Fidelity deliberately penalizes paraphrase of chemical and taxonomic names, where a paraphrase can alter the pharmacological meaning. On the 50-query subset used for the generator comparison, where the two components were measured separately, DeepSeek scores $0.613$ semantic and $0.587$ lexical, which combine to the $0.604$ reported in Table~\ref{tab:multi_llm} (Sec.~\ref{sec:fidelity_weight}).
 
 \begin{table}[!ht]
 \centering
-\caption{Retrieval metrics (top-30 pool, weighted RRF followed by cross-encoder reranking; same methodology as Table~\ref{tab:full_results}) on the 12 human-verified species (50 queries) and on 30 additional species sampled from the catalogue (30 template queries), 42 unique species in total. $n_{\text{spp}}$ is the number of species, not of queries. C.\ Precision and C.\ Recall are Context Precision and Context Recall.}
+\caption{Retrieval metrics of the full pipeline (weighted RRF followed by cross-encoder reranking) on the 12 human-verified species (50 benchmark queries) and on 30 additional catalogued species (30 template queries). $n_{\text{spp}}$ is the number of species and $n_{\text{q}}$ the number of queries. C.\ Prec.\ and C.\ Recall are Context Precision and Context Recall.}
 \label{tab:extended_retrieval}
-\resizebox{0.9\linewidth}{!}{%
-\begin{tabular}{l c c c c c c}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{l c c c c c c c}
 \toprule
-\textbf{Subset} & $n_{\text{spp}}$ & \textbf{MRR} & \textbf{NDCG@5} & \textbf{NDCG@10} & \textbf{C.\ Precision} & \textbf{C.\ Recall} \\
+\textbf{Subset} & $n_{\text{spp}}$ & $n_{\text{q}}$ & \textbf{MRR} & \textbf{NDCG@5} & \textbf{NDCG@10} & \textbf{C.\ Prec.} & \textbf{C.\ Recall} \\
 \midrule
-Initial human-verified & 12 & $0.897$ & $0.881$ & $0.887$ & $0.430$ & $0.485$ \\
-Additional 30 species & 30 & $0.883$ & $0.868$ & $0.867$ & $0.451$ & $0.489$ \\
+Verified & 12 & 50 & $0.897$ & $0.881$ & $0.887$ & $0.430$ & $0.485$ \\
+Additional & 30 & 30 & $0.883$ & $0.868$ & $0.867$ & $0.451$ & $0.489$ \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}
 \end{table}
 
-\textbf{Retrieval generalization.} Table~\ref{tab:extended_retrieval} shows that retrieval quality is preserved when the evaluation is widened from the 12 human-verified species to 30 further species sampled from the catalogue: MRR moves from $0.897$ to $0.883$, NDCG@10 from $0.887$ to $0.867$ and Context Recall from $0.485$ to $0.489$. The two subsets are therefore statistically indistinguishable, which is the claim we make: the retrieval engine is not overfit to the verified subset. We do \emph{not} describe these as \emph{unseen} species --- all of them are represented in the index, so the experiment measures performance on species absent from the initial benchmark, not generalization to material outside the corpus. Reproducibility was verified by running the script three times independently with identical results, after fixing a genuine source of non-determinism in the query-refinement step, where an unordered collection was truncated before being sorted, so its contents varied across processes; the repository README documents the defect and its fix.
+\textbf{Retrieval generalization.} Table~\ref{tab:extended_retrieval} shows that retrieval quality is preserved when the evaluation is widened from the 12 human-verified species to 30 further species sampled from the catalogue: MRR moves from $0.897$ to $0.883$, NDCG@10 from $0.887$ to $0.867$ and Context Recall from $0.485$ to $0.489$, and no metric changes by more than $0.021$. The retrieval engine is therefore not overfit to the verified subset. We do \emph{not} describe these as \emph{unseen} species: all of them are represented in the index, so the experiment measures performance on species absent from the initial benchmark, not generalization to material outside the corpus.
 
-\subsection{Robustness Across Multiple Models}
-\label{sec:multi_llm}
+The remainder of this section reports, in order, the central routing result (Sec.~\ref{sec:crag_validation}), the ablation and its statistical tests (Secs.~\ref{sec:ablation}--\ref{sec:wilcoxon}), the contribution of hybrid fusion (Sec.~\ref{sec:pool}), the generator swap (Sec.~\ref{sec:multi_llm}), the validity of the Fidelity proxy (Secs.~\ref{sec:fidelity_weight}--\ref{sec:llm_judge}) and the per-language analysis (Sec.~\ref{sec:language}).
 
-To test whether the observed behaviour is specific to DeepSeek, we replaced the generator with Gemma-4-31B~\cite{googledeepmind2026gemma4} and re-answered the same 50 questions over the same retrieved contexts.\footnote{Gemma-4-31B is served here through the SambaNova inference API (model identifier \texttt{gemma-4-31B-it}); the provider differs from an earlier run of this experiment, the model does not.} Retrieval is upstream of the generator and therefore unchanged; the generated text differs measurably (Table~\ref{tab:multi_llm}).
+\subsection{Corrective Routing and Score Normalization}
+\label{sec:crag_validation}
 
-\begin{table}[!ht]
-\centering
-\caption{Generator comparison with the \sirca{} pipeline held fixed: DeepSeek V4-Flash vs.\ Gemma-4-31B, both over the same 50 benchmark queries and the same retrieved contexts ($n{=}50$ paired observations per metric). $\Delta$ is Gemma minus DeepSeek, so a positive value favours Gemma. Two-tailed paired $t$-tests, no correction for multiple comparisons. Entity Cov.\ = Entity Coverage (fraction of reference entities named in the answer); Sem.\ Sim.\ = Semantic Similarity; Answer Rel.\ = Answer Relevancy. Boldface marks the higher value in each row.}
-\label{tab:multi_llm}
-\resizebox{0.9\linewidth}{!}{%
-\begin{tabular}{l c c c l}
-\toprule
-\textbf{Metric} & \textbf{DeepSeek-V4} & \textbf{Gemma-4-31B} & $\Delta$ & \textbf{Significance (paired $t$)} \\
-\midrule
-BERTScore F1 & $0.820$ & $\mathbf{0.834}$ & $+0.014$ & \textbf{Significant} ($p{<}0.001$) \\
-Sem.\ Sim. & $\mathbf{0.770}$ & $0.766$ & $-0.004$ & Not significant ($p{=}0.931$) \\
-Entity Cov. & $\mathbf{0.428}$ & $0.365$ & $-0.063$ & \textbf{Significant} ($p{=}0.012$) \\
-Answer Rel. & $\mathbf{0.999}$ & $0.979$ & $-0.020$ & Not significant ($p{=}0.180$) \\
-\midrule
-\textbf{Fidelity} (hybrid) & $0.604$ & $\mathbf{0.686}$ & $+0.082$ & \textbf{Significant} ($p{=}0.019$) \\
-\bottomrule
-\end{tabular}%
-}
-\end{table}
+The first implementation of the evaluator rescaled the reranker scores of each retrieved batch to $[0,1]$ by min--max normalization. This makes the decision relative to the batch: the best passage of every query is mapped to $1.0$ regardless of its absolute relevance, so the accept branch can be reached even when no retrieved passage is relevant. We replaced it with the per-document logistic transformation $s_\sigma{=}\sigma(s)$ described in Sec.~\ref{sec:architecture}, which does not depend on the other passages retrieved for the same query. We deliberately avoid the term \emph{calibration}: a calibrated score would have to match empirical correctness frequencies, which we do not verify here.
+
+The 27 out-of-distribution probes (Sec.~\ref{sec:experiments}, Table~\ref{tab:probe_families}) test whether the corrective routes fire on the inputs they exist for; they evaluate route selection, not the quality of any subsequent web-supported answer (Limitation~\ref{lim:websearch}). Table~\ref{tab:norm_compare} and Fig.~\ref{fig:crag_routing} compare both scoring rules on the same probes and on the 50 benchmark queries, using one retrieval pass per query, one vector of raw cross-encoder logits and two decision functions.
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.85\linewidth]{cross_llm.png}
-\caption{Generator swap with the pipeline and retrieved contexts held fixed ($n{=}50$ paired queries). DeepSeek leads on Entity Coverage; Gemma on Fidelity and, by $0.014$, on BERTScore F1. Per-bar $p$-values are two-tailed paired $t$-tests without multiplicity correction; values in red are significant at $\alpha{=}0.05$.}
-\label{fig:cross_llm}
+\includegraphics[width=0.85\linewidth]{crag_routing.png}
+\caption{Routing of the 27 out-of-distribution probes under the two scoring rules. For each family, the solid bar is the within-batch \textsc{min--max} rule and the hatched bar the per-document absolute transformation; colors give the route taken. Family sizes: A $n{=}9$, B $n{=}10$, C $n{=}8$. The absolute transformation lowers acceptance from $20/27$ to $8/27$ probes and rejects every off-domain query ($0/10$ accepted, vs.\ $7/10$ under \textsc{min--max}).}
+\label{fig:crag_routing}
 \end{figure}
-
-The comparison splits along metric families rather than favouring one generator outright. DeepSeek leads on Entity Coverage ($0.428$ vs $0.365$, $p{=}0.012$) and, without reaching significance, on Answer Relevancy ($0.999$ vs $0.979$, $p{=}0.180$) and Semantic Similarity ($p{=}0.931$). Gemma leads on Fidelity ($0.686$ vs $0.604$, $p{=}0.019$) and, by a margin of $0.014$, on BERTScore F1 ($p{<}0.001$): the separation on that metric is statistically reliable but small enough that the two generators are best described as equivalent on it.
-
-A decomposition of the Fidelity metric locates Gemma's advantage more precisely. Recomputing Fidelity across the full range of the semantic/lexical weighting (Sec.~\ref{sec:fidelity_weight}) shows that Gemma's margin is \emph{largest} under a purely semantic weighting ($+0.108$) and \emph{smallest}, and not significant, under a purely lexical one ($+0.035$, $p{=}0.249$). The advantage is therefore driven by the cross-encoder component that judges whether each sentence is supported by the context, not by verbatim reuse of context wording. Decomposed, Gemma scores $0.721$ semantic and $0.622$ lexical against DeepSeek's $0.613$ and $0.587$.
-
-Two architectural points follow: (i)~the \sirca{} pipeline tolerates a change of generator without additional tuning, and (ii)~the choice of generator matters for grounding specifically, not for generation quality in general. In this run both generators produced a usable answer for every query ($0/50$ failures each), after two DeepSeek queries that initially returned empty content were regenerated; Limitation~(vii) documents the mechanism.
-
-\subsection{Cross-Validation}
-\label{sec:llm_judge}
-
-To test whether the Fidelity metric tracks grounding as intended, we applied the \emph{LLM-as-judge} technique~\cite{zheng2023mtbench}, having Gemma-4-31B decompose each DeepSeek answer into individual factual claims and report how many are explicitly supported by the provided context --- a claim-level rubric rather than a single holistic score, to avoid a pile-up of perfect scores. The evaluator comes from a different model family than the generator it grades. The qualitative result is favourable: on the final index, 42 of the 48 gradable answers had every claim supported ($88\,\%$; the earlier holistic 0--4 rubric gave $86\,\%$ and the first claim-level run $74\,\%$). Even so, that rate leaves little variance for a formal correlation. Across three attempts the correlation between the judge's score and the algorithmic metric is null in every case: $r{=}0.056$ ($p{=}0.70$) for the holistic 0--4 rubric, $r{=}{-}0.167$ ($p{=}0.27$) for the claim-level rubric, and $r{=}0.039$ ($p{=}0.79$, $n{=}48$) for the claim-level rubric recomputed on the final index, where 42 of 48 gradable answers had every claim supported. Three rubric designs over two indices reproduce the same null result, so we do not attribute it to a ceiling artifact of any single scale: the LLM judge does not quantitatively validate Fidelity.
-
-The scale gap is informative in itself. The judge averages $0.977$ (normalized) against the metric's $0.593$ on the same answers, because the metric is deliberately unforgiving toward medical paraphrase: we prefer a low score to endorsing a phrase that reads as similar but could carry a clinical error. No automated judge substitutes for a pharmacist's review; the exercise works as a coarse filter for unsupported answers, not as a quantitative validation of Fidelity, which after three attempts we did not establish.
 
 \begin{table}[!ht]
 \centering
-\caption{Ablation of five configurations. \textbf{Sample sizes differ by column}: the four retrieval metrics are computed over the 50 benchmark queries, while Fidelity is computed over $n{=}80$ (the 50 benchmark queries plus 30 template queries on additional species) with DeepSeek generation. Boldface marks the best and underlining the worst value per column. Fidelity is reported for all five configurations, measured with the same generator over the same $n{=}80$ query set. $^\dagger$\texttt{dense\_only} matches \texttt{full} on every retrieval metric because its Top-10 is identical on all 50 queries; Sec.~\ref{sec:pool} shows this follows from the fusion parameters rather than from the reranker dominating.}
+\caption{Head-to-head comparison of the two scoring rules on the \emph{same}
+27 probes and the \emph{same} 50 benchmark queries. \textsc{min--max} is the
+original within-batch implementation, recovered verbatim from the pre-fix revision of
+the evaluator; \textsc{sigmoid} is the per-document absolute transformation. The
+downstream decision rule (Sec.~\ref{sec:architecture}) is identical in both arms.
+\textsc{corrective} counts \textsc{refine} plus \textsc{web\_search}; under \textsc{sigmoid}
+the 50 benchmark queries split into 43 \textsc{accept}, 2 \textsc{refine} and 5
+\textsc{web\_search}. Boldface marks the intended behavior on off-domain input.}
+\label{tab:norm_compare}
+\footnotesize
+\begin{tabular}{l c c c c c c}
+\toprule
+ & & \multicolumn{2}{c}{\textsc{min--max} (within-batch)} & \multicolumn{2}{c}{\textsc{sigmoid} (absolute)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Query set} & $n$ & \textsc{accept} & \textsc{corrective} & \textsc{accept} & \textsc{corrective} \\
+\midrule
+A. Species with no indexed data &  9 & 8 & 1 & 4 & 5 \\
+B. Off-domain                   & 10 & 7 & 3 & \textbf{0} & \textbf{10} \\
+C. Garbled strings              &  8 & 5 & 3 & 4 & 4 \\
+\midrule
+All probes                      & 27 & 20 & 7 & \textbf{8} & \textbf{19} \\
+In-domain benchmark             & 50 & 46 & 4 & 43 & 7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:norm_compare} quantifies the defect against its replacement. Within-batch
+normalization accepts $20$ of the $27$ out-of-distribution probes ($74\,\%$) vs.\ $8$
+($30\,\%$) under the absolute transformation, and accepts $7$ of the $10$ off-domain
+queries that the absolute transformation routes to external search without exception
+($10/10$). One qualification is required: within-batch normalization does not suppress
+the corrective routes altogether. It still triggers $7$ of them across the 27 probes,
+since the decision rule also requires at least $20\,\%$ of the batch above threshold,
+and min--max sends the worst document of every batch to $0$. The effect is therefore
+quantitative: the within-batch rule multiplies the out-of-distribution acceptance rate by
+about 2.5 and removes the categorical rejection of off-domain input, without disabling
+the corrective routes entirely.
+
+\begin{table}[!ht]
+\centering
+\caption{Accept rate under the absolute transformation as a function of the accept
+threshold (refine threshold fixed at $0.30$), recomputed from the stored raw logits of
+the same queries. The desired behavior is a high rate on the in-domain benchmark and a
+low one on the probe families; Family C (not shown) is constant at $50\,\%$. Boldface
+marks the operating point.}
+\label{tab:threshold_sweep}
+\footnotesize
+\begin{tabular}{l c c c c c c}
+\toprule
+\textbf{Accept threshold} & $0.30$ & $0.40$ & $0.50$ & $\mathbf{0.60}$ & $0.70$ & $0.90$ \\
+\midrule
+In-domain benchmark ($n{=}50$)      & $90\,\%$ & $90\,\%$ & $88\,\%$ & $\mathbf{86\,\%}$ & $86\,\%$ & $76\,\%$ \\
+Species with no data ($n{=}9$)      & $78\,\%$ & $56\,\%$ & $56\,\%$ & $\mathbf{44\,\%}$ & $44\,\%$ & $22\,\%$ \\
+Off-domain ($n{=}10$)               & $0\,\%$  & $0\,\%$  & $0\,\%$  & $\mathbf{0\,\%}$  & $0\,\%$  & $0\,\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The thresholds were fixed a priori rather than tuned on the probes, and then checked
+for sensitivity (Table~\ref{tab:threshold_sweep}). Off-domain queries never reach \textsc{accept} at any threshold, so they do
+not constrain the choice at all; acceptance of no-data species falls in steps from
+$78\,\%$ to $22\,\%$ but is flat at $44\,\%$ across every threshold in
+$[0.55,\,0.85]$; and in-domain acceptance declines smoothly from $90\,\%$ to
+$76\,\%$. The operating point therefore sits on a plateau rather than at an optimum:
+every threshold in $[0.55,\,0.85]$ routes both probe families identically, and
+$0.60$ is a defensible but not a distinguished choice (Limitation~\ref{lim:thresholds}).
+
+Under the absolute transformation, off-domain queries are routed to external search in $10$ of $10$ cases. For taxa absent from the index, $5$ of $9$ probes trigger a reformulation or the external fallback, while $4$ are accepted because the index supplies context from related taxa of the same genus or family. The router thus rejects out-of-domain input categorically, but it does not distinguish a species without literature of its own from one whose close relatives are well documented. On the 50 benchmark queries, $7$ corrective activations occur ($2$ \textsc{refine}, $5$ \textsc{web\_search}); $5$ of them fall on \textit{exploratory} or \textit{comparative} queries (vs.\ $25$ of the $43$ accepted queries), categories that call for synthesis across sources; with seven activations we report this as a tendency only. In such cases, declaring uncertainty is preferable to producing an unsupported answer. Overall, the per-document absolute transformation makes the corrective routes reachable on out-of-distribution input and on low-confidence in-domain queries, which the batch-relative rule largely prevented (Table~\ref{tab:norm_compare}).
+
+\subsection{Findings from the Ablation}
+\label{sec:ablation}
+
+\begin{table}[!ht]
+\centering
+\caption{Ablation of five configurations. \textbf{Sample sizes differ by column}: the four retrieval metrics are computed over the 50 benchmark queries, while Fidelity is computed over $n{=}80$ (the 50 benchmark queries plus 30 template queries on additional species) with the DeepSeek generator. $\Delta$ is the relative change in Fidelity with respect to \texttt{full}. Boldface marks the best and underlining the worst value per column; no Fidelity difference is statistically significant (Sec.~\ref{sec:ablation}). $^\dagger$\texttt{dense\_only} matches \texttt{full} on every retrieval metric because its Top-10 is identical on all 50 queries; Sec.~\ref{sec:pool} shows this follows from the fusion parameters rather than from the reranker dominating.}
 \label{tab:full_results}
 \footnotesize
 \begin{tabular}{l c c c c c c}
@@ -260,9 +302,9 @@ The scale gap is informative in itself. The judge averages $0.977$ (normalized) 
  & \textbf{C.Prec.} & \textbf{C.Recall} & \textbf{MRR} & \textbf{NDCG@10} & \textbf{Fidel.} & $\boldsymbol{\Delta}$ \\
 \midrule
 \texttt{full} & \underline{$0.430$} & $0.485$ & $0.897$ & $0.887$ & $0.670$ & --- \\
-\texttt{dense\_only$^\dagger$} & \underline{$0.430$} & $0.485$ & $0.897$ & $0.887$ & \textbf{$0.677$} & $+1.1\%$ \\
-\texttt{sparse\_only} & \textbf{$0.465$} & \textbf{$0.525$} & \underline{$0.867$} & \underline{$0.832$} & $0.657$ & $-1.9\%$ \\
-\texttt{no\_reranker} & $0.440$ & \underline{$0.484$} & \textbf{$0.955$} & \textbf{$0.900$} & \underline{$0.640$} & $-4.5\%$ \\
+\texttt{dense\_only$^\dagger$} & \underline{$0.430$} & $0.485$ & $0.897$ & $0.887$ & $\mathbf{0.677}$ & $+1.1\%$ \\
+\texttt{sparse\_only} & $\mathbf{0.465}$ & $\mathbf{0.525}$ & \underline{$0.867$} & \underline{$0.832$} & $0.657$ & $-1.9\%$ \\
+\texttt{no\_reranker} & $0.440$ & \underline{$0.484$} & $\mathbf{0.955}$ & $\mathbf{0.900}$ & \underline{$0.640$} & $-4.5\%$ \\
 \texttt{no\_crag} & $0.432$ & $0.488$ & $0.897$ & $0.891$ & $0.676$ & $+0.9\%$ \\
 \bottomrule
 \end{tabular}
@@ -270,98 +312,38 @@ The scale gap is informative in itself. The judge averages $0.977$ (normalized) 
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.7\linewidth]{ablation_fidelity.png}
-\caption{Fidelity across the ablation. \textbf{Left:} mean Fidelity for the five configurations over the $n{=}80$ query set, spanning $0.640$ (\texttt{no\_reranker}) to $0.677$ (\texttt{dense\_only}); no pairwise difference is statistically significant. \textbf{Right:} per-query Fidelity, \texttt{full} vs.\ \texttt{no\_reranker} ($n{=}80$ paired queries, DeepSeek generator). The direction is consistent across all six runs of this experiment, but the final run does not reach two-sided significance ($p{=}0.082$; $p{=}0.041$ one-sided), and $49$ of the $80$ queries favour \texttt{full}.}
+\includegraphics[width=0.92\linewidth]{ablation_fidelity.png}
+\caption{Fidelity across the ablation ($n{=}80$ queries, DeepSeek generator). \textbf{(a)}~Mean Fidelity of the five configurations, from $0.640$ (\texttt{no\_reranker}) to $0.677$ (\texttt{dense\_only}); no pairwise difference with \texttt{full} is significant. \textbf{(b)}~Distribution of the per-query difference \texttt{full}~$-$~\texttt{no\_reranker}; the dashed line marks zero and the solid line the mean ($+0.030$). $49$ of the $80$ queries favor \texttt{full}, but the paired Wilcoxon test is not significant two-sided ($p{=}0.082$; one-sided $p{=}0.041$).}
 \label{fig:ablation_fidelity}
 \end{figure}
 
-\subsection{Sensitivity of the Fidelity Weighting}
-\label{sec:fidelity_weight}
+Table~\ref{tab:full_results} and Fig.~\ref{fig:ablation_fidelity} yield three observations. \textbf{First}, the cross-encoder is the component most consistently associated with Fidelity. Removing it lowers Fidelity by $4.5\,\%$ relative ($0.670 \rightarrow 0.640$), the largest movement in the column, but the paired Wilcoxon test does not reach two-sided significance ($p{=}0.082$; one-sided $p{=}0.041$; $n{=}80$), and $49$ of the $80$ queries favor \texttt{full}. The other configurations bracket \texttt{full} without significant differences (\texttt{dense\_only} $0.677$, $p{=}0.680$; \texttt{no\_crag} $0.676$, $p{=}0.996$; \texttt{sparse\_only} $0.657$, $p{=}0.412$). The \texttt{dense\_only} row also provides an empirical noise floor: it feeds the generator exactly the same Top-10 as \texttt{full}, so its difference from \texttt{full} ($+0.008$) is pure generation stochasticity. The reranker effect ($-0.030$) is about four times this floor, which explains why its direction is stable across runs while its two-sided significance is not (Limitation~\ref{lim:reranker}). We therefore report it as a consistent directional signal, not as a statistically confirmed effect. \textbf{Second}, \texttt{sparse\_only} attains the best Context Precision ($0.465$) and Recall ($0.525$) but the worst MRR ($0.867$) and NDCG@10 ($0.832$): BM25 alone admits more relevant passages into the pool but orders them worse. \textbf{Third}, \texttt{dense\_only} returns the same Top-10 as \texttt{full} on all 50 queries, which Sec.~\ref{sec:pool} shows to follow from the fusion parameters.
 
-Fidelity combines a semantic term (sentence-level cross-encoder support) with a lexical
-term (content-word overlap) under a fixed $65/35$ weighting. Those weights were set a
-priori, so we report how the conclusions depend on them. Sweeping the semantic weight
-$w$ from $0$ to $1$ in steps of $0.05$ and recomputing the DeepSeek-vs-Gemma
-comparison at every point (Table~\ref{tab:weight_sweep}) gives a single crossing: the
-Gemma advantage is significant for every $w \geq 0.35$ and not significant below it.
-The reported operating point $w{=}0.65$ therefore sits inside a broad significant
-region rather than at a favourable singularity, but the finding is weight-dependent at
-the lexical end and we state it as such.
+\subsection{Statistical Significance of the Ablation Deltas}
+\label{sec:wilcoxon}
+
+Per-query paired Wilcoxon signed-rank tests (two-sided, $n{=}50$) compare each ablation variant with \texttt{full} on the four retrieval metrics (Table~\ref{tab:wilcoxon}). No correction for multiple comparisons is applied: only the Fidelity comparison between \texttt{full} and \texttt{no\_reranker} is interpreted confirmatorily, and the retrieval tests are exploratory.
 
 \begin{table}[!ht]
 \centering
-\caption{Fidelity as a function of the semantic weight $w$ (lexical weight $1-w$),
-recomputed from the per-query components of the same 50 answers. $\Delta$ is Gemma minus
-DeepSeek; $p$ from a two-tailed paired $t$-test. The row $w{=}0.65$ is the operating
-point used elsewhere in this paper.}
-\label{tab:weight_sweep}
+\caption{Wilcoxon signed-rank $p$-values (two-sided) against \texttt{full} on per-query retrieval metrics ($n{=}50$), same methodology as Table~\ref{tab:full_results}. $n_{\neq}$ is the number of queries with a non-zero difference on C.Recall; ``---'' marks a configuration whose Top-10 is identical to \texttt{full} ($n_{\neq}{=}0$). \textbf{No value reaches $\alpha{=}0.05$.} The central Fidelity comparison (\texttt{full} vs.\ \texttt{no\_reranker}, $n{=}80$) is reported in the text below.}
+\label{tab:wilcoxon}
 \footnotesize
-\begin{tabular}{c c c c c}
+\begin{tabular}{l c c c c c}
 \toprule
-$w$ (semantic) & \textbf{DeepSeek} & \textbf{Gemma} & $\boldsymbol{\Delta}$ & $p$ \\
+\textbf{Config.} & \textbf{$n_{\neq}$} & \textbf{C.Prec.} & \textbf{C.Recall} & \textbf{MRR} & \textbf{NDCG@10} \\
 \midrule
-$0.00$ (lexical only) & $0.587$ & $0.622$ & $+0.035$ & $0.249$ \\
-$0.25$ & $0.593$ & $0.646$ & $+0.053$ & $0.074$ \\
-$0.35$ & $0.596$ & $0.656$ & $+0.060$ & $0.047$ \\
-\textbf{$0.65$} & $0.604$ & $0.686$ & $+0.082$ & $0.019$ \\
-$1.00$ (semantic only) & $0.613$ & $0.721$ & $+0.108$ & $0.014$ \\
+\texttt{dense\_only}    &  0 & --- & --- & --- & --- \\
+\texttt{sparse\_only} & 38 & 0.393 & 0.331 & 0.325 & 0.062 \\
+\texttt{no\_reranker} & 11 & 0.687 & 0.721 & 0.128 & 0.653 \\
+\texttt{no\_crag} &  1 & 0.317 & 0.317 & --- & 0.317 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The sweep also locates the mechanism. The advantage grows monotonically with the
-\emph{semantic} weight and disappears under a purely lexical one, so what distinguishes
-the two generators is how well each sentence is supported by the retrieved context, not
-how much context wording they reuse verbatim.
+No configuration differs significantly from \texttt{full} at the retrieval level. \texttt{sparse\_only} does not reach significance despite its higher aggregate precision (C.\ Prec.\ $p{=}0.393$; C.\ Recall $p{=}0.331$, $n_{\neq}{=}38$): BM25 alone wins on some queries and loses on others. \texttt{no\_reranker} is not significant on any metric ($p{\geq}0.128$), and \texttt{no\_crag} differs from \texttt{full} on a single query ($p{=}0.317$), where disabling the router changes the final context. \texttt{dense\_only} is identical to \texttt{full} on every query (Sec.~\ref{sec:pool}). An $\alpha$ sweep over 30 held-out species, not used for any reported number, confirmed this invariance: neither a different fixed $\alpha$ nor a tuned per-category $\alpha$ improved on $\alpha{=}0.6$ when evaluated once on the 50 benchmark queries, which motivated removing the per-category weighting (Sec.~\ref{sec:architecture}).
 
-Given the null LLM-judge correlation (Sec.~\ref{sec:llm_judge}) and this weight
-dependence, we present Fidelity as an experimental proxy for grounding, not as an
-established measure of factuality.
-
-\subsection{Results by Query Language}
-\label{sec:language}
-
-The benchmark is bilingual by construction: 32 of the 50 questions are in English and 18
-in Spanish (English: 13 factual, 7 exploratory, 12 comparative; Spanish: 7 factual, 8
-exploratory, 3 comparative). We disaggregate both sides of the pipeline (Table~\ref{tab:language}).
-
-\begin{table}[!ht]
-\centering
-\caption{Per-language means on the \texttt{full} configuration, with two-sided
-Mann--Whitney $U$ tests between the Spanish ($n{=}18$) and English ($n{=}32$) subsets of
-the same 50-query benchmark. Retrieval metrics come from the agent run; generation
-metrics from the DeepSeek answers. Boldface marks $p<0.05$.}
-\label{tab:language}
-\footnotesize
-\begin{tabular}{l l c c c}
-\toprule
-\textbf{Stage} & \textbf{Metric} & \textbf{Spanish} & \textbf{English} & $p$ \\
-\midrule
-Retrieval  & C.\ Precision       & $0.477$ & $0.403$ & $0.054$ \\
-Retrieval  & C.\ Recall          & $0.499$ & $0.478$ & $0.324$ \\
-Retrieval  & MRR                 & $0.956$ & $0.864$ & $0.221$ \\
-Retrieval  & NDCG@10             & $0.940$ & $0.857$ & $0.496$ \\
-\midrule
-Generation & BERTScore F1        & $0.808$ & $0.826$ & $\mathbf{0.007}$ \\
-Generation & Sem.\ Sim.          & $0.672$ & $0.825$ & $0.056$ \\
-Generation & Entity Cov.         & $0.454$ & $0.414$ & $0.878$ \\
-Generation & \textbf{Fidelity}   & $0.468$ & $0.680$ & $\mathbf{0.001}$ \\
-Generation & Answer Rel.         & $0.998$ & $0.999$ & $0.436$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Retrieval is language-neutral: no metric differs significantly between the two subsets,
-which is the expected behaviour of a multilingual embedding space shared by query and
-passage. Generation is not. Fidelity is $0.212$ lower on Spanish queries
-($0.468$ vs $0.680$, $p{=}0.001$) and BERTScore F1 is $0.018$ lower
-($p{=}0.007$). The mechanism is visible in the corpus composition: the indexed
-literature is overwhelmingly in English, so a Spanish query retrieves English context
-and the generator must answer in Spanish, which suppresses the lexical-overlap term of
-Fidelity and penalises surface similarity against a Spanish reference answer. This is a
-genuine asymmetry of the current system rather than a metric artifact alone, and it
-bounds the bilingual claim: retrieval is bilingual, grounded generation is measurably
-weaker in Spanish.
+The confirmatory test on Fidelity (\texttt{full} vs.\ \texttt{no\_reranker}, $n{=}80$) gives $p{=}0.082$ two-sided and $p{=}0.041$ one-sided on the final index. It was repeated six times during development as defects were fixed and the index was rebuilt; the direction was the same in all six runs, whereas two-sided significance was reached in three (Limitation~\ref{lim:reranker}). We adopt the final run as the reference. Finally, DeepSeek's Fidelity differs between Table~\ref{tab:multi_llm} ($0.604$) and Table~\ref{tab:full_results} ($0.670$) because the two come from different runs over different query sets (50 vs.\ 80 queries); only within-run comparisons are interpreted.
 
 \subsection{Where Hybrid Fusion Contributes}
 \label{sec:pool}
@@ -369,12 +351,12 @@ weaker in Spanish.
 Because \texttt{dense\_only} and \texttt{full} return an identical Top-10 on every query
 (Table~\ref{tab:wilcoxon}), the reported benchmark cannot establish an incremental
 benefit of hybrid retrieval after reranking. The cause is arithmetic rather than
-empirical, and follows from Eq.~\ref{eq:rrf}. With $k{=}60$, a pool of $30$ and
-$\alpha{=}0.6$, the dense document at rank 30 scores $0.6/(60{+}31)=0.006593$
-while a sparse-only document at rank 1 scores $0.4/(60{+}2)=0.006452$. The former is
+empirical, and follows from Eq.~\ref{eq:rrf}. With $k{=}60$, 30 candidates per branch and
+$\alpha{=}0.6$, the last dense document (rank 29) scores at least $0.6/(60{+}29{+}1)=0.006667$,
+while a document found only by BM25 scores at most $0.4/(60{+}0{+}1)=0.006557$. The former is
 larger, so \emph{no} document unique to BM25 can enter the pool while 30 dense
 candidates exist: we confirmed $0$ such documents across all queries in both indices.
-The crossing point is $\alpha^\ast = (k{+}31)/(2k{+}33) = 0.5948$; below it BM25
+The crossing point is $\alpha^\ast = (k{+}30)/(2k{+}31) = 0.5960$; below it BM25
 contributes documents, above it only ranking evidence through the agreement bonus.
 
 Measuring the configurations on the candidate pool \emph{before} the cross-encoder makes
@@ -382,7 +364,7 @@ the contribution visible (Table~\ref{tab:pool}). Hybrid fusion improves ranking 
 dense-only (NDCG@10 $0.799 \rightarrow 0.824$; C.\ Precision $0.540 \rightarrow
 0.553$) while Recall@30 is identical by the argument above. The claim is therefore
 narrow: at $\alpha{=}0.6$ the lexical branch re-ranks the dense pool and does not
-extend it, and the benefit does not survive the cross-encoder. Lowering $\alpha$ below $0.5948$, or fusing before truncation, is the
+extend it, and the benefit does not survive the cross-encoder. Lowering $\alpha$ below $0.5960$, or fusing before truncation, is the
 experiment that would let the lexical branch contribute coverage; we leave it open.
 
 \begin{table}[!ht]
@@ -405,162 +387,154 @@ hybrid because, at $\alpha{=}0.6$, no BM25-unique document enters the pool.}
 \end{tabular}
 \end{table}
 
-\subsection{Findings from the Ablation}
+\subsection{Robustness Across Multiple Models}
+\label{sec:multi_llm}
 
-Removing components one at a time (Table~\ref{tab:full_results}) yields three observations. First, the reranking module is consistently associated with better Fidelity. Removing it lowers Fidelity by $4.5\,\%$ relative (from $0.670$ to $0.640$); the direction repeated across all six runs of this experiment, but the paired Wilcoxon test over $n{=}80$ queries does not reach conventional two-sided significance ($p{=}0.082$; $p{=}0.041$ one-sided; Sec.~\ref{sec:wilcoxon}), and $49$ of the $80$ queries favour \texttt{full} --- see Limitation~(ix). The complete Fidelity column puts that drop in context. \texttt{dense\_only} ($0.677$, $p{=}0.680$) and \texttt{no\_crag} ($0.676$, $p{=}0.996$) land marginally \emph{above} \texttt{full} and \texttt{sparse\_only} marginally below ($0.657$, $p{=}0.412$); none of the three differs significantly, and the whole column spans $0.640$--$0.677$. Removing the reranker is thus the largest single movement in the column and the only one that approaches significance.
-
-The \texttt{dense\_only} row also supplies an empirical noise floor, which is worth stating because it bounds how much of the reranker effect can be attributed to the reranker at all. That configuration returns exactly the same Top-10 as \texttt{full} on every query, so both feed the generator an identical context and the entire difference between them is generation stochasticity: $+0.008$, spread over $80/80$ queries with a non-zero difference. The reranker effect, $-0.030$, is about four times that floor --- which is why the direction survives six runs while the two-sided test does not: the effect is real but only a few times larger than the run-to-run noise of a non-deterministic commercial generator. Second, keyword search alone (\texttt{sparse\_only}) shows a counterintuitive trade-off: it achieves the best C.Prec. ($0.465$) and C.Recall ($0.525$) of the five configurations, but the worst MRR ($0.867$) and NDCG@10 ($0.832$) --- BM25 brings more relevant documents into the 30-item pool, but without the dense semantic signal it orders them worse before reranking. None of these differences reach per-query significance (Sec.~\ref{sec:wilcoxon}). Third, \texttt{dense\_only} produces exactly the same Top-10 as \texttt{full} across all 50 queries ($n_{\neq}{=}0$) on both indices. Section~\ref{sec:pool} shows this is arithmetic rather than empirical: at $\alpha{=}0.6$ no BM25-unique document can enter the 30-document pool, so the lexical branch re-ranks the dense pool instead of extending it. Retrieval takes $\sim$1\,810\,ms on CPU, and generation between 10 and 30 seconds against the DeepSeek API.
-
-\subsection{Statistical Significance of the Ablation Deltas}
-\label{sec:wilcoxon}
-
-The differences between configurations in Table~\ref{tab:full_results} are point estimates and could be due to chance. To rule this out, we ran paired Wilcoxon signed-rank tests on the per-query values (50 queries, two-sided test) between each ablation variant and the \texttt{full} configuration. Table~\ref{tab:wilcoxon} summarizes the $p$-values for Context Precision, Context Recall, MRR, and NDCG@10. It should be noted that none of the $p$-values in this section incorporate correction for multiple comparisons: only the central comparison on Fidelity (\texttt{full} vs \texttt{no\_reranker}, below) is interpreted confirmatorily; the rest of the tests in this section are exploratory and reported without adjustment, and should be read with the usual caution around uncorrected multiple comparisons.
+To test whether the observed behavior is specific to DeepSeek, we replaced the generator with Gemma-4-31B~\cite{googledeepmind2026gemma4} and re-answered the same 50 questions over the same retrieved contexts.\footnote{Gemma-4-31B is served here through the SambaNova inference API (model identifier \texttt{gemma-4-31B-it}).} Retrieval is upstream of the generator and therefore unchanged; the generated text differs measurably (Table~\ref{tab:multi_llm}).
 
 \begin{table}[!ht]
 \centering
-\caption{Wilcoxon signed-rank $p$-values (two-sided) against \texttt{full} on per-query retrieval metrics ($n{=}50$), same methodology as Table~\ref{tab:full_results}. $n_{\neq}$ is the number of queries with a non-zero difference on C.Recall; ``---'' marks a configuration whose Top-10 is identical to \texttt{full} ($n_{\neq}{=}0$). \textbf{No value reaches $\alpha{=}0.05$.} The central Fidelity comparison (\texttt{full} vs \texttt{no\_reranker}, $n{=}80$) is reported in the text below.}
-\label{tab:wilcoxon}
-\footnotesize
-\begin{tabular}{l c c c c c}
-\toprule
-\textbf{Config.} & \textbf{$n_{\neq}$} & \textbf{C.Prec.} & \textbf{C.Recall} & \textbf{MRR} & \textbf{NDCG@10} \\
-\midrule
-\texttt{dense\_only}    &  0 & --- & --- & --- & --- \\
-\texttt{sparse\_only} & 38 & 0.393 & 0.331 & 0.325 & 0.062 \\
-\texttt{no\_reranker} & 11 & 0.687 & 0.721 & 0.128 & 0.653 \\
-\texttt{no\_crag} &  1 & 0.317 & 0.317 & --- & 0.317 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The statistical picture confirms that, at the retrieval level, no configuration differs significantly from \texttt{full}. \texttt{sparse\_only} fails to reach significance despite having the best aggregate C.Prec. ($p{=}0.331$, $n_{\neq}{=}38$ on C.Recall): BM25 without the dense component wins on some queries and loses on others, and the net effect is indistinguishable from chance. \texttt{no\_reranker} likewise fails to reach significance on any retrieval metric ($p{\geq}0.127$ on all four). \texttt{no\_crag} differs from \texttt{full} in only $1$ of $50$ queries ($p{=}0.317$): disabling CRAG means those queries no longer trigger \textsc{refine}/\textsc{web\_search} and the final context changes; for the rest CRAG accepts the same Top-10. \texttt{dense\_only} does produce exactly the same Top-10 as \texttt{full} ($n_{\neq}{=}0$, marked with ``---''): the cross-encoder reranker makes final retrieval indifferent to which $\alpha$ the fusion started from. We confirmed this invariance is not an artifact of the reported benchmark with an $\alpha$ sweep over 30 held-out species never used to report numbers (runner documented in the repository README): neither a fixed $\alpha$ other than $0.6$ nor a properly-tuned per-category $\alpha$ on that held-out set beat the current $\alpha{=}0.6$ when evaluated, once, on the 50 reported queries; that is why we removed the classifier's per-category weighting (Section~\ref{sec:architecture}) in favor of a fixed $\alpha$.
-
-The overall reading is that, at the retrieval level, the five configurations are statistically equivalent, and the architecturally central impact of the ablation lives in Fidelity, where removing the reranker costs a $4.5\,\%$ relative drop (Table~\ref{tab:full_results}). To test whether that drop is noise we applied a paired Wilcoxon signed-rank test on per-query Fidelity between \texttt{full} and \texttt{no\_reranker}. On the final index the test gives $p{=}0.082$ two-sided and $p{=}0.041$ one-sided ($n{=}80$, with a non-zero difference on every query). The test was repeated six times over the course of this work as bugs were fixed and the index rebuilt; the direction held in all six runs while two-sided significance did not, and Limitation~(ix) reports that series in full. We adopt the final run as the reference: the reranker's contribution to Fidelity is a consistent directional signal, not a statistically confirmed effect.
-
-\textbf{Note on runs and the absolute value of Fidelity.} DeepSeek's Fidelity in the cross-LLM comparison (Table~\ref{tab:multi_llm}, $0.604$) differs from \texttt{full}'s Fidelity in Table~\ref{tab:full_results} ($0.670$) because the two come from different runs and different query sets: Table~\ref{tab:multi_llm} is the paired run with Gemma over the 50 benchmark queries, while Table~\ref{tab:full_results} is a dedicated ablation run over $n{=}80$. The one result reproducible across runs — and the one that supports the article's conclusion — is the \emph{direction} of the differences, not their absolute value, and (as documented above) not always their formal significance either.
-
-\subsection{The Within-Batch Normalization Defect}
-\label{sec:crag_validation}
-
-The initial implementation contained a normalization defect. The evaluator rescaled each batch of retrieved blocks to the $[0,1]$ interval by min--max normalization. This makes the threshold relative to the batch: the best document of every query is mapped to $1.0$ regardless of its absolute relevance, so the accept branch is reached even when no retrieved text is relevant. Table~\ref{tab:norm_compare} quantifies how much this shifts the routing distribution. We replaced it with a per-document logistic transformation of the raw reranker logit, $s_\sigma = \sigma(s)$, which is absolute in the sense that it does not depend on the other documents retrieved for the same query. We set the operating thresholds at $0.60$ to accept and $0.30$ to refine. We deliberately avoid calling this a \emph{calibration}: a calibrated score would have to match empirical correctness frequencies, which we do not verify here.
-
-To verify that the corrective branches fire as designed, we assembled 27 out-of-distribution probes in three families: taxa absent from the index, queries outside the botanical domain, and lexically degraded strings. Table~\ref{tab:crag_stress} reports the resulting routing decisions.
-
-\begin{table}[!ht]
-\centering
-\caption{Routing decisions of the deployed configuration (absolute transformation, accept $\geq0.60$, refine $\geq0.30$) on the 27 out-of-distribution probes and, for reference, on the 50 in-domain benchmark queries. Family A: the 9 catalogued taxa with no indexed literature; Family B: 10 queries outside the botanical domain; Family C: 8 lexically degraded strings. Table~\ref{tab:norm_compare} contrasts these decisions with the within-batch rule they replaced.}
-\label{tab:crag_stress}
+\caption{Generator comparison with the \sirca{} pipeline and the retrieved contexts held fixed (same 50 benchmark queries, $n{=}50$ paired observations per metric). $\Delta$ is Gemma minus DeepSeek, so a positive value favors Gemma. $p$: two-tailed paired $t$-test, without correction for multiple comparisons. Boldface marks the higher mean in each row and $p{<}0.05$.}
+\label{tab:multi_llm}
 \footnotesize
 \begin{tabular}{l c c c c}
 \toprule
-\textbf{Family} & $n$ & \textbf{\textsc{accept}} & \textbf{\textsc{refine}} & \textbf{\textsc{web\_search}} \\
+\textbf{Metric} & \textbf{DeepSeek V4-Flash} & \textbf{Gemma-4-31B} & $\boldsymbol{\Delta}$ & $\boldsymbol{p}$ \\
 \midrule
-A. Species with no data & 9 & 4 & 4 & 1 \\
-B. Off-domain   & 10 & 0 & 0 & \textbf{10} \\
-C. Garbled           &  8 & 4 & 1 & 3 \\
+BERTScore F1        & $0.820$          & $\mathbf{0.834}$ & $+0.014$ & $\mathbf{<0.001}$ \\
+Semantic Similarity & $\mathbf{0.770}$ & $0.766$          & $-0.004$ & $0.931$ \\
+Entity Coverage     & $\mathbf{0.428}$ & $0.365$          & $-0.063$ & $\mathbf{0.012}$ \\
+Answer Relevancy    & $\mathbf{0.999}$ & $0.979$          & $-0.020$ & $0.180$ \\
 \midrule
-Total (\emph{probes})            & 27 & 8 & 5 & 14 \\
-Total (in-domain \emph{benchmark}) & 50 & 43 & 2 & 5 \\
+Fidelity (65/35)    & $0.604$          & $\mathbf{0.686}$ & $+0.082$ & $\mathbf{0.019}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=0.85\linewidth]{crag_routing.png}
-\caption{Routing of the 27 out-of-distribution probes under the two score transformations. Solid bars are the within-batch \textsc{min--max} rule; hatched bars the per-document absolute transformation. Family sizes: A $n{=}9$, B $n{=}10$, C $n{=}8$. The absolute transformation lowers acceptance from $20/27$ to $8/27$ probes and restores the categorical rejection of off-domain input ($0/10$ accepted, versus $7/10$ under \textsc{min--max}).}
-\label{fig:crag_routing}
-\end{figure}
+The comparison splits along metric families rather than favoring one generator outright. DeepSeek leads on Entity Coverage ($0.428$ vs.\ $0.365$, $p{=}0.012$), and its advantages on Answer Relevancy ($p{=}0.180$) and Semantic Similarity ($p{=}0.931$) are not significant. Gemma leads on Fidelity ($0.686$ vs.\ $0.604$, $p{=}0.019$) and on BERTScore F1 ($p{<}0.001$), although the latter margin ($0.014$) is statistically reliable but small in absolute terms.
+
+A decomposition of the Fidelity metric locates Gemma's advantage more precisely. Recomputing Fidelity across the full range of the semantic/lexical weighting (Sec.~\ref{sec:fidelity_weight}) shows that Gemma's margin is \emph{largest} under a purely semantic weighting ($+0.108$) and \emph{smallest}, and not significant, under a purely lexical one ($+0.035$, $p{=}0.249$). The advantage is therefore driven by the cross-encoder component that judges whether each sentence is supported by the context, not by verbatim reuse of context wording. Decomposed, Gemma scores $0.721$ semantic and $0.622$ lexical against DeepSeek's $0.613$ and $0.587$.
+
+The pipeline thus tolerates a change of generator without additional tuning, and the choice of generator matters for grounding specifically rather than for generation quality in general. Both generators answered every query, after two initially empty DeepSeek answers were regenerated (Limitation~\ref{lim:engineering}).
+
+\subsection{Sensitivity of the Fidelity Weighting}
+\label{sec:fidelity_weight}
+
+Fidelity combines a semantic term (sentence-level cross-encoder support) with a lexical
+term (content-word overlap) under a fixed $65/35$ weighting. Those weights were set a
+priori, so we report how the conclusions depend on them. Sweeping the semantic weight
+$w$ from $0$ to $1$ in steps of $0.05$ and recomputing the DeepSeek-vs.-Gemma
+comparison at every point (Table~\ref{tab:weight_sweep}) gives a single crossing: the
+Gemma advantage is significant for every $w \geq 0.35$ and not significant below it.
+The reported operating point $w{=}0.65$ therefore sits inside a broad significant
+region rather than at a favorable singularity, but the finding is weight-dependent at
+the lexical end and we state it as such.
 
 \begin{table}[!ht]
 \centering
-\caption{Head-to-head comparison of the two score transformations on the \emph{same}
-27 probes and the \emph{same} 50 benchmark queries: one retrieval pass per query, one
-vector of raw cross-encoder logits, two decision functions. \textsc{min--max} is the
-original within-batch implementation, recovered verbatim from the pre-fix revision of
-the evaluator (see the repository README); \textsc{sigmoid} is the per-document absolute
-transformation. The downstream decision rule (accept at $s_\sigma{\geq}0.60$, refine
-at $0.30$, minimum relevant ratio $0.2$) is identical in both arms.}
-\label{tab:norm_compare}
+\caption{Fidelity as a function of the semantic weight $w$ (lexical weight $1-w$),
+recomputed from the per-query components of the same 50 answers. $\Delta$ is Gemma minus
+DeepSeek; $p$ from a two-tailed paired $t$-test. Boldface marks the operating point
+$w{=}0.65$ used elsewhere in this paper.}
+\label{tab:weight_sweep}
 \footnotesize
-\begin{tabular}{l c c c c c c}
+\begin{tabular}{c c c c c}
 \toprule
- & & \multicolumn{2}{c}{\textsc{min--max} (within-batch)} & \multicolumn{2}{c}{\textsc{sigmoid} (absolute)} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-\textbf{Query set} & $n$ & \textsc{accept} & \textsc{corrective} & \textsc{accept} & \textsc{corrective} \\
+$w$ (semantic) & \textbf{DeepSeek} & \textbf{Gemma} & $\boldsymbol{\Delta}$ & $p$ \\
 \midrule
-A. Species with no indexed data &  9 & 8 & 1 & 4 & 5 \\
-B. Off-domain                   & 10 & 7 & 3 & \textbf{0} & \textbf{10} \\
-C. Garbled strings              &  8 & 5 & 3 & 4 & 4 \\
-\midrule
-All probes                      & 27 & 20 & 7 & \textbf{8} & \textbf{19} \\
-In-domain benchmark             & 50 & 46 & 4 & 43 & 7 \\
+$0.00$ (lexical only) & $0.587$ & $0.622$ & $+0.035$ & $0.249$ \\
+$0.25$ & $0.593$ & $0.646$ & $+0.053$ & $0.074$ \\
+$0.35$ & $0.596$ & $0.656$ & $+0.060$ & $0.047$ \\
+$\mathbf{0.65}$ & $0.604$ & $0.686$ & $+0.082$ & $0.019$ \\
+$1.00$ (semantic only) & $0.613$ & $0.721$ & $+0.108$ & $0.014$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:norm_compare} quantifies the defect against its replacement. Within-batch
-normalization accepts $20$ of the $27$ out-of-distribution probes ($74\,\%$) versus $8$
-($30\,\%$) under the absolute transformation, and accepts $7$ of the $10$ off-domain
-queries that the absolute transformation routes to external search without exception
-($10/10$). One qualification is required: within-batch normalization does not suppress
-the corrective routes altogether. It still triggers $7$ of them across the 27 probes,
-since the decision rule also requires at least $20\,\%$ of the batch above threshold,
-and min--max sends the worst document of every batch to $0$. The defensible statement is
-quantitative --- the within-batch rule multiplies the out-of-distribution acceptance rate
-by roughly two and a half and removes the categorical rejection of off-domain input ---
-not that the corrective routes never fire.
+Given the null LLM-judge correlation (Sec.~\ref{sec:llm_judge}) and this weight
+dependence, we present Fidelity as an experimental proxy for grounding, not as an
+established measure of factuality (Limitation~\ref{lim:fidelity}).
+
+\subsection{LLM-as-Judge Cross-Check of Fidelity}
+\label{sec:llm_judge}
+
+To test whether Fidelity tracks grounding, we used an LLM-as-judge~\cite{zheng2023mtbench}: Gemma-4-31B, from a different model family than the generator, decomposed each DeepSeek answer into atomic claims and counted those explicitly supported by the retrieved context. Qualitatively the result is favorable: on the final index, 42 of the 48 gradable answers ($88\,\%$) had every claim supported. Quantitatively, however, the judge score and Fidelity are uncorrelated under all three rubric designs we tried: holistic 0--4 ($r{=}0.056$, $p{=}0.70$), claim-level ($r{=}{-}0.167$, $p{=}0.27$), and claim-level on the final index ($r{=}0.039$, $p{=}0.79$, $n{=}48$). Because the null result recurs across rubrics and indices, we do not attribute it to a ceiling effect of a single scale. The two scores also differ in level (judge $0.977$ vs.\ Fidelity $0.593$ on the same answers), since Fidelity deliberately penalizes paraphrase of medical terms. The judge therefore serves as a coarse filter for unsupported answers, not as a validation of Fidelity; expert pharmacological review remains necessary (Limitation~\ref{lim:references}).
+
+\subsection{Results by Query Language}
+\label{sec:language}
+
+The benchmark is bilingual by construction: 32 of the 50 questions are in English and 18
+in Spanish (English: 13 factual, 7 exploratory, 12 comparative; Spanish: 7 factual, 8
+exploratory, 3 comparative). We disaggregate both sides of the pipeline (Table~\ref{tab:language}).
 
 \begin{table}[!ht]
 \centering
-\caption{Accept rate as a function of the accept threshold (refine threshold fixed at
-$0.30$), recomputed from the stored raw logits of the same queries. Desired behaviour
-is a high rate on the in-domain benchmark and a low one on the two probe families.}
-\label{tab:threshold_sweep}
+\caption{Per-language means on the \texttt{full} configuration, with two-sided
+Mann--Whitney $U$ tests between the Spanish ($n{=}18$) and English ($n{=}32$) subsets of
+the same 50-query benchmark. Retrieval metrics come from the agent run; generation
+metrics from the DeepSeek answers. Boldface marks $p<0.05$.}
+\label{tab:language}
 \footnotesize
-\begin{tabular}{l c c c c c c}
+\begin{tabular}{l l c c c}
 \toprule
-\textbf{Accept threshold} & $0.30$ & $0.40$ & $0.50$ & $\mathbf{0.60}$ & $0.70$ & $0.90$ \\
+\textbf{Stage} & \textbf{Metric} & \textbf{Spanish} & \textbf{English} & $p$ \\
 \midrule
-In-domain benchmark ($n{=}50$)      & $90\,\%$ & $90\,\%$ & $88\,\%$ & $\mathbf{86\,\%}$ & $86\,\%$ & $76\,\%$ \\
-Species with no data ($n{=}9$)      & $78\,\%$ & $56\,\%$ & $56\,\%$ & $\mathbf{44\,\%}$ & $44\,\%$ & $22\,\%$ \\
-Off-domain ($n{=}10$)               & $0\,\%$  & $0\,\%$  & $0\,\%$  & $\mathbf{0\,\%}$  & $0\,\%$  & $0\,\%$ \\
+Retrieval  & Context Precision   & $0.477$ & $0.403$ & $0.054$ \\
+Retrieval  & Context Recall      & $0.499$ & $0.478$ & $0.324$ \\
+Retrieval  & MRR                 & $0.956$ & $0.864$ & $0.221$ \\
+Retrieval  & NDCG@10             & $0.940$ & $0.857$ & $0.496$ \\
+\midrule
+Generation & BERTScore F1        & $0.808$ & $0.826$ & $\mathbf{0.007}$ \\
+Generation & Semantic Similarity & $0.672$ & $0.825$ & $0.056$ \\
+Generation & Entity Coverage     & $0.454$ & $0.414$ & $0.878$ \\
+Generation & \textbf{Fidelity}   & $0.468$ & $0.680$ & $\mathbf{0.001}$ \\
+Generation & Answer Relevancy    & $0.998$ & $0.999$ & $0.436$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The thresholds were not tuned: they were taken from the midpoint and lower quartile of
-the logistic curve and then checked for sanity. Table~\ref{tab:threshold_sweep} reports
-that check. Off-domain queries never reach \textsc{accept} at any threshold, so they do
-not constrain the choice at all; acceptance of no-data species falls in steps from
-$78\,\%$ to $22\,\%$ but is flat at $44\,\%$ across every threshold in
-$[0.55,\,0.85]$; and in-domain acceptance declines smoothly from $90\,\%$ to
-$76\,\%$. The operating point therefore sits on a plateau rather than at an optimum:
-every threshold in $[0.55,\,0.85]$ routes both probe families identically, and
-$0.60$ is a defensible but not a distinguished choice. A systematic sweep over a larger
-out-of-distribution set remains future work (Limitation~vi).
+Retrieval is language-neutral: no metric differs significantly between the two subsets,
+which is the expected behavior of a multilingual embedding space shared by query and
+passage. Generation is not. Fidelity is $0.212$ lower on Spanish queries
+($0.468$ vs.\ $0.680$, $p{=}0.001$) and BERTScore F1 is $0.018$ lower
+($p{=}0.007$). The mechanism is visible in the corpus composition: the indexed
+literature is overwhelmingly in English, so a Spanish query retrieves English context
+and the generator must answer in Spanish, which suppresses the lexical-overlap term of
+Fidelity and penalizes surface similarity against a Spanish reference answer. This is a
+genuine asymmetry of the current system rather than a metric artifact alone, and it
+bounds the bilingual claim: retrieval is bilingual, grounded generation is measurably
+weaker in Spanish (Limitation~\ref{lim:language}).
 
-Off-domain subjects are redirected to external search in $10$ of $10$ cases. For taxa absent from the index the result is weaker on the final index than on the smaller one: $5$ of $9$ probes trigger either a query reformulation or the external fallback, while $4$ are accepted because the enlarged index supplies context from phylogenetically related taxa of the same genus or family. We state this as a cost of scaling the corpus rather than as a success: the router rejects out-of-domain input categorically, but it does not distinguish a species with no literature of its own from a species whose close relatives are well documented. On the in-domain benchmark itself (50 queries), the absolute transformation does not always yield \textsc{accept}: $43/50$ route to \textsc{accept}, $2/50$ to \textsc{refine}, and $5/50$ to \textsc{web\_search}. Those $7$ corrective activations fall mostly on \textit{exploratory} and \textit{comparative} queries ($5/7$, versus $25/43$ among accepted queries), categories that by design call for synthesis across several sources rather than a single fact; with seven activations we report this as a tendency and not as an established concentration. We prefer the system to declare uncertainty in those cases rather than fabricate an answer. In short, replacing within-batch normalization with the per-document absolute transformation makes the corrective route reachable both on out-of-distribution input and on low-confidence in-domain queries, which the batch-relative rule had rendered largely indistinguishable from nominal behaviour (Table~\ref{tab:norm_compare}).
-
-% ============================================================
 \section{Discussion}
 \label{sec:discussion}
 
-When processing herbal-medicine queries, we face heterogeneous structures. A user might ask for ``common names'' while concatenating a rigorous academic term such as \textit{Uncaria tomentosa}. Lexical matching is what captures Latin binomials reliably, and Sec.~\ref{sec:pool} locates its contribution precisely: the lexical branch improves the ordering of the candidate pool (NDCG@10 $0.799 \rightarrow 0.824$ before reranking), but at $\alpha{=}0.6$ that gain does not survive the cross-encoder, which re-orders the pool independently of how the fusion ranked it. The hybrid configuration is therefore justified at the pool level rather than, on this benchmark, at the level of the delivered answer. Additionally, natively handling multiple languages through the vector space mitigated considerable computational barriers.
+Herbal-medicine queries mix vernacular names with scientific binomials such as \textit{Uncaria tomentosa}. Lexical matching captures such binomials reliably, and Sec.~\ref{sec:pool} locates its contribution precisely: the lexical branch improves the ordering of the candidate pool (NDCG@10 $0.799 \rightarrow 0.824$ before reranking), but at $\alpha{=}0.6$ that gain does not survive the cross-encoder, which re-orders the pool independently of the fusion ranking. On this benchmark, hybrid fusion is therefore justified at the level of the candidate pool rather than of the delivered answer. Likewise, the shared multilingual embedding space makes retrieval language-neutral (Sec.~\ref{sec:language}), but grounded generation is weaker in Spanish because the indexed literature is predominantly in English: bilingual retrieval alone does not yield bilingual grounding.
 
-Monroy Barrios et al.~\cite{monroy2026finetuning} follow a different route, fine-tuning Llama on Andean texts. That yields fluent answers, but the provenance of a stated dosage cannot be traced back to a source document. Our path with RAG keeps the data outside, auditable, with a traceable reference number. We believe the obvious future lies in merging both worlds: fine-tuning a model and, on top of that, adding a protective RAG layer.
+Monroy Barrios et al.~\cite{monroy2026finetuning} follow a complementary route, fine-tuning Llama on Andean texts. This yields fluent answers, but the provenance of a stated claim, such as a dosage, cannot be traced to a source document. RAG keeps the evidence external and auditable, with a citation for each statement. A natural extension is to combine both approaches: a domain-adapted generator constrained by a retrieval layer that preserves provenance.
 
-\textbf{Availability and limitations.} The complete code is released in a public repository (URL withheld for double-blind review), together with the 50-question bilingual benchmark and its author-validated reference answers, the retrieval index embeddings with their bibliographic metadata, and the per-query JSON outputs from which every table and figure in this paper is derived. The experiment runners, their invocation, and the mapping from each script to the result it produces are documented in the repository README rather than in this manuscript; an interactive demo (URL withheld) exposes the retrieved fragments with their DOI/PMID and the routing decision per query. We list below the current limitations so readers can correctly gauge the scope of the results: (i)~the human-verified \emph{benchmark} covers 12 of the 91 indexed species (100 catalogued); retrieval was verified on 42 species in total (Sec.~\ref{sec:results}) and routing on the 9 species with no indexed data (Sec.~\ref{sec:crag_validation}), but full answer-quality evaluation over the remaining 58 species requires building additional reference answers; (ii)~current reference answers were authored by the authors themselves; although the Fidelity metric was cross-checked against an independent LLM-judge (Sec.~\ref{sec:llm_judge}), validation by an external pharmacognosy or ethnobotany specialist is still pending, and that is the first requirement before any clinical or production use; (iii)~for the central comparison (\texttt{full} vs \texttt{no\_reranker}; Sec.~\ref{sec:wilcoxon}) the reranker's contribution to Fidelity is directionally consistent but does not reach two-sided significance ($p{=}0.082$, $n{=}80$; see limitation ix). Fidelity is now reported for all five ablation configurations, so this limitation no longer extends to missing measurements; what remains is that no pairwise Fidelity difference in Table~\ref{tab:full_results} is statistically significant, and the \texttt{dense\_only} row bounds the generator's own run-to-run noise at $0.008$ on identical contexts; (iv)~hybrid Fidelity (65\,\% semantic + 35\,\% lexical) was cross-checked against an LLM judge under three rubric/index combinations and none yielded a significant correlation ($r{=}0.056$, $p{=}0.70$; $r{=}{-}0.167$, $p{=}0.27$; $r{=}0.039$, $p{=}0.79$; Sec.~\ref{sec:llm_judge}), and the Gemma-vs-DeepSeek conclusion is weight-dependent below $w{=}0.35$ (Sec.~\ref{sec:fidelity_weight}). We therefore treat Fidelity as an experimental proxy for grounding rather than an established factuality measure; correlation with expert human judgments remains open; (v)~robustness across LLMs was verified with a second generator (Gemma-4-31B, served through SambaNova); extending that verification to other families (Llama, Qwen, Mistral) would strengthen the generality claim; (vi)~the operating thresholds ($\sigma_{\mathrm{acc}}{=}0.60$, $\sigma_{\mathrm{ref}}{=}0.30$) were taken from the logistic curve rather than tuned; the sweep in Sec.~\ref{sec:crag_validation} shows they sit on a plateau (every threshold in $[0.55,\,0.85]$ routes both probe families identically), so $0.60$ is defensible but not distinguished, and locating an optimum would need a broader out-of-distribution set; (vii)~the commercial generator can return an empty answer when its internal reasoning exhausts the token budget, and a transient network failure cost responses in an earlier run; both are addressed by an escalating token budget and socket-level retry with backoff, and no generation of the reported Fidelity experiment came back blank. One caveat survives for readers of earlier runs: the Semantic Similarity implementation scores empty answers highly, where every other generation metric correctly returns $0$, so that column must not be read without the blank count. The repository README documents all three defects and their fixes; (viii)~absolute values of the generation metrics depend on the point in time at which the commercial DeepSeek API was accessed, so exact reproduction may differ from the values reported here; the \emph{direction} of the reranker$\rightarrow$Fidelity effect held stable across all six runs performed during this work, but \emph{formal significance} did not (Limitation~ix), so only direction should be read as stable across runs; (ix)~the Wilcoxon test on Fidelity (\texttt{full} vs \texttt{no\_reranker}) has now been run six times over the course of this work, each on a code or index state that differed by a fixed bug or by the retrieval index: $p{=}0.016$ and $p{=}0.00023$ ($n{=}50$, with the per-category $\alpha$ classifier still active and before an $\alpha$-restore-order fix in the agent graph); $p{=}0.110$ ($n{=}50$, classifier removed); $p{=}0.028$ ($n{=}80$); $p{=}0.160$ ($n{=}80$, after fixing the string-hash non-determinism in \texttt{\_refine\_query()}); and $p{=}0.082$ two-sided / $p{=}0.041$ one-sided ($n{=}80$) on the final index. Three of the six reach two-sided significance and three do not, and the two run on the fully-fixed pipeline before the re-index did not. Enlarging the sample from 50 to 80 did not by itself produce stability. The direction is the stable part: \texttt{full} exceeded \texttt{no\_reranker} in all six runs ($0.534{>}0.467$; $0.566{>}0.465$; $0.517{>}0.469$; $0.562{>}0.514$; $0.554{>}0.526$; $0.670{>}0.640$), and in the final run $49$ of the $80$ queries favour \texttt{full} with a mean per-query difference of $+0.030$ --- a majority, not a uniform improvement. We therefore report the reranker's contribution to Fidelity as a consistent directional signal that does not reach the two-sided significance level this paper uses elsewhere; (x)~the bilingual claim is asymmetric: retrieval shows no significant difference between the Spanish and English subsets, but grounded generation is measurably weaker in Spanish (Fidelity $0.468$ vs $0.680$, $p{=}0.001$; Sec.~\ref{sec:language}), because the indexed literature is almost entirely in English; raising Spanish-language coverage of the corpus is the direct remedy and is not attempted here; (xi)~the out-of-distribution stress test evaluates \emph{route selection} only. The probes carry no reference answers, so the quality of the answers that the system produces after a \textsc{web\_search} fallback is not evaluated anywhere in this paper, and no claim about web-supported answer quality should be read into Sec.~\ref{sec:crag_validation}.
+\textbf{Availability.} The code, the 50-question benchmark with its reference answers, the retrieval index (release \texttt{v1.0-index}) with per-chunk bibliographic metadata, the list of indexed records and the per-query outputs behind every table and figure are available at \url{https://github.com/yughiyami/rag_medicinal_plants}. The repository README maps each experiment runner to the result it produces and records the development history, including the defects fixed during this work. An interactive demo (\url{https://rag.scn.quest}) shows the retrieved passages with their DOI/PMID and the routing decision for each query.
 
-% ============================================================
+\textbf{Limitations.} The following limitations bound the scope of the results.
+\begin{enumerate}[label=(\roman*),ref=\roman*,leftmargin=*,itemsep=1pt,topsep=2pt]
+  \item \label{lim:scope} The human-verified benchmark covers 12 of the 91 indexed species. Retrieval was checked on 42 species and routing on the 9 species without literature, but answer quality on the remaining species requires additional reference answers.
+  \item \label{lim:references} The reference answers were written by the authors. Validation by an external pharmacognosy or ethnobotany specialist is pending and is a prerequisite for any clinical or production use.
+  \item \label{lim:fidelity} Fidelity is an experimental grounding proxy, not an established factuality measure: three LLM-judge rubrics yield no significant correlation with it (Sec.~\ref{sec:llm_judge}), and the generator comparison depends on its weighting below $w{=}0.35$ (Sec.~\ref{sec:fidelity_weight}). Its correlation with expert judgement remains open.
+  \item \label{lim:reranker} The reranker's effect on Fidelity is directional only. \texttt{full} exceeded \texttt{no\_reranker} in all six development runs (Fidelity from $0.534$ vs.\ $0.467$ in the first run to $0.670$ vs.\ $0.640$ in the final one), but two-sided significance was reached in three of them ($p$ between $0.00023$ and $0.160$; final run $p{=}0.082$). A larger query set and a deterministic generator would be needed to settle it; the full series is in the repository.
+  \item \label{lim:api} Generation relies on a commercial API that is not version-frozen, so absolute generation scores may drift between runs; the direction of the reported comparisons is the stable quantity.
+  \item \label{lim:generators} Robustness to the generator was tested with one alternative (Gemma-4-31B); other families (e.g., Llama, Qwen, Mistral) remain untested.
+  \item \label{lim:thresholds} The routing thresholds were fixed a priori. They lie on a plateau ($[0.55,\,0.85]$ routes both probe families identically), but locating an optimum would require a larger out-of-distribution set; the router also accepts species without literature when close relatives are well documented (4 of 9).
+  \item \label{lim:language} Grounded generation is weaker in Spanish (Fidelity $0.468$ vs.\ $0.680$, $p{=}0.001$; Sec.~\ref{sec:language}) because the indexed literature is predominantly in English; increasing Spanish-language coverage is the direct remedy.
+  \item \label{lim:websearch} The stress test evaluates route selection only. The probes carry no reference answers, so the quality of answers produced after a \textsc{web\_search} fallback is not evaluated in this paper.
+  \item \label{lim:engineering} The generator occasionally returns an empty answer when its internal reasoning exhausts the token budget; an escalating budget prevents this, and no generation in the reported Fidelity runs was blank. An earlier version of the Semantic Similarity implementation scored empty answers highly; it now scores them $0$. Both issues and their fixes are documented in the repository.
+\end{enumerate}
+
 \section{Conclusions}
 \label{sec:conclusion}
 
-Throughout this manuscript we outlined \sirca{}'s architecture. We integrated parallel retrieval methods, incorporated a strict reranker, established an absolute per-document scoring rule for the corrective router, and forced the model to use sequential reasoning before synthesizing bilingual botanical outputs. Our contribution is not a record retrieval score --- on the 50-query benchmark the system attains a Context Recall of $0.485$, an MRR of $0.897$ and a Fidelity of $0.670$, competitive values that are not the focus --- but the corrective design and its scoring: we show that within-batch normalization raises out-of-distribution acceptance from $8/27$ to $20/27$ probes and removes the categorical rejection of off-domain queries ($0/10$ accepted versus $7/10$), and that a per-document absolute transformation restores that rejection while still routing low-confidence in-domain queries to the corrective branches. The reranker is associated with better Fidelity in a directionally consistent way ($-4.5\,\%$ relative when removed in the final run), and \texttt{full} exceeded \texttt{no\_reranker} in all six runs performed during this work, but the effect does not reach robust statistical significance: the final run gives $p{=}0.082$ two-sided ($p{=}0.041$ one-sided), with $49$ of $80$ queries favouring \texttt{full}, and the two-sided $p$ was unstable across runs (Limitation~ix). Completing the Fidelity column for all five configurations places that movement on a scale: no pairwise difference is significant, and \texttt{dense\_only}, which feeds the generator exactly the same context as \texttt{full}, differs from it by $0.008$ --- the generator's own run-to-run noise, about a quarter of the reranker effect. We report this finding honestly as a directional signal, not as a confirmed effect. A held-out $\alpha$ sweep also led us to simplify the architecture: the per-category weight the query classifier assigned to retrieval did not beat a fixed $\alpha$ even when properly tuned, so we removed it from the production system. Cross-validation with a second generator (Gemma-4-31B) confirmed that the architecture tolerates swapping the LLM without design changes. Two of the five generation metrics differ significantly between generators — Fidelity, in Gemma's favour, and Entity Coverage, in DeepSeek's — while BERTScore F1 separates them by only $0.014$ and Semantic Similarity and Answer Relevancy show no significant difference. The wider methodological point is that a default normalization choice inside a standard component can silently disable a corrective pipeline, so the scoring rule deserves the same scrutiny as the retrieval architecture around it. Three directions follow: auditing the answers with panels of biologists under professional scrutiny~\cite{heinrich2020ethnopharmacology}, extending the geographic scope of the evaluation, and modifying the LLM's weights to internalise botanical ontology prior to document analysis.
+We presented \sirca{}, a bilingual corrective RAG system for Peruvian medicinal plants that combines hybrid retrieval, cross-encoder reranking, a confidence-based router and citation-bearing Chain-of-Thought generation. Its main contribution lies in the router's scoring rule rather than in a record retrieval score: within-batch min--max normalization raises out-of-distribution acceptance from $8/27$ to $20/27$ probes and accepts $7/10$ off-domain queries, whereas a per-document absolute transformation of the reranker logits rejects every off-domain query while still routing low-confidence in-domain queries to the corrective branches. The broader lesson is that a default normalization inside a standard component can silently disable a corrective pipeline, so the scoring rule deserves the same scrutiny as the retrieval architecture around it.
 
-% ============================================================
+On the 50-question benchmark the system reaches an MRR of $0.897$ and an NDCG@10 of $0.887$, with a Fidelity of $0.670$ over 80 queries. The reranker is associated with higher Fidelity in every run, but not significantly ($p{=}0.082$); hybrid fusion improves the candidate pool but not the final Top-10 at $\alpha{=}0.6$; and a held-out $\alpha$ sweep led us to replace per-category fusion weights with a single fixed weight. The architecture tolerates a generator swap without redesign: Gemma-4-31B and DeepSeek differ significantly on Fidelity and BERTScore F1 (both favoring Gemma, the latter by $0.014$) and on Entity Coverage (favoring DeepSeek), but not on Semantic Similarity or Answer Relevancy. Grounded generation is weaker for Spanish queries. Future work includes expert pharmacological validation of the answers~\cite{heinrich2020ethnopharmacology}, broader geographic coverage, fusion weights below $\alpha^\ast$ that let BM25 extend the candidate pool, and domain adaptation of the generator.
 
-% ============================================================
 \bibliographystyle{splncs04}
 \bibliography{references}
 

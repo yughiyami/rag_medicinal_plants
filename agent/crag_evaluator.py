@@ -23,9 +23,10 @@ class CRAGDecision:
     refined_query: str | None = None
 
 
-# Absolute sigmoid-calibrated thresholds (see paper Sec. "Calibration finding").
+# Thresholds on the absolute (per-document) sigmoid transform of the reranker logit
+# (paper Sec. "Corrective Routing and Score Normalization"). Not a calibration (scores are not matched to correctness frequencies).
 # The previous min-max normalization made these thresholds relative to the
-# best/worst document of the SAME query, so every query reached "accept". The
+# best/worst document of the SAME query, so most queries reached "accept". The
 # sigmoid over raw cross-encoder logits restores an absolute-quality signal, so
 # the corrective branches (refine / web_search) fire on out-of-distribution input.
 RELEVANCE_ACCEPT = 0.60
@@ -119,8 +120,8 @@ def _normalize_scores(scores: np.ndarray) -> np.ndarray:
     """
     Map raw cross-encoder logits to [0, 1] via an ABSOLUTE sigmoid.
 
-    This is a per-document calibration (each score transformed independently),
-    NOT a within-batch min-max. Absolute calibration is what makes the fixed
+    This is a per-document absolute transformation (each score transformed independently),
+    NOT a within-batch min-max. The absolute transformation is what makes the fixed
     accept/refine thresholds meaningful across queries; min-max normalization
     (the previous implementation) always sent the best-of-batch to 1.0 and thus
     collapsed the corrective routing to always-accept.
